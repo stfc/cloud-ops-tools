@@ -1,0 +1,8 @@
+mgmt1 ansible_host=192.168.100.101
+mgmt2 ansible_host=192.168.100.102
+[mgmt-3048]
+mgmt1
+mgmt2
+
+[datacenter:children]
+mgmt-3048
