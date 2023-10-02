@@ -1,0 +1,45 @@
+hostname: mgmt2
+
+ansible_network_os: dellos10
+ansible_ssh_user: admin
+ansible_ssh_pass: admin
+
+
+os10_system:
+  hostname: "mgmt-3048-887"
+
+os10_vlan:
+  vlan 4001:
+    description: "IPMI"
+    tagged_members:
+    - port: ethernet 1/1/48
+    untagged_members:
+    - port: ethernet 1/1/1
+    - port: ethernet 1/1/2
+    - port: ethernet 1/1/3
+    - port: ethernet 1/1/4
+    - port: ethernet 1/1/5
+    - port: ethernet 1/1/6
+    - port: ethernet 1/1/7
+    - port: ethernet 1/1/8
+
+os10_vlan:
+  vlan 4002:
+    description: "Power"
+    tagged_members:
+    - port: ethernet 1/1/48
+    untagged_members:
+    - port: ethernet 1/1/41
+    - port: ethernet 1/1/42
+    - port: ethernet 1/1/43
+    - port: ethernet 1/1/44
+    - port: ethernet 1/1/45
+    - port: ethernet 1/1/46
+
+os10_vlan:
+  vlan 4005:
+    description: "Switches"
+    untagged_members:
+    - port: ethernet 1/1/48
+
+

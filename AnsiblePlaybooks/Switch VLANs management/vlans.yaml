@@ -1,0 +1,7 @@
+- hosts: datacenter
+  connection: network_cli
+  collections:
+    - dellemc.os10
+  roles:
+    - os10_system
+    - os10_vlan
