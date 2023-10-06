@@ -1,0 +1,46 @@
+- name: Automatically create and destroy VMs
+  hosts: localhost
+  vars:
+    images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
+  pre_tasks:
+          - package:
+              name: python3-openstacksdk
+              state: present
+            become: true
+
+          - name: Query openstack
+            openstack.cloud.compute_flavor_info:
+                    ram: "<200000"
+            register: flavor_list
+
+          - name: Generate list
+            set_fact:
+                    flavors: "{{ flavors | default([]) + [item.name | string] }}"
+            with_items:
+                    - "{{ flavor_list.openstack_flavors }}"
+
+          - name: Remove GPU flavors
+            set_fact:
+                    flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
+            vars:
+                    flavor_list_search: 'g-'
+
+                  
+
+          - name: Print flavors
+            debug: var=flavors
+
+          - name: Print images
+            debug: var=images
+  roles:
+    - role: create_vm
+
+          # - name: Delete VM if already exists
+          #   openstack.cloud.server:
+          #          name: "made_with_ansible"
+          #          state: absent
+
+          # - include_tasks: create_destroy.yaml
+          #   with_nested:
+          #           - "{{ flavors }}"
+          #           - "{{ images }}"

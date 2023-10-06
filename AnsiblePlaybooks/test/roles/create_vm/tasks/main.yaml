@@ -1,0 +1,21 @@
+- name: Print creation info
+  debug:
+    msg:
+      - "Creating:"
+      - "Flavor: {{ flavors }}"
+      - "Image: {{ images }}"
+
+- name: create VMs
+  os_server:
+      image: "{{ item.1 }}"
+      name: "Meerkat_L7WZTzJZ"
+      key_name: diz41711
+      availability_zone: ceph
+      flavor: "{{ item.0 }}"
+      state: present
+      network: Internal
+      auto_ip: no
+      timeout: 200
+  with_nested:
+    - "{{ flavors }}"
+    - "{{ images }}"
