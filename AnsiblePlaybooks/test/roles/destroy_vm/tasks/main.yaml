@@ -2,10 +2,10 @@
   debug:
     msg:
       - "Deleting:"
-      - "Flavor: {{ flavors }}"
-      - "Image: {{ images }}"
+      - "Flavor: {{ item.0 }}"
+      - "Image: {{ item.1 }}"
 
-- name: Delets VMs
+- name: Delete VMs
   openstack.cloud.server:
       name: "Meerkat_L7WZTzJZ"
       state: absent

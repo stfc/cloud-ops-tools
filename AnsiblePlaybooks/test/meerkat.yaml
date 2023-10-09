@@ -32,9 +32,17 @@
 
           - name: Print images
             debug: var=images
-  roles:
-    - role: create_vm
-    - role: destroy_vm
+
+  tasks:
+      - name: Storage Benchmark
+        include_role: 
+          name: storage_benchmark
+        with_nested:
+          - "{{ flavors }}"
+          - "{{ images }}"
+
+  # roles:
+  #   - role: storage_benchmark
 
           # - name: Delete VM if already exists
           #   openstack.cloud.server:

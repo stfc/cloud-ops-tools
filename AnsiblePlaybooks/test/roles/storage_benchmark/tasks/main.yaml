@@ -1,0 +1,32 @@
+- name: Print creation info
+  debug:
+    msg:
+      - "Creating:"
+      - "Flavor: {{ item.0 }}"
+      - "Image: {{ item.1 }}"
+
+- name: create VMs
+  os_server:
+      flavor: "{{ item.0 }}"
+      image: "{{ item.1 }}"
+      name: "Meerkat_L7WZTzJZ"
+      key_name: diz41711
+      availability_zone: ceph
+      state: present
+      network: Internal
+      auto_ip: no
+      timeout: 200
+
+
+- name: Print deletion info
+  debug:
+    msg:
+      - "Deleting:"
+      - "Flavor: {{ item.0 }}"
+      - "Image: {{ item.1 }}"
+
+- name: Delete VMs
+  openstack.cloud.server:
+      name: "Meerkat_L7WZTzJZ"
+      state: absent
+
