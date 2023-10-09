@@ -1,0 +1,11 @@
+- name: Print deletion info
+  debug:
+    msg:
+      - "Deleting:"
+      - "Flavor: {{ flavors }}"
+      - "Image: {{ images }}"
+
+- name: Delets VMs
+  openstack.cloud.server:
+      name: "Meerkat_L7WZTzJZ"
+      state: absent

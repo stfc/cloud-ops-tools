@@ -34,6 +34,7 @@
             debug: var=images
   roles:
     - role: create_vm
+    - role: destroy_vm
 
           # - name: Delete VM if already exists
           #   openstack.cloud.server:
