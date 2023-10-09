@@ -1,32 +1,13 @@
-- name: Print creation info
-  debug:
-    msg:
-      - "Creating:"
-      - "Flavor: {{ item.0 }}"
-      - "Image: {{ item.1 }}"
+- name: set flavor
+  set_fact:
+    vm_flavor: "{{ item.0 }}"
 
-- name: create VMs
-  os_server:
-      flavor: "{{ item.0 }}"
-      image: "{{ item.1 }}"
-      name: "Meerkat_L7WZTzJZ"
-      key_name: diz41711
-      availability_zone: ceph
-      state: present
-      network: Internal
-      auto_ip: no
-      timeout: 200
+- name: set image
+  set_fact:
+    vm_image: "{{ item.1 }}"
+
+- include_tasks: create_vm.yaml
+- include_tasks: destroy_vm.yaml
 
 
-- name: Print deletion info
-  debug:
-    msg:
-      - "Deleting:"
-      - "Flavor: {{ item.0 }}"
-      - "Image: {{ item.1 }}"
-
-- name: Delete VMs
-  openstack.cloud.server:
-      name: "Meerkat_L7WZTzJZ"
-      state: absent
 

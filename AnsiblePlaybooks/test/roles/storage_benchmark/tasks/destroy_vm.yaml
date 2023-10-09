@@ -2,8 +2,8 @@
   debug:
     msg:
       - "Deleting:"
-      - "Flavor: {{ item.0 }}"
-      - "Image: {{ item.1 }}"
+      - "Flavor: {{ vm_flavor }}"
+      - "Image: {{ vm_image }}"
 
 - name: Delete VMs
   openstack.cloud.server:

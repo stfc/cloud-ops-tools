@@ -2,20 +2,17 @@
   debug:
     msg:
       - "Creating:"
-      - "Flavor: {{ flavors }}"
-      - "Image: {{ images }}"
+      - "Flavor: {{ vm_flavor }}"
+      - "Image: {{ vm_image }}"
 
 - name: create VMs
   os_server:
-      image: "{{ item.1 }}"
+      flavor: "{{ vm_flavor }}"
+      image: "{{ vm_image }}"
       name: "Meerkat_L7WZTzJZ"
       key_name: diz41711
       availability_zone: ceph
-      flavor: "{{ item.0 }}"
       state: present
       network: Internal
       auto_ip: no
       timeout: 200
-  with_nested:
-    - "{{ flavors }}"
-    - "{{ images }}"
