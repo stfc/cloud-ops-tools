@@ -1,9 +1,5 @@
 ---
 - name: Deploy and run hepscore
-
-  vars:
-   vm_flavour: l3.nano
-   victoria_url: http://172.16.113.118:4242/api/put
   tasks:
    - name: set flavor
      set_fact:
