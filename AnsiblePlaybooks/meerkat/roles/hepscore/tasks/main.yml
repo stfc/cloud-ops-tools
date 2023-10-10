@@ -1,0 +1,31 @@
+---
+- name: Deploy and run hepscore
+  hosts: hepscore
+  vars:
+   vm_flavour: l3.nano
+   victoria_url: http://172.16.113.118:4242/api/put
+  tasks:
+   - name: Copy apptainer file
+     ansible.builtin.copy:
+      src: /home/adamg/cloud/benchmarking/hepscore-ansible/files/hepscore.sif
+      dest: /home/rhw13944/hepscore.sif
+      owner: rhw13944
+
+   - name: Template metrics sending script
+     ansible.builtin.template:
+      src: /home/adamg/cloud/benchmarking/hepscore-ansible/files/send_to_victoria.sh
+      dest: /home/rhw13944/send_to_victoria.sh
+      mode: a+x
+
+
+   - name: Install apptainer
+     become: true
+     ansible.builtin.dnf:
+      name: apptainer
+      state: latest
+
+   - name: Run apptainer file
+     ansible.builtin.command: apptainer run /home/rhw13944/hepscore.sif
+
+   - name: Send score to VictoriaMetrics
+     ansible.builtin.command: ./send_to_victoria.sh
