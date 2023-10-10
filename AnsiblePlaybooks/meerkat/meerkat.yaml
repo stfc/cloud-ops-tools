@@ -37,10 +37,18 @@
         msg: "{{ vm_name }}"
 
   tasks:
-    - name: Storage Benchmark
-      include_role: 
-        name: storage_benchmark
-      with_nested:
-        - "{{ flavors }}"
-        - "{{ images }}"
+      - name: Storage Benchmark
+        hosts: storage_benchmark
+        include_role: 
+          name: storage_benchmark
+        with_nested:
+          - "{{ flavors }}"
+          - "{{ images }}"
 
+      - name: HEPScore
+        hosts: hepscore
+        include_role: 
+            name: hepscore
+        with_nested:
+            - "{{ flavors }}"
+            - "{{ images }}"

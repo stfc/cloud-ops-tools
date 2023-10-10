@@ -1,3 +1,3 @@
 #!/bin/bash
 SCORE=$(jq '.score' results/*/HEPscoreTest.json)
-curl -H 'Content-Type: application/json' -d '{"metric":"hepscore","value":"'$SCORE'","tags":{"flavour":"{{vm_flavour}}"}}' {{victoria_url}}
+curl -H 'Content-Type: application/json' -d '{"metric":"hepscore","value":"'$SCORE'","tags":{"flavour":"{{vm_flavor}}", "image": "{{ vm_image }}"}}' {{victoria_url}}

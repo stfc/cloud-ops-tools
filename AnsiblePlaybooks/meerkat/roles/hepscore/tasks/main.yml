@@ -1,10 +1,18 @@
 ---
 - name: Deploy and run hepscore
-  hosts: hepscore
+
   vars:
    vm_flavour: l3.nano
    victoria_url: http://172.16.113.118:4242/api/put
   tasks:
+   - name: set flavor
+     set_fact:
+      vm_flavor: "{{ item.0 }}"
+
+   - name: set image
+     set_fact:
+      vm_image: "{{ item.1 }}"
+
    - name: Copy apptainer file
      ansible.builtin.copy:
       src: /home/adamg/cloud/benchmarking/hepscore-ansible/files/hepscore.sif
