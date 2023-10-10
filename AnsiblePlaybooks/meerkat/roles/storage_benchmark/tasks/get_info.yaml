@@ -1,0 +1,23 @@
+- name: Get server info
+  openstack.cloud.server_info:
+    server: "Meerkat_L7WZTzJZ"
+    timeout: 200
+  register: server_info
+
+- name: Print server info
+  debug:
+    msg: "{{ server_info }}"
+
+- name: Print info type
+  debug:
+    msg: "{{ server_info.openstack_servers[0].addresses.Internal[0].addr | type_debug }}"
+
+- name: Print info 
+  debug:
+    msg: "{{ server_info.openstack_servers[0].addresses.Internal[0].addr }}"
+
+- name: Kill playbook
+  openstack.cloud.server_info:
+    name: "Meerkat_L7WZTzJZ"
+    timeout: 200
+  register: server_info
