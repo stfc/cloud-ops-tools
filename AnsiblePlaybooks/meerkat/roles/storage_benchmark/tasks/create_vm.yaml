@@ -1,0 +1,17 @@
+- name: Print creation info
+  debug:
+    msg:
+      - "Creating:"
+      - "Flavor: {{ vm_flavor }}"
+      - "Image: {{ vm_image }}"
+
+- name: create VMs
+  os_server:
+      flavor: "{{ vm_flavor }}"
+      image: "{{ vm_image }}"
+      name: "{{ vm_name }}"
+      key_name: "{{ key_name }}"
+      state: present
+      network: Internal
+      auto_ip: no
+      timeout: 200

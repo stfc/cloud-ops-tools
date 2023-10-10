@@ -1,0 +1,13 @@
+- name: set flavor
+  set_fact:
+    vm_flavor: "{{ item.0 }}"
+
+- name: set image
+  set_fact:
+    vm_image: "{{ item.1 }}"
+
+- include_tasks: create_vm.yaml
+- include_tasks: destroy_vm.yaml
+
+
+
