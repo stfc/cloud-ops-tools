@@ -2,40 +2,45 @@
   hosts: localhost
   vars:
     images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
+    vm_name: "{{ '_'.join(('Meerkat', lookup('community.general.random_string', length=5, special=false, numbers=false) )) }}"
+    key_name: diz41711
+      
   pre_tasks:
-          - package:
-              name: python3-openstacksdk
-              state: present
-            become: true
+    - package:
+        name: python3-openstacksdk
+        state: present
+      become: true
 
-          - name: Query openstack
-            openstack.cloud.compute_flavor_info:
-                    ram: "<200000"
-            register: flavor_list
+    - name: Query openstack
+      openstack.cloud.compute_flavor_info:
+        ram: "<200000"
+      register: flavor_list
 
-          - name: Generate list
-            set_fact:
-                    flavors: "{{ flavors | default([]) + [item.name | string] }}"
-            with_items:
-                    - "{{ flavor_list.openstack_flavors }}"
+    - name: Generate list
+      set_fact:
+        flavors: "{{ flavors | default([]) + [item.name | string] }}"
+      with_items:
+        - "{{ flavor_list.openstack_flavors }}"
 
-          - name: Remove GPU flavors
-            set_fact:
-                    flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
-            vars:
-                    flavor_list_search: 'g-'
+    - name: Remove GPU flavors
+      set_fact:
+        flavors: "{{ flavors | reject('search', 'g-') | list }}"
 
-          - name: Print flavors
-            debug: var=flavors
+    - name: Print flavors
+      debug: var=flavors
 
-          - name: Print images
-            debug: var=images
+    - name: Print images
+      debug: var=images
+      
+    - name: Print VM name
+      debug:
+        msg: "{{ vm_name }}"
 
   tasks:
-      - name: Storage Benchmark
-        include_role: 
-          name: storage_benchmark
-        with_nested:
-          - "{{ flavors }}"
-          - "{{ images }}"
+    - name: Storage Benchmark
+      include_role: 
+        name: storage_benchmark
+      with_nested:
+        - "{{ flavors }}"
+        - "{{ images }}"
 

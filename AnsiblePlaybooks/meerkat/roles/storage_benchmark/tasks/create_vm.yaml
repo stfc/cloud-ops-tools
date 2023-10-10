@@ -9,9 +9,8 @@
   os_server:
       flavor: "{{ vm_flavor }}"
       image: "{{ vm_image }}"
-      name: "Meerkat_L7WZTzJZ"
-      key_name: diz41711
-      availability_zone: ceph
+      name: "{{ vm_name }}"
+      key_name: "{{ key_name }}"
       state: present
       network: Internal
       auto_ip: no
