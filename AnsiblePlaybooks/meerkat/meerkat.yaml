@@ -1,12 +1,12 @@
+---
 - name: Automatically create and destroy VMs
   hosts: localhost
   vars:
     images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
-    vm_name: "Meerkat_Benchmark"
-    key_name: diz41711
-      
+
   pre_tasks:
-    - package:
+    - name: Install openstack
+      ansible.builtin.package:
         name: python3-openstacksdk
         state: present
       become: true
@@ -17,38 +17,45 @@
       register: flavor_list
 
     - name: Generate list
-      set_fact:
+      ansible.builitin.set_fact:
         flavors: "{{ flavors | default([]) + [item.name | string] }}"
       with_items:
         - "{{ flavor_list.openstack_flavors }}"
 
     - name: Remove GPU flavors
-      set_fact:
-        flavors: "{{ flavors | reject('search', 'g-') | list }}"
-
+      ansibel.builtin.set_fact:
+        flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
+      vars:
+        flavor_list_search: 'g-'
+  
     - name: Print flavors
       debug: var=flavors
-
+  
     - name: Print images
       debug: var=images
-      
-    - name: Print VM name
-      debug:
-        msg: "{{ vm_name }}"
 
   tasks:
-      - name: Storage Benchmark
-        hosts: storage_benchmark
-        include_role: 
-          name: storage_benchmark
-        with_nested:
-          - "{{ flavors }}"
-          - "{{ images }}"
+    - name: Storage Benchmark
+      include_role: 
+        name: storage_benchmark
+      with_nested:
+        - "{{ flavors }}"
+        - "{{ images }}"
 
-      - name: HEPScore
-        hosts: hepscore
-        include_role: 
-            name: hepscore
-        with_nested:
-            - "{{ flavors }}"
-            - "{{ images }}"
+    - name: Create hepscore machines
+      include_tasks: common/create_vm.yaml
+      vars:
+        group: hepscore
+      with_nested:
+        - "{{ flavors }}"
+        - "{{ images }}"
+  
+    - name: Run HEPScore
+      include_role: 
+          name: hepscore
+
+    - name: Destroy hepscore machines
+      include_tasks: common/destroy_vm.yaml
+      with_nested:
+        - "{{ flavors }}"
+        - "{{ images }}"
