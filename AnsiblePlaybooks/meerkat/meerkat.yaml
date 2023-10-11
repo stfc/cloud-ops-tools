@@ -17,17 +17,17 @@
       register: flavor_list
 
     - name: Generate list
-      ansible.builitin.set_fact:
+      ansible.builtin.set_fact:
         flavors: "{{ flavors | default([]) + [item.name | string] }}"
       with_items:
-        - "{{ flavor_list.openstack_flavors }}"
+        - "{{ flavor_list.flavors }}"
 
     - name: Remove GPU flavors
-      ansibel.builtin.set_fact:
+      ansible.builtin.set_fact:
         flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
       vars:
         flavor_list_search: 'g-'
-  
+
     - name: Print flavors
       debug: var=flavors
   
@@ -37,25 +37,12 @@
   tasks:
     - name: Storage Benchmark
       include_role: 
-        name: storage_benchmark
+        name: roles/storage_benchmark
       with_nested:
-        - "{{ flavors }}"
-        - "{{ images }}"
-
-    - name: Create hepscore machines
-      include_tasks: common/create_vm.yaml
-      vars:
-        group: hepscore
-      with_nested:
-        - "{{ flavors }}"
+        - [l3.nano]
         - "{{ images }}"
   
-    - name: Run HEPScore
-      include_role: 
-          name: hepscore
+    # - name: Run HEPScore
+    #   include_role: 
+    #       name: hepscore
 
-    - name: Destroy hepscore machines
-      include_tasks: common/destroy_vm.yaml
-      with_nested:
-        - "{{ flavors }}"
-        - "{{ images }}"

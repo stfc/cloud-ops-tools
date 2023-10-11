@@ -9,7 +9,7 @@
   os_server:
       flavor: "{{ vm_flavor }}"
       image: "{{ vm_image }}"
-      name: "{{ vm_name }}"
+      name: "Meerkat-{{ vm_flavor }}-{{ vm_image }}"
       key_name: "{{ key_name }}"
       state: present
       network: Internal
@@ -19,8 +19,13 @@
 
 - name: Get IP address of VM
   set_fact:
-    vm_IP: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+    vm_IP: "{{ vm_info.server.addresses.Internal[0].addr }}"
 
 - name: Print VM IP
   debug:
     msg: "{{ vm_IP }}"
+
+- name: Add VM to hosts
+  add_host:
+    hostname: "{{ vm_IP }}"
+    groups: benchmarking

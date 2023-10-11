@@ -6,5 +6,5 @@
   set_fact:
     vm_image: "{{ item.1 }}"
 
-- include_tasks: create_vm.yaml
-- include_tasks: destroy_vm.yaml
+- include_tasks: roles/common/tasks/create_vm.yaml
+- include_tasks: roles/common/tasks/destroy_vm.yaml
