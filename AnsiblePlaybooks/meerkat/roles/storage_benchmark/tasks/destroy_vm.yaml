@@ -5,7 +5,7 @@
       - "Flavor: {{ vm_flavor }}"
       - "Image: {{ vm_image }}"
 
-- name: Delete VMs
+- name: Delete VM
   openstack.cloud.server:
       name: "{{ vm_name }}"
       state: absent
