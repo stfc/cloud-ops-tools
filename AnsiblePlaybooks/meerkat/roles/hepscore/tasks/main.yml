@@ -1,16 +1,15 @@
-- name: set flavor
-  set_fact:
-   vm_flavor: "{{ item.0 }}"
-
-- name: set image
-  set_fact:
-   vm_image: "{{ item.1 }}"
-
 - name: Template metrics sending script
   ansible.builtin.template:
    src: send_to_victoria.sh.j2
    dest: ~/send_to_victoria.sh
    mode: a+x
+
+- name: Add apptainer repo (Ubuntu)
+  when: ansible_distribution == "Ubuntu"
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:apptainer/ppa
+    state: present
 
 - name: Install apptainer
   become: true
@@ -30,4 +29,3 @@
 
 # - name: Send score to VictoriaMetrics
 #   ansible.builtin.command: ./send_to_victoria.sh
-
