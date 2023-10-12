@@ -1,3 +1,11 @@
+- name: set flavor
+  set_fact:
+    vm_flavor: "{{ item.0 }}"
+
+- name: set image
+  set_fact:
+    vm_image: "{{ item.1 }}"
+
 - name: Print creation info
   debug:
     msg:
@@ -27,5 +35,5 @@
 
 - name: Add VM to hosts
   add_host:
-    hostname: "{{ vm_IP }}"
+    hostname: "rhw13944@{{ vm_IP }}"
     groups: benchmarking

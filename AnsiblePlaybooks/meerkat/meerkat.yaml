@@ -1,48 +1,67 @@
 ---
-- name: Automatically create and destroy VMs
-  hosts: localhost
+- hosts: localhost
   vars:
     images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
-
-  pre_tasks:
+  
+  tasks:
     - name: Install openstack
       ansible.builtin.package:
         name: python3-openstacksdk
         state: present
       become: true
-
+  
     - name: Query openstack
       openstack.cloud.compute_flavor_info:
         ram: "<200000"
       register: flavor_list
-
+  
     - name: Generate list
       ansible.builtin.set_fact:
         flavors: "{{ flavors | default([]) + [item.name | string] }}"
       with_items:
         - "{{ flavor_list.flavors }}"
-
+  
     - name: Remove GPU flavors
       ansible.builtin.set_fact:
         flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
       vars:
         flavor_list_search: 'g-'
-
+  
     - name: Print flavors
       debug: var=flavors
   
     - name: Print images
       debug: var=images
 
-  tasks:
-    - name: Storage Benchmark
-      include_role: 
-        name: roles/storage_benchmark
+    - include_tasks: roles/common/tasks/create_vm.yaml
       with_nested:
         - [l3.nano]
-        - "{{ images }}"
-  
-    # - name: Run HEPScore
-    #   include_role: 
-    #       name: hepscore
+        - [rocky-8-nogui]
 
+
+- hosts: benchmarking
+  gather_facts: no
+  #   - name: Storage Benchmark
+  #     include_role: 
+  #       name: roles/storage_benchmark
+  #     with_nested:
+  #       - [l3.nano]
+  #       - "{{ images }}"
+  tasks:
+  - name: Wait for system to become reachable
+    ansible.builtin.wait_for_connection:
+      delay: 60
+      timeout: 300
+  - name: HEPScore Benchmark
+    include_role:
+      name: roles/hepscore
+    with_nested:
+      - [l3.nano]
+      - [rocky-8-nogui]
+
+- hosts: localhost
+  tasks:
+    - include_tasks: roles/common/tasks/destroy_vm.yaml
+      with_nested:
+          - [l3.nano]
+          - [rocky-8-nogui]
