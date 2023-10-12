@@ -37,3 +37,5 @@
   add_host:
     hostname: "rhw13944@{{ vm_IP }}"
     groups: benchmarking
+    vm_flavor: "{{ vm_flavor }}"
+    vm_image: "{{ vm_image }}"
