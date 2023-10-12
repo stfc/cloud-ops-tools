@@ -2,7 +2,7 @@
   hosts: localhost
   vars:
     images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
-    vm_name: "{{ '_'.join(('Meerkat', lookup('community.general.random_string', length=5, special=false, numbers=false) )) }}"
+    vm_name: "Meerkat_Benchmark"
     key_name: diz41711
       
   pre_tasks:

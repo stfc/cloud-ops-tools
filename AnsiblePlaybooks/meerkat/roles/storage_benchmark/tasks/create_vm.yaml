@@ -5,7 +5,7 @@
       - "Flavor: {{ vm_flavor }}"
       - "Image: {{ vm_image }}"
 
-- name: create VMs
+- name: create VM
   os_server:
       flavor: "{{ vm_flavor }}"
       image: "{{ vm_image }}"
@@ -15,3 +15,12 @@
       network: Internal
       auto_ip: no
       timeout: 200
+  register: vm_info
+
+- name: Get IP address of VM
+  set_fact:
+    vm_IP: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+
+- name: Print VM IP
+  debug:
+    msg: "{{ vm_IP }}"

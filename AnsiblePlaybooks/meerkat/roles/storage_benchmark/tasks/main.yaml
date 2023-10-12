@@ -8,6 +8,3 @@
 
 - include_tasks: create_vm.yaml
 - include_tasks: destroy_vm.yaml
-
-
-
