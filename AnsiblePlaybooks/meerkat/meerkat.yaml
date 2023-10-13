@@ -1,9 +1,12 @@
 ---
 - hosts: localhost
-  vars:
-    images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
+
 
   tasks:
+    - name: Set images
+      ansible.builtin.set_fact:
+        images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
+
     - name: Install openstack
       ansible.builtin.package:
         name: python3-openstacksdk
@@ -34,18 +37,21 @@
       debug: var=images
 
     - include_tasks: roles/common/tasks/create_vm.yaml
+      vars: 
+        benchmark: hepscore
       with_nested:
         - [l3.nano]
         - "{{ images }}"
 
-- hosts: benchmarking
+- hosts: storage_benchmark
+  tasks:
+    - name: Storage Benchmark
+      include_role: 
+        name: roles/storage_benchmark
+
+- hosts: hepscore
   gather_facts: no
-  #   - name: Storage Benchmark
-  #     include_role: 
-  #       name: roles/storage_benchmark
-  #     with_nested:
-  #       - [l3.nano]
-  #       - "{{ images }}"
+
   tasks:
   - name: Wait for system to become reachable
     ansible.builtin.wait_for_connection:
@@ -62,4 +68,4 @@
     - include_tasks: roles/common/tasks/destroy_vm.yaml
       with_nested:
           - [l3.nano]
-          - [rocky-8-nogui]
+          - "{{ images }}"

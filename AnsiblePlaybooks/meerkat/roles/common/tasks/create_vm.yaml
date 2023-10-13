@@ -36,6 +36,6 @@
 - name: Add VM to hosts
   add_host:
     hostname: "rhw13944@{{ vm_IP }}"
-    groups: benchmarking
+    groups: "{{ benchmark }}"
     vm_flavor: "{{ vm_flavor }}"
     vm_image: "{{ vm_image }}"
