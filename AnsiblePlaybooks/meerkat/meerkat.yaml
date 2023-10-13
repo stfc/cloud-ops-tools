@@ -19,7 +19,7 @@
       ansible.builtin.set_fact:
         flavors: "{{ flavors | default([]) + [item.name | string] }}"
       with_items:
-        - "{{ flavor_list.flavors }}"
+        - "{{ flavor_list.openstack_flavors }}"
 
     - name: Remove GPU flavors
       ansible.builtin.set_fact:
@@ -37,7 +37,6 @@
       with_nested:
         - [l3.nano]
         - "{{ images }}"
-
 
 - hosts: benchmarking
   gather_facts: no
