@@ -17,7 +17,7 @@
       become: true
       ansible.builtin.package:
         name: apptainer
-        state: latest
+        state: present
 
     - name: Login to harbor
       ansible.builtin.command: apptainer remote login -u {{ harbor_username }} -p {{ harbor_password }} oras://harbor.stfc.ac.uk
@@ -30,6 +30,9 @@
 
     - name: Send score to VictoriaMetrics
       ansible.builtin.command: ./send_to_victoria.sh
+      register: return_code
+      changed_when: return_code.rc == 0
+
   rescue:
     - name: Print errored VM
       debug:

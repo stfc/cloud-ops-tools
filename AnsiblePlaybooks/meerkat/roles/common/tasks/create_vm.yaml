@@ -15,27 +15,27 @@
 
 - name: create VM
   os_server:
-      flavor: "{{ vm_flavor }}"
-      image: "{{ vm_image }}"
-      name: "Meerkat-{{ vm_flavor }}-{{ vm_image }}"
-      key_name: "{{ key_name }}"
-      state: present
-      network: Internal
-      auto_ip: no
-      timeout: 200
+    flavor: "{{ vm_flavor }}"
+    image: "{{ vm_image }}"
+    name: "Meerkat-{{ vm_flavor }}-{{ vm_image }}"
+    key_name: "{{ key_name }}"
+    state: present
+    network: Internal
+    auto_ip: false
+    timeout: 200
   register: vm_info
 
 - name: Get IP address of VM
   set_fact:
-    vm_IP: "{{ vm_info.server.addresses.Internal[0].addr }}"
+    vm_ip: "{{ vm_info.server.addresses.Internal[0].addr }}"
 
 - name: Print VM IP
   debug:
-    msg: "{{ vm_IP }}"
+    msg: "{{ vm_ip }}"
 
 - name: Add VM to hosts
   add_host:
-    hostname: "{{ openstack_username }}@{{ vm_IP }}"
-    groups: benchmarking
+    hostname: "{{ openstack_username }}@{{ vm_ip }}"
+    groups: "{{ benchmark }}"
     vm_flavor: "{{ vm_flavor }}"
     vm_image: "{{ vm_image }}"

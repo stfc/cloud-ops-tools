@@ -1,7 +1,5 @@
 ---
 - hosts: localhost
-
-
   tasks:
     - name: Set images
       ansible.builtin.set_fact:
@@ -37,7 +35,7 @@
       debug: var=images
 
     - include_tasks: roles/common/tasks/create_vm.yaml
-      vars: 
+      vars:
         benchmark: hepscore
       with_nested:
         - "{{ flavors }}"
@@ -46,26 +44,25 @@
 - hosts: storage_benchmark
   tasks:
     - name: Storage Benchmark
-      include_role: 
+      include_role:
         name: roles/storage_benchmark
 
 - hosts: hepscore
-  gather_facts: no
-
+  gather_facts: false
   tasks:
-  - name: Wait for system to become reachable
-    ansible.builtin.wait_for_connection:
-      delay: 60
-      timeout: 300
-  - name: Gathering facts
-    setup:
-  - name: HEPScore Benchmark
-    include_role:
-      name: roles/hepscore
+    - name: Wait for system to become reachable
+      ansible.builtin.wait_for_connection:
+        delay: 60
+        timeout: 300
+    - name: Gathering facts
+      setup:
+    - name: HEPScore Benchmark
+      include_role:
+        name: roles/hepscore
 
 - hosts: localhost
   tasks:
     - include_tasks: roles/common/tasks/destroy_vm.yaml
       with_nested:
-          - "{{ flavors }}"
-          - "{{ images }}"
+        - "{{ flavors }}"
+        - "{{ images }}"

@@ -15,5 +15,5 @@
 
 - name: Delete VM
   openstack.cloud.server:
-      name: "Meerkat-{{ vm_flavor }}-{{ vm_image }}"
-      state: absent
+    name: "Meerkat-{{ vm_flavor }}-{{ vm_image }}"
+    state: absent
