@@ -25,11 +25,11 @@
     - name: Pull apptainer file
       ansible.builtin.command: apptainer pull -F oras://harbor.stfc.ac.uk/stfc-cloud-staging/hepscore:latest
 
-    # - name: Run apptainer file
-    #   ansible.builtin.command: apptainer run ./hepscore_latest.sif
+    - name: Run apptainer file
+      ansible.builtin.command: apptainer run ./hepscore_latest.sif
 
-    # - name: Send score to VictoriaMetrics
-    #   ansible.builtin.command: ./send_to_victoria.sh
+    - name: Send score to VictoriaMetrics
+      ansible.builtin.command: ./send_to_victoria.sh
   rescue:
     - name: Print errored VM
       debug:

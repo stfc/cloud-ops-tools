@@ -40,7 +40,7 @@
       vars: 
         benchmark: hepscore
       with_nested:
-        - [l3.nano]
+        - "{{ flavors }}"
         - "{{ images }}"
 
 - hosts: storage_benchmark
@@ -67,5 +67,5 @@
   tasks:
     - include_tasks: roles/common/tasks/destroy_vm.yaml
       with_nested:
-          - [l3.nano]
+          - "{{ flavors }}"
           - "{{ images }}"
