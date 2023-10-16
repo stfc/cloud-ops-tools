@@ -35,7 +35,7 @@
 
 - name: Add VM to hosts
   add_host:
-    hostname: "rhw13944@{{ vm_IP }}"
+    hostname: "{{ openstack_username }}@{{ vm_IP }}"
     groups: benchmarking
     vm_flavor: "{{ vm_flavor }}"
     vm_image: "{{ vm_image }}"
