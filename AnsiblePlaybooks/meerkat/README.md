@@ -17,5 +17,7 @@ With the extra vars:
     - Harbor credentials to pull the HEPScore container
 - `key_name`
     - The name of the Openstack key name used to access newly created VMs
+- `openstack_username`
+    - The name of the user to log into VMs as
 
 It may also be necessary to set the environment variable `ANSIBLE_HOST_KEY_CHECKING` to False. This prevents an interactive prompt appearing for every VM to verify the host key.
