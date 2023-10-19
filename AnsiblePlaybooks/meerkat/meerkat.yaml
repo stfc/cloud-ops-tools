@@ -1,8 +1,10 @@
 - name: Automatically create and destroy VMs
   hosts: localhost
+  tags:
+    - create
   vars:
-    images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
-    vm_name: "Meerkat_Benchmark"
+    images: ["ubuntu-focal-20.04-nogui"]
+    vm_name: "Meerkat_Benchmark_2"
     key_name: diz41711
       
   pre_tasks:
@@ -13,7 +15,7 @@
 
     - name: Query openstack
       openstack.cloud.compute_flavor_info:
-        ram: "<200000"
+        ram: "<20000"
       register: flavor_list
 
     - name: Generate list
@@ -37,10 +39,24 @@
         msg: "{{ vm_name }}"
 
   tasks:
-    - name: Storage Benchmark
+    - name: Create VMs
       include_role: 
-        name: storage_benchmark
+        name: create_vm
       with_nested:
         - "{{ flavors }}"
         - "{{ images }}"
+    
+- name: Storage benchmark
+  hosts: all
+  gather_facts: no
+  remote_user: ubuntu
+  tags:
+    - benchmark
+  roles:
+    - role: storage_benchmark
 
+
+- name: delete VMs
+  hosts: localhost
+  roles:
+    - destroy_vm
