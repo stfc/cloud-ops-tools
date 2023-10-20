@@ -1,0 +1,19 @@
+---
+- name: Ansible example
+  hosts: localhost
+  pre_tasks:
+    - package:
+        name: python3-openstacksdk
+        state: present
+      become: true
+
+- name: Create a VM
+  hosts: localhost
+  roles:
+  - create_vm
+
+- name: Install Docker
+  hosts: all
+  roles:
+  - install_docker
+  - NGINX

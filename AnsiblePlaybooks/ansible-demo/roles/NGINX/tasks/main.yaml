@@ -1,0 +1,6 @@
+- name: Create a data container
+  community.docker.docker_container:
+    name: nginx_container
+    image: nginx
+    state: present
+  become: true

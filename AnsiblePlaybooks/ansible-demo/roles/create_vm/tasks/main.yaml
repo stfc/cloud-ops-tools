@@ -1,0 +1,32 @@
+- name: Install openstack
+  package:
+    name: python3-openstacksdk
+    state: present
+  become: true
+
+- name: Boot VM
+  os_server:
+    name: CG_example_VM
+    flavor: l3.nano
+    image: ubuntu-focal-20.04-gui
+    key_name: diz41711
+    network: Internal
+    security_groups: [default]
+    auto_ip: no
+    state: present
+    timeout: 200
+  register: vm_info
+
+- name: Extract VM IP address
+  set_fact:
+    vm_IP: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+
+- name: Add VM to hosts
+  add_host:
+    name: "{{ vm_IP }}"
+    groups: VMs
+
+- name: Wait for connection
+  ansible.builtin.wait_for_connection:
+    timeout: 300
+  delegate_to: "{{ vm_IP }}"
