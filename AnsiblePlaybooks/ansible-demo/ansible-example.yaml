@@ -1,19 +1,17 @@
 ---
 - name: Ansible example
   hosts: localhost
-  pre_tasks:
-    - package:
-        name: python3-openstacksdk
-        state: present
-      become: true
 
 - name: Create a VM
   hosts: localhost
   roles:
-  - create_vm
+  - role: create_vm
+    vm_name: "<unique VM name>"
+    key_name: "<key pair name>"
 
-- name: Install Docker
+- name: Install Docker & NGINX
   hosts: all
   roles:
   - install_docker
-  - NGINX
+  - nginx
+

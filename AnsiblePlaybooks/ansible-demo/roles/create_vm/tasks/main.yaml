@@ -6,10 +6,10 @@
 
 - name: Boot VM
   os_server:
-    name: CG_example_VM
+    name: "{{ vm_name }}"
     flavor: l3.nano
     image: ubuntu-focal-20.04-gui
-    key_name: diz41711
+    key_name: "{{ key_name }}"
     network: Internal
     security_groups: [default]
     auto_ip: no
@@ -30,3 +30,6 @@
   ansible.builtin.wait_for_connection:
     timeout: 300
   delegate_to: "{{ vm_IP }}"
+
+
+  
