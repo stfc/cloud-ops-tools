@@ -4,7 +4,6 @@ from functools import reduce
 import socket
 import pandas as pd
 
-
 """
 read from 2 txt files one containing dns name and another containing ip address
 convert into list of dictionaries containing them as keys - dns name and ip address
@@ -88,6 +87,7 @@ def write_output(parsed_info: List[Dict], output_filepath: str, reverse_order: b
                     f"{item['hypervisor']}\tIN A\t{item['ip_address']}\n"
                 )
 
+
 """
 def check_ip(idrac_ip_column: int = 10)
     
@@ -100,8 +100,6 @@ def check_ip(idrac_ip_column: int = 10)
     dns_data = {'IP':'HOSTNAME'}
     for ip in dictionary_ip:    
 """
-
-
 
 
 def main(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10, reverse_order: bool = False,
@@ -121,7 +119,6 @@ def main(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10, 
 
 
 if __name__ == "__main__":
-
     # TODO argparse command line argument parsing
 
     netbox_filepath = "test.xlsx"
