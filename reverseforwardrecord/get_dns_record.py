@@ -9,13 +9,15 @@ read from 2 txt files one containing dns name and another containing ip address
 convert into list of dictionaries containing them as keys - dns name and ip address
 write a function that takes 2 lists and converts them into a list of dicts
 just have to change read from netbox
+only converts from xlsx
+xlsx file has to have fqdn in column 8 and idrac_ip in column 10
+otherwise have to set it up with manual user input
 """
 
 
 # create a new file for results to be returned into
 
 def create_file():
-    
     """
     makes a txt file for the results to be returned into
     :return: output.txt
@@ -24,10 +26,9 @@ def create_file():
     f.close()
 
 
-
 def read_from_netbox(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10) -> List[Dict]:
     """
-    reads from netbox file
+    reads from netbox file, in a xlsx format
     :param netbox_filepath: path for the netbox info
     :param fqdn_column: full qualified domain name column in netbox file
     :param idrac_ip_column: idrac ip column in netbox file
@@ -101,20 +102,6 @@ def write_output(parsed_info: List[Dict], output_filepath: str, reverse_order: b
                 )
 
 
-"""
-def check_ip(idrac_ip_column: int = 10)
-    
-    
-    :param idrac_ip_column: idrac ip column in netbox file
-    :return: whether all the ips match the dns resolved version and return the ones that dont 
-
-    dictionary_ip = {}
-
-    dns_data = {'IP':'HOSTNAME'}
-    for ip in dictionary_ip:    
-"""
-
-
 def main(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10, reverse_order: bool = False,
          output_filepath: str = "output.txt"):
     """
@@ -133,7 +120,6 @@ def main(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10, 
 
 
 if __name__ == "__main__":
-    # TODO argparse command line argument parsing
 
     netbox_filepath = "test.xlsx"
     main(netbox_filepath, reverse_order=False)
