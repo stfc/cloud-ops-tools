@@ -15,8 +15,14 @@ just have to change read from netbox
 # create a new file for results to be returned into
 
 def create_file():
+    
+    """
+    makes a txt file for the results to be returned into
+    :return: output.txt
+    """
     f = open('output.txt', 'w')
     f.close()
+
 
 
 def read_from_netbox(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10) -> List[Dict]:
