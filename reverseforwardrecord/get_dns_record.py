@@ -17,16 +17,19 @@ otherwise have to set it up with manual user input
 
 # create a new file for results to be returned into
 
+
 def create_file():
     """
     makes a txt file for the results to be returned into
     :return: output.txt
     """
-    f = open('output.txt', 'w')
+    f = open("output.txt", "w")
     f.close()
 
 
-def read_from_netbox(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10) -> List[Dict]:
+def read_from_netbox(
+    netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10
+) -> List[Dict]:
     """
     reads from netbox file, in a xlsx format
     :param netbox_filepath: path for the netbox info
@@ -49,7 +52,7 @@ def read_from_netbox(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column
             try:
                 val = {
                     "fqdn": row[fqdn_column].value,
-                    "idrac_ip": row[idrac_ip_column].value
+                    "idrac_ip": row[idrac_ip_column].value,
                 }
             except IndexError as exp:
                 raise RuntimeError(
@@ -60,7 +63,9 @@ def read_from_netbox(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column
     return workbook_info
 
 
-def parse_netbox_info(netbox_info: List[Dict], reverse_order: bool = False) -> List[Dict]:
+def parse_netbox_info(
+    netbox_info: List[Dict], reverse_order: bool = False
+) -> List[Dict]:
     """
     Parse info from netbox and create corresponding hypervisor fqdn and ip value
     :param netbox_info: list of dictionaries holding fqdn and idrac_ip
@@ -71,18 +76,22 @@ def parse_netbox_info(netbox_info: List[Dict], reverse_order: bool = False) -> L
     for item in netbox_info:
         parsed_item = {}
         if reverse_order:
-            idrac = reduce(lambda x, y: f"{x}.{y}", item["idrac_ip"].split(".")[::-1])  #
-            idrac = idrac.rsplit('.', 1)[0]
+            idrac = reduce(
+                lambda x, y: f"{x}.{y}", item["idrac_ip"].split(".")[::-1]
+            )  #
+            idrac = idrac.rsplit(".", 1)[0]
             parsed_item["ip_address"] = idrac
             parsed_item["hypervisor"] = item["fqdn"]
         else:
             parsed_item["ip_address"] = item["idrac_ip"]
-            parsed_item["hypervisor"] = item["fqdn"].split('.')[0]
+            parsed_item["hypervisor"] = item["fqdn"].split(".")[0]
         parsed_info.append(parsed_item)
     return parsed_info
 
 
-def write_output(parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False):
+def write_output(
+    parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False
+):
     """
     write parsed netbox info to a file
     :param parsed_info: list of dictionaries which contains hypervisor fqdn and ip keys
@@ -90,20 +99,21 @@ def write_output(parsed_info: List[Dict], output_filepath: str, reverse_order: b
     :param reverse_order: use reverse or forward order / if true use forward if false use reverse
     :return: None
     """
-    with open(output_filepath, 'w', encoding="utf-8") as out_file:
+    with open(output_filepath, "w", encoding="utf-8") as out_file:
         for item in parsed_info:
             if reverse_order:
-                out_file.write(
-                    f"{item['ip_address']}\tIN PTR\t{item['hypervisor']}\n"
-                )
+                out_file.write(f"{item['ip_address']}\tIN PTR\t{item['hypervisor']}\n")
             else:
-                out_file.write(
-                    f"{item['hypervisor']}\tIN A\t{item['ip_address']}\n"
-                )
+                out_file.write(f"{item['hypervisor']}\tIN A\t{item['ip_address']}\n")
 
 
-def main(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10, reverse_order: bool = False,
-         output_filepath: str = "output.txt"):
+def main(
+    netbox_filepath: str,
+    fqdn_column: int = 8,
+    idrac_ip_column: int = 10,
+    reverse_order: bool = False,
+    output_filepath: str = "output.txt",
+):
     """
     this function will create a file for the output for dns records
     :param netbox_filepath: path for the netbox info
@@ -120,6 +130,5 @@ def main(netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10, 
 
 
 if __name__ == "__main__":
-
     netbox_filepath = "test.xlsx"
     main(netbox_filepath, reverse_order=False)

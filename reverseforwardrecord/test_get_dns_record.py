@@ -1,12 +1,7 @@
 from unittest import mock
 import pytest
 from unittest.mock import patch, MagicMock, NonCallableMock, Mock
-from get_dns_record import main, read_from_netbox, parse_netbox_info, write_output
-
-
-# patch is for calling functions in a function
-# magic mock is to mock the parameters
-# you only put anything in the parameters that are needed later in the mock test
+from get_dns_record_personal import main, read_from_netbox, parse_netbox_info, write_output
 
 
 @patch("get_dns_record.read_from_netbox")
@@ -219,6 +214,10 @@ def test_read_from_netbox_many_sheet_many_rows(run_read_from_netbox_test_case):
 
 @patch("get_dns_record.load_workbook")
 def test_read_from_netbox_index_error(mock_load_workbook):
+    """
+    tests read from netbox if there's a runtime error
+    and the fqdn is not found
+    """
     mock_netbox_filepath = NonCallableMock()
     fqdn_row1_item = MagicMock()
     fqdn_row1_item.value = "fqdn1"
@@ -234,23 +233,32 @@ def test_read_from_netbox_index_error(mock_load_workbook):
         read_from_netbox(mock_netbox_filepath, 2, 1)
 
 
+# STILL BEING DEVELOPED
 def test_write_output_reversed_order():
-    mock_parsed_info = [{"ip_address": "192.168.0.1", "hypervisor": "www"}]
+    """
+    tests whether the write output function works in the reversed order format
+    uses txt in the format of ip addresses and url's
+    """
+    mock_parsed_info = [{"ip_address": "1.0.168", "hypervisor": "www.google.com"}]
     mock_output_filepath = NonCallableMock()
 
     with mock.patch("builtins.open") as mock_open:
         write_output(mock_parsed_info, mock_output_filepath, True)
 
-    mock_open.return_value.assert_called_once_with(mock_output_filepath, "w", encoding="utf-8")
-    mock_open.return_value.__enter__.return_value.write.assert_called_once_with("1.0.168\tIN PTR\twww.google.com")
+    mock_open.assert_called_once_with(mock_output_filepath, "w", encoding="utf-8")
+    mock_open.return_value.__enter__.return_value.write.assert_called_once_with("1.0.168\tIN PTR\twww.google.com\n")
 
 
 def test_write_output_non_reversed_order():
+    """
+    tests whether the write output function works in the non-reversed order format
+    uses txt in the format of ip addresses and url's
+    """
     mock_parsed_info = [{"ip_address": "192.168.0.1", "hypervisor": "www"}]
     mock_output_filepath = NonCallableMock()
 
     with mock.patch("builtins.open") as mock_open:
         write_output(mock_parsed_info, mock_output_filepath, False)
 
-    mock_open.return_value.assert_called_once_with(mock_output_filepath, "w", encoding="utf-8")
-    mock_open.return_value.__enter__.return_value.write.assert_called_once_with("192.168.0.1\tIN A\twww")
+    mock_open.assert_called_once_with(mock_output_filepath, "w", encoding="utf-8")
+    mock_open.return_value.__enter__.return_value.write.assert_called_once_with("www\tIN A\t192.168.0.1\n")

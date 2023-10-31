@@ -1,0 +1,12 @@
+reverseforwardrecord/idrac_fqdn.txt
+reverseforwardrecord/reverse.txt
+reverseforwardrecord/tt.csv
+reverseforwardrecord/test.xlsx
+reverseforwardrecord/.idea
+reverseforwardrecord/main.py
+reverseforwardrecord/main2.py
+reverseforwardrecord/output.txt
+reverseforwardrecord/xslxtocsv.py
+reverseforwardrecord/get_dns_record_personal.py
+reverseforwardrecord/__pycache__/get_dns_record.cpython-311.pyc
+reverseforwardrecord/__pycache__/test_get_dns_record.cpython-311-pytest-7.4.0.pyc
