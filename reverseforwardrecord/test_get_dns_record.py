@@ -1,7 +1,7 @@
 from unittest import mock
 import pytest
-from unittest.mock import patch, MagicMock, NonCallableMock, Mock
-from get_dns_record_personal import main, read_from_netbox, parse_netbox_info, write_output
+from unittest.mock import patch, MagicMock, NonCallableMock
+from reverseforwardrecord.ignored.get_dns_record_personal import main, read_from_netbox, parse_netbox_info, write_output
 
 
 @patch("get_dns_record.read_from_netbox")

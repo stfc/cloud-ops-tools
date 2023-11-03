@@ -15,20 +15,17 @@ otherwise have to set it up with manual user input
 """
 
 
-# create a new file for results to be returned into
-
-
 def create_file():
     """
     makes a txt file for the results to be returned into
     :return: output.txt
     """
-    f = open("output.txt", "w")
+    f = open("ignored/output.txt", "w")
     f.close()
 
 
 def read_from_netbox(
-    netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10
+        netbox_filepath: str, fqdn_column: int = 8, idrac_ip_column: int = 10
 ) -> List[Dict]:
     """
     reads from netbox file, in a xlsx format
@@ -64,7 +61,7 @@ def read_from_netbox(
 
 
 def parse_netbox_info(
-    netbox_info: List[Dict], reverse_order: bool = False
+        netbox_info: List[Dict], reverse_order: bool = False
 ) -> List[Dict]:
     """
     Parse info from netbox and create corresponding hypervisor fqdn and ip value
@@ -90,14 +87,14 @@ def parse_netbox_info(
 
 
 def write_output(
-    parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False
+        parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False
 ):
     """
     write parsed netbox info to a file
     :param parsed_info: list of dictionaries which contains hypervisor fqdn and ip keys
     :param output_filepath: file path for output
     :param reverse_order: use reverse or forward order / if true use forward if false use reverse
-    :return: None
+    :return: the text written into the file
     """
     with open(output_filepath, "w", encoding="utf-8") as out_file:
         for item in parsed_info:
@@ -108,11 +105,11 @@ def write_output(
 
 
 def main(
-    netbox_filepath: str,
-    fqdn_column: int = 8,
-    idrac_ip_column: int = 10,
-    reverse_order: bool = False,
-    output_filepath: str = "output.txt",
+        netbox_filepath: str,
+        fqdn_column: int = 8,
+        idrac_ip_column: int = 10,
+        reverse_order: bool = False,
+        output_filepath: str = "output.txt",
 ):
     """
     this function will create a file for the output for dns records
@@ -130,5 +127,5 @@ def main(
 
 
 if __name__ == "__main__":
-    netbox_filepath = "test.xlsx"
+    netbox_filepath = "ignored/test.xlsx"
     main(netbox_filepath, reverse_order=False)
