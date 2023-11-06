@@ -68,9 +68,9 @@
       include_role:
         name: roles/hepscore
 
-        #- hosts: localhost
-        #tasks:
-        #- include_tasks: roles/common/tasks/destroy_vm.yaml
-        #with_nested:
-        #- "{{ flavors }}"
-        #- "{{ images }}"
+- hosts: localhost
+  tasks:
+    - include_tasks: roles/common/tasks/destroy_vm.yaml
+      with_nested:
+        - "{{ flavors }}"
+        - "{{ images }}"
