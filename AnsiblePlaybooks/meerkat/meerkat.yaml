@@ -3,7 +3,7 @@
   tasks:
     - name: Set images
       ansible.builtin.set_fact:
-        images: ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
+        images: ["ubuntu-focal-20.04-nogui"] #, "rocky-8-nogui"]
 
     - name: Install openstack
       ansible.builtin.package:
@@ -17,11 +17,19 @@
       register: flavor_list
 
     - name: Generate list
-      ansible.builtin.set_fact:
-        flavors: "{{ flavors | default([]) + [item.name | string] }}"
-      with_items:
-        - "{{ flavor_list.openstack_flavors }}"
-
+      block: 
+        - name: Use "openstack_flavors"
+          ansible.builtin.set_fact:
+            flavors: "{{ flavors | default([]) + [item.name | string] }}"
+          with_items:
+            - "{{ flavor_list.openstack_flavors }}"
+      rescue:
+        - name: Use "flavors"
+          ansible.builtin.set_fact:
+            flavors: "{{ flavors | default([]) + [item.name | string] }}"
+          with_items:
+            - "{{ flavor_list.flavors }}"
+ 
     - name: Remove GPU flavors
       ansible.builtin.set_fact:
         flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
@@ -38,7 +46,7 @@
       vars:
         benchmark: hepscore
       with_nested:
-        - "{{ flavors }}"
+        - [l3.micro] #"{{ flavors }}"
         - "{{ images }}"
 
 - hosts: storage_benchmark
@@ -60,9 +68,9 @@
       include_role:
         name: roles/hepscore
 
-- hosts: localhost
-  tasks:
-    - include_tasks: roles/common/tasks/destroy_vm.yaml
-      with_nested:
-        - "{{ flavors }}"
-        - "{{ images }}"
+        #- hosts: localhost
+        #tasks:
+        #- include_tasks: roles/common/tasks/destroy_vm.yaml
+        #with_nested:
+        #- "{{ flavors }}"
+        #- "{{ images }}"
