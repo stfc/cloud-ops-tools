@@ -1,5 +1,40 @@
 - name: Create test directory task
   file:
-    path: /tmp/test_directory
+    path: /home/ubuntu/benchmarking
     state: directory
     mode: '0755'
+
+- name: Copy over benchmarking files
+  copy:
+    src: "{{ item }}"
+    dest: /home/ubuntu/benchmarking/
+    owner: ubuntu
+    mode: 0755
+  loop:
+    - benchmark.sh
+    - speed_test.py
+    - sysbench.sh
+
+- name: update machine
+  apt:
+    name: "*"
+    state: latest
+    update_cache: true
+  become: true
+
+- name: Install sysbench
+  apt:
+    name: sysbench=1.0.18+ds-1
+    state: present
+  become: true
+
+- name: Run benchmark
+  shell: /home/ubuntu/benchmarking/benchmark.sh
+  register: script_output
+
+- name: print script_output
+  debug:
+    msg: "{{ script_output }}"
+
+
+

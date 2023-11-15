@@ -30,7 +30,7 @@
       state: present
       network: Internal
       auto_ip: no
-      timeout: 200
+      timeout: 400
   register: vm_info
 
 - name: Get IP address of VM
