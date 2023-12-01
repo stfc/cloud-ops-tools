@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
+
 # Docs: https://imysql.com/wp-content/uploads/2014/10/sysbench-manual.pdf
 while getopts "n:s:" arg; do
 	case $arg in
