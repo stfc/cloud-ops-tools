@@ -12,7 +12,6 @@
     mode: 0755
   loop:
     - benchmark.sh
-    - speed_test.py
     - sysbench.sh
 
 - name: update machine
@@ -21,6 +20,10 @@
     state: latest
     update_cache: true
   become: true
+
+- name: Reboot if required
+  reboot:
+  when: reboot_required_file.stat.exists == true
 
 - name: Install sysbench
   apt:

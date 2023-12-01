@@ -1,15 +1,16 @@
 #!/bin/bash
 # Docs: https://imysql.com/wp-content/uploads/2014/10/sysbench-manual.pdf
-while getopts "n:s:b:p:" arg; do
+while getopts "n:s:" arg; do
 	case $arg in
 		n) n=$OPTARG;;
 		s) file_size=$OPTARG;; # in MB
-		b) block_size=$OPTARG;;
-		p) path=$OPTARG;;
 	esac
 done
 
 cd $path
+
+####################################################################
+# This section handles file sizes < 1 Mb
 if [[ "$file_size" == *"."* ]]; then
 	file_size="$(echo "scale=3; $file_size * 1000" | bc)"k
 fi
@@ -19,20 +20,17 @@ if [[ "$file_size" == *"k"* ]]; then
 else
 	total_size="$(echo "scale=0; $n * $file_size" | bc)"M
 fi
+
 if [[ "$total_size" == *"."* ]]; then
 	suffix=${total_size: -1}
 	total_size="$(echo "$total_size" | cut -f1 -d".")"$suffix
 fi
 
-
-#total_size=$(echo "scale=5; $n * $file_size" | bc)M
 if [[ ${total_size:0:1} == "." ]]; then
 	total_size="0$total_size"
 fi
-
-if [ -z "$block_size" ]; then
-	block_size="16k" # Default block size
-fi
+#######################################################################
+block_size="16k" # Default block size
 
 echo Total size: $total_size
 echo Numebr of files: $n
@@ -44,9 +42,7 @@ sewr=0
 randw=0
 randr=0
 
-
-
-#seqwr, seqrewr, seqrd, rndrd, rndwr, rndrw
+#sysbench test types: seqwr, seqrd, seqrewr, rndwr, rndrd, rndrw
 
 mkdir sysbench
 cd sysbench

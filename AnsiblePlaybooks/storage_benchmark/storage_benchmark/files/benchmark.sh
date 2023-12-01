@@ -1,6 +1,6 @@
-#!/bin/bash
-cd benchmarking
-mkdir ./test_dir
+#!/usr/bin/env bash
+set -euo pipefail
+
 
 while getopts "p:" arg; do
         case $arg in
@@ -23,9 +23,9 @@ if [ $? -ne 0 ]; then
         exit 1
 fi
 
+mkdir benchmarking
+cd benchmarking
 
-echo $path
-echo $(pwd)
 #######################################################################################################################
 # 1000 x 1 KB files
 echo -------------------------------------------------------
@@ -34,12 +34,6 @@ s=0.001
 echo $n x $s MB files
 echo -------------------------------------------------------
 
-# Python benchmark
-output=$(python3 speed_test.py -n $n -s $s -p $path)
-pw1=$(echo "$output" | grep -ioP "Write speed: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-pr1=$(echo "$output" | grep -ioP "Read speed: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-echo Write: $pw1 MB/s
-echo Read: $pr1 MB/s
 
 # Sysbench benchmark
 output=$(./sysbench.sh -n $n -s $s)
@@ -60,12 +54,6 @@ s=1
 echo $n x $s MB files
 echo -------------------------------------------------------
 
-# Python benchmark
-output=$(python3 speed_test.py -n $n -s $s -p $path)
-pw2=$(echo "$output" | grep -ioP "Write speed: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-pr2=$(echo "$output" | grep -ioP "Read speed: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-echo Write: $pw2 MB/s
-echo Read: $pr2 MB/s
 
 # Sysbench benchmark
 output=$(./sysbench.sh -n $n -s $s)
@@ -86,12 +74,6 @@ s=500
 echo $n x $s MB files
 echo -------------------------------------------------------
 
-# Python benchmark
-output=$(python3 speed_test.py -n $n -s $s -p $path)
-pw3=$(echo "$output" | grep -ioP "Write speed: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-pr3=$(echo "$output" | grep -ioP "Read speed: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-echo Write: $pw3 MB/s
-echo Read: $pr3 MB/s
 
 # Sysbench benchmark
 output=$(./sysbench.sh -n $n -s $s)

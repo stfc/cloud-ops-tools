@@ -1,6 +1,6 @@
 - name: Generate vm name
   set_fact:
-    vm_name: "{{ '_'.join(('Meerkat', lookup('community.general.random_string', length=5, special=false, numbers=false) )) }}"
+    vm_name: "{{ '-'.join(('meerkat', lookup('community.general.random_string', length=5, special=false, upper=false) )) }}"
 
 - name: List of vm names
   set_fact:
