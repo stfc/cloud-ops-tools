@@ -1,0 +1,17 @@
+---
+- name: Ansible example
+  hosts: localhost
+
+- name: Create a VM
+  hosts: localhost
+  roles:
+  - role: create_vm
+    vm_name: "<unique VM name>"
+    key_name: "<key pair name>"
+
+- name: Install Docker & NGINX
+  hosts: all
+  roles:
+  - install_docker
+  - nginx
+

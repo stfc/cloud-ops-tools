@@ -55,7 +55,6 @@
   roles:
     - role: storage_benchmark
 
-
 - name: delete VMs
   hosts: localhost
   roles:

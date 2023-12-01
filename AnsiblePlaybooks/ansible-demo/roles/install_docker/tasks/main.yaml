@@ -1,0 +1,20 @@
+- name: Install docker
+  apt:
+    pkg:
+      - docker.io
+    state: latest
+    update_cache: true
+  become: true
+
+- name: Install pip
+  apt:
+    pkg:
+      - python3-pip
+    state: latest
+    update_cache: true
+  become: true
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+
