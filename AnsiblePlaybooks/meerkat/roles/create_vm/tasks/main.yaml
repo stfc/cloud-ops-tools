@@ -1,6 +1,6 @@
 - name: Generate vm name
   set_fact:
-    vm_name: "{{ '_'.join(('Meerkat', lookup('community.general.random_string', length=5, special=false, numbers=false) )) }}"
+    vm_name: "{{ '-'.join(('meerkat', lookup('community.general.random_string', length=5, special=false, upper=false) )) }}"
 
 - name: List of vm names
   set_fact:
@@ -30,7 +30,7 @@
       state: present
       network: Internal
       auto_ip: no
-      timeout: 200
+      timeout: 400
   register: vm_info
 
 - name: Get IP address of VM

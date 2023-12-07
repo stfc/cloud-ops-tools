@@ -1,5 +1,0 @@
-- name: Create test directory task
-  file:
-    path: /tmp/test_directory
-    state: directory
-    mode: '0755'
