@@ -1,19 +1,21 @@
----
-- hosts: localhost
-  tasks:
-    - name: Set images
-      ansible.builtin.set_fact:
-        images: ["ubuntu-focal-20.04-nogui"] #, "rocky-8-nogui"]
-
-    - name: Install openstack
-      ansible.builtin.package:
+- name: Automatically create and destroy VMs
+  hosts: localhost
+  tags:
+    - create
+  vars:
+    images: ["ubuntu-focal-20.04-nogui"]
+    vm_name: "Meerkat_Benchmark_2"
+    key_name: "{{ key_name }}"
+      
+  pre_tasks:
+    - package:
         name: python3-openstacksdk
         state: present
       become: true
 
     - name: Query openstack
       openstack.cloud.compute_flavor_info:
-        ram: "<200000"
+        ram: "<20000"
       register: flavor_list
 
     - name: Generate list
@@ -42,35 +44,33 @@
     - name: Print images
       debug: var=images
 
-    - include_tasks: roles/common/tasks/create_vm.yaml
-      vars:
-        benchmark: hepscore
-      with_nested:
-        - [l3.micro] #"{{ flavors }}"
-        - "{{ images }}"
-
-- hosts: storage_benchmark
   tasks:
-    - name: Storage Benchmark
-      include_role:
-        name: roles/storage_benchmark
-
-- hosts: hepscore
-  gather_facts: false
-  tasks:
-    - name: Wait for system to become reachable
-      ansible.builtin.wait_for_connection:
-        delay: 60
-        timeout: 300
-    - name: Gathering facts
-      setup:
-    - name: HEPScore Benchmark
-      include_role:
-        name: roles/hepscore
-
-- hosts: localhost
-  tasks:
-    - include_tasks: roles/common/tasks/destroy_vm.yaml
+    - name: Create VMs
+      include_role: 
+        name: create_vm
       with_nested:
         - "{{ flavors }}"
         - "{{ images }}"
+    
+- name: Storage benchmark
+  hosts: all
+  gather_facts: no
+  remote_user: ubuntu
+  tags:
+    - benchmark
+  roles:
+    - role: storage_benchmark
+
+- name: HEPScore Benchmark
+  hosts: all
+  gather_facts: yes
+  remote_user: ubuntu
+  tags:
+    - hepscore
+  roles:
+    - role: hepscore
+
+- name: delete VMs
+  hosts: localhost
+  roles:
+    - destroy_vm

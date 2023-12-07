@@ -1,0 +1,58 @@
+- name: Generate vm name
+  set_fact:
+    vm_name: "{{ '_'.join(('Meerkat', lookup('community.general.random_string', length=5, special=false, numbers=false) )) }}"
+
+- name: List of vm names
+  set_fact:
+    vm_list: "{{ vm_list | default([]) + [  vm_name | string] }}"
+
+- name: set flavor
+  set_fact:
+    vm_flavor: "{{ item.0 }}"
+
+- name: set image
+  set_fact:
+    vm_image: "{{ item.1 }}"
+
+- name: Print creation info
+  debug:
+    msg:
+      - "Creating:"
+      - "Flavor: {{ vm_flavor }}"
+      - "Image: {{ vm_image }}"
+
+- name: create VM
+  os_server:
+      flavor: "{{ vm_flavor }}"
+      image: "{{ vm_image }}"
+      name: "{{ vm_name }}"
+      key_name: "{{ key_name }}"
+      state: present
+      network: Internal
+      auto_ip: no
+      timeout: 200
+  register: vm_info
+
+- name: Get IP address of VM
+  block:
+    - name: Use "openstack"
+      set_fact:
+        vm_IP: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+  rescue:
+    - name: Use "server"
+      set_fact:
+        vm_IP: "{{ vm_info.server.addresses.Internal[0].addr }}"
+
+- name: Add VM to hosts
+  add_host:
+    name: "{{ vm_IP }}"
+    groups: VMs
+    vm_flavor: "{{ vm_flavor }}"
+    vm_image: "{{ vm_image }}"
+
+- name: Wait until VM is up
+  wait_for: 
+    port: 22
+    host: "{{ vm_IP }}"
+  delegate_to: localhost
+
