@@ -18,8 +18,6 @@ Meerkat can be run from this directory with the command:
 With the extra vars:
 - `victoria_url`
     - The URL of a VictoriaMetrics instance for benchmarks to send their results to
-- `harbor_username` and `harbor_password`
-    - Harbor credentials to pull the HEPScore container
 - `key_name`
     - The name of the Openstack key name used to access newly created VMs
 

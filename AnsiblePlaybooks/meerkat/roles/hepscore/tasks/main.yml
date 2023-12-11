@@ -19,9 +19,6 @@
         name: apptainer
         state: present
 
-    - name: Login to harbor
-      ansible.builtin.command: apptainer remote login -u {{ harbor_username }} -p {{ harbor_password }} oras://harbor.stfc.ac.uk
-
     - name: Pull apptainer file
       ansible.builtin.command: apptainer pull -F oras://harbor.stfc.ac.uk/stfc-cloud-staging/hepscore:latest
 
