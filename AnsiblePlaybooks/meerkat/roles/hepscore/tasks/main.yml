@@ -1,6 +1,7 @@
 - name: HEPScore benchmark
   block:
     - name: Template metrics sending script
+      become: true    
       ansible.builtin.template:
         src: send_to_victoria.sh.j2
         dest: /usr/local/bin/send_to_victoria.sh
@@ -26,7 +27,7 @@
       ansible.builtin.command: apptainer run ./hepscore_latest.sif
 
     - name: Send score to VictoriaMetrics
-      ansible.builtin.command: ./send_to_victoria.sh
+      ansible.builtin.command: /usr/local/bin/send_to_victoria.sh
       register: return_code
       changed_when: return_code.rc == 0
 
