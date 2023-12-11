@@ -3,7 +3,7 @@
     - name: Template metrics sending script
       ansible.builtin.template:
         src: send_to_victoria.sh.j2
-        dest: ~/send_to_victoria.sh
+        dest: /usr/local/bin/send_to_victoria.sh
         mode: a+x
 
     - name: Add apptainer repo (Ubuntu)
