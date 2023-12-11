@@ -5,7 +5,7 @@
   vars:
     images: ["ubuntu-focal-20.04-nogui"]
     vm_name: "Meerkat_Benchmark_2"
-    key_name: diz41711
+    key_name: "{{ key_name }}"
       
   pre_tasks:
     - package:
@@ -19,24 +19,30 @@
       register: flavor_list
 
     - name: Generate list
-      set_fact:
-        flavors: "{{ flavors | default([]) + [item.name | string] }}"
-      with_items:
-        - "{{ flavor_list.openstack_flavors }}"
-
+      block: 
+        - name: Use "openstack_flavors"
+          ansible.builtin.set_fact:
+            flavors: "{{ flavors | default([]) + [item.name | string] }}"
+          with_items:
+            - "{{ flavor_list.openstack_flavors }}"
+      rescue:
+        - name: Use "flavors"
+          ansible.builtin.set_fact:
+            flavors: "{{ flavors | default([]) + [item.name | string] }}"
+          with_items:
+            - "{{ flavor_list.flavors }}"
+ 
     - name: Remove GPU flavors
-      set_fact:
-        flavors: "{{ flavors | reject('search', 'g-') | list }}"
+      ansible.builtin.set_fact:
+        flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
+      vars:
+        flavor_list_search: 'g-'
 
     - name: Print flavors
       debug: var=flavors
 
     - name: Print images
       debug: var=images
-      
-    - name: Print VM name
-      debug:
-        msg: "{{ vm_name }}"
 
   tasks:
     - name: Create VMs
@@ -54,6 +60,15 @@
     - benchmark
   roles:
     - role: storage_benchmark
+
+- name: HEPScore Benchmark
+  hosts: all
+  gather_facts: yes
+  remote_user: ubuntu
+  tags:
+    - hepscore
+  roles:
+    - role: hepscore
 
 - name: delete VMs
   hosts: localhost

@@ -34,13 +34,21 @@
   register: vm_info
 
 - name: Get IP address of VM
-  set_fact:
-    vm_IP: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+  block:
+    - name: Use "openstack"
+      set_fact:
+        vm_IP: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+  rescue:
+    - name: Use "server"
+      set_fact:
+        vm_IP: "{{ vm_info.server.addresses.Internal[0].addr }}"
 
 - name: Add VM to hosts
   add_host:
     name: "{{ vm_IP }}"
     groups: VMs
+    vm_flavor: "{{ vm_flavor }}"
+    vm_image: "{{ vm_image }}"
 
 - name: Wait until VM is up
   wait_for: 

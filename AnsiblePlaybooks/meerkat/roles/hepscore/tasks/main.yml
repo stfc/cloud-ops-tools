@@ -1,0 +1,37 @@
+- name: HEPScore benchmark
+  block:
+    - name: Template metrics sending script
+      become: true    
+      ansible.builtin.template:
+        src: send_to_victoria.sh.j2
+        dest: /usr/local/bin/send_to_victoria.sh
+        mode: a+x
+
+    - name: Add apptainer repo (Ubuntu)
+      when: ansible_distribution == "Ubuntu"
+      become: true
+      ansible.builtin.apt_repository:
+        repo: ppa:apptainer/ppa
+        state: present
+
+    - name: Install apptainer
+      become: true
+      ansible.builtin.package:
+        name: apptainer
+        state: present
+
+    - name: Pull apptainer file
+      ansible.builtin.command: apptainer pull -F oras://harbor.stfc.ac.uk/stfc-cloud-staging/hepscore:latest
+
+    - name: Run apptainer file
+      ansible.builtin.command: apptainer run ./hepscore_latest.sif
+
+    - name: Send score to VictoriaMetrics
+      ansible.builtin.command: /usr/local/bin/send_to_victoria.sh
+      register: return_code
+      changed_when: return_code.rc == 0
+
+  rescue:
+    - name: Print errored VM
+      debug:
+        msg: HEPScore failed to run for flavor {{ vm_flavor }} image {{ vm_image }}

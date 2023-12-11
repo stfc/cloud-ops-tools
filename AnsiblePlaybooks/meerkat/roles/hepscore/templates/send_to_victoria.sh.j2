@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+SCORE=$(jq '.score' results/*/HEPscore23Beta.json)
+curl -H 'Content-Type: application/json' -d '{"metric":"hepscore","value":"'$SCORE'","tags":{"flavour":"{{vm_flavor}}", "image": "{{ vm_image }}"}}' {{victoria_url}}
