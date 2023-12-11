@@ -6,8 +6,7 @@ Currently Meerkat has the following benchmarks available:
 - A custom storage benchmark (to be added)
 
 ## Running Meerkat
-Meerkat requires Openstack credentials to create or delete VMs. These can be given by downloading and sourcing an openstackrc.sh file, but this requires password input and is not suitable for running Meerkat automatically (e.g. with cron).
-Instead you should create an application credential and put the clouds.yaml file in /etc/openstack or ~/.config/openstack.
+Meerkat requires Openstack credentials to create or delete VMs. These can be obtained by creating an application credential and putting it in the clouds.yaml file in /etc/openstack or ~/.config/openstack.
 
 Similarly, host checking needs to be turned off to avoid interactive prompts for verification (the only VMs Meerkat accesses are freshly created ones). This can be done by settting the environment variable `ANSIBLE_HOST_KEY_CHECKING` to False,
 or by uncommenting the line `host_key_checking = False` in /etc/ansible/ansible.cfg.
