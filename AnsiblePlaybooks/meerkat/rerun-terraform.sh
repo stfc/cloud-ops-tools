@@ -1,6 +1,6 @@
 #! /bin/bash
 
-#cd /home/diz41711/terra-meerkat
+#cd /home/USER/terra-meerkat
 terraform init
 terraform destroy --auto-approve
 terraform plan -out=deploy.tfplan -lock=false
