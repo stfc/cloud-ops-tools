@@ -1,5 +1,0 @@
-- name: Delete VM
-  openstack.cloud.server:
-      name: "{{ item }}"
-      state: absent
-  loop: "{{ vm_list }}"

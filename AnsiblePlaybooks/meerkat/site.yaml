@@ -1,0 +1,9 @@
+- hosts: Meertkat_vms 
+  tasks:
+    - name: Wait target connection to become reachable/usable
+      ansible.builtin.wait_for_connection:
+        timeout: 200 
+
+- import_playbook: wait_for_connection.yaml
+- import_playbook: benchmark.yaml
+
