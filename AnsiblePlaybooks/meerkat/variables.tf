@@ -1,6 +1,6 @@
 variable "keypair_name" {
     description = "The keypair to be used."
-    default  = "<SSH key name>"
+    default  = "keyless"
 }
 
 variable "network_name" {
@@ -32,6 +32,6 @@ variable "security_groups" {
 }
 variable "VM_group" {
     description = "Group to add VMs to for ansible"
-    default = "Meerkat"
+    default = "Meerkat_storage"
 }
 	

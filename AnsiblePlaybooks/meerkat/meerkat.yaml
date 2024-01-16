@@ -1,0 +1,23 @@
+- hosts: Meertkat_storage
+  tasks:
+    - name: Wait target connection to become reachable/usable
+      ansible.builtin.wait_for_connection:
+        timeout: 200
+
+- hosts: Meerkat_storage
+  roles:
+    - role: wait_for_connection
+      tags: [ always ]
+
+    - role: move_clouds_yaml
+      tags: [ always ]
+
+    - role: update_machine
+      tags: [ always ]
+
+    - role: storage_benchmark
+      tags: [ storage ]
+
+    - role: hepscore
+      tags: [ cpu ]
+

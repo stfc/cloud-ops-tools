@@ -35,7 +35,7 @@ resource "openstack_compute_instance_v2" "Instance" {
          command = "ANSIBLE_HOST_KEY_CHECKING=False ansible -m wait_for_connection -i staging-openstack.yaml ${self.name}"
     }
     provisioner "local-exec" {
-         command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${self.name} site.yaml"
+         command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${self.name} meerkat.yaml --tags storage"
     }
 
 

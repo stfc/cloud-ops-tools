@@ -1,0 +1,57 @@
+- name: Copy over benchmarking files
+  copy:
+    src: "{{ item }}"
+    dest: ~/
+    mode: '0755'
+  loop:
+    - benchmark.sh
+    - sysbench.sh
+    - get-vm-info.sh
+
+- name: Install sysbench
+  apt:
+    name: sysbench
+    state: present
+  become: true
+  register: result
+  retries: 5
+  delay: 30
+  until: result is not failed
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install sysbench Rocky
+  yum:
+    name: sysbench
+    state: present
+  become: true
+  when: ansible_distribution == 'Rocky'
+
+- name: Install openstack
+  apt:
+    name: python3-openstackclient
+    state: present
+  become: true
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install openstack Rocky
+  dnf:
+    name: python3-openstackclient
+    state: present
+  become: true
+  register: result
+  retries: 5
+  delay: 30
+  until: result is not failed
+  when: ansible_distribution == 'Rocky'
+
+- name: Run benchmark
+  shell: ./benchmark.sh
+  register: script_output
+
+- name: Print script_output
+  debug:
+    msg: "{{ script_output }}"
+
+
+
+

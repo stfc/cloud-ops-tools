@@ -1,0 +1,4 @@
+- name: update machine
+  shell: sudo apt update
+  when: ansible_distribution == 'Ubuntu'
+

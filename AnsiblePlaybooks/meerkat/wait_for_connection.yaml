@@ -1,9 +1,0 @@
-- name: Wait for VM connection
-  hosts: Meerkat-storage
-  gather_facts: false
-  tasks:
-    - name: Wait for connection
-      wait_for:
-        port: 22
-      delegate_to: localhost
-
