@@ -1,0 +1,10 @@
+---
+- name: Configure border switches for STFC Cloud
+  hosts: borders
+  connection: paramiko
+  gather_facts: false
+  vars:
+    ansible_password: "{{ vault_default_password }}"
+    ansible_become_password: "{{ ansible_password }}"
+  roles:
+    - update

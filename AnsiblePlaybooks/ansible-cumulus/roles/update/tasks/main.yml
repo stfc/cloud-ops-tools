@@ -1,0 +1,43 @@
+---
+- name: check if node is flagged for updating
+  ansible.builtin.meta: end_host
+  when: not update | default(false)
+
+- name: update cumulus sources list
+  become: true
+  ansible.builtin.replace:
+    path: "/etc/apt/sources.list"
+    replace: "{{ apt_cumulus_proxy }}"
+    regexp: "https://apt.cumulusnetworks.com"
+
+- name: Update packages
+  become: true
+  apt:
+    upgrade: true
+    update_cache: true
+
+- name: Reboot to apply updates
+  become: true
+  ansible.builtin.reboot:
+    msg: "Switch rebooted by Ansible"
+    reboot_timeout: 3600
+
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars
+
+- name: set bootstrapped variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      update: false
+
+- name: combine into inventory
+  ansible.builtin.set_fact:
+    host_added_vars: "{{ host_temp_vars | ansible.builtin.combine(temp_fact) }}"
+
+- name: Update inventory
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "host_vars/{{ fqdn }}.yml"
+    content: "{{ host_added_vars | to_nice_yaml }}"

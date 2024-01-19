@@ -1,0 +1,20 @@
+ansible_host: 10.5.0.233
+bgp_router_id: 3.3.2.37
+bootstrap: true
+bootstrapped: false
+configured_bridge: true
+configured_evpn: true
+configured_interfaces: true
+configured_router: false
+configured_service: true
+configured_system: true
+eth0_ip: 10.5.0.233/16
+fqdn: lfsw37.r89.cloud.internal
+hostname: lfsw37
+lo_ip: 10.10.10.137/32
+reinstall: false
+system_location: r89rack241
+update: false
+vlan_interfaces:
+-   id: '450'
+    network: 10.195.0.0/28

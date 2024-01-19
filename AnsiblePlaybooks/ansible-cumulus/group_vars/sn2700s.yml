@@ -1,0 +1,4 @@
+---
+north_interfaces:
+  - swp31
+  - swp32

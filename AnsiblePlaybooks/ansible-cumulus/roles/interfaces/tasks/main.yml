@@ -1,0 +1,80 @@
+---
+- name: check if node already configured for interfaces component
+  ansible.builtin.meta: end_host
+  when: configured_interfaces | default(false)
+
+- name: build breakoutports dictionary
+  ansible.builtin.set_fact:
+    breakout_dict: "{{ breakout_dict | default([]) + [ { 'id': item.id , 'link': { 'id': item.breakout } } ] }}"
+  with_items: "{{ breakout_ports | default([]) }}"
+
+- name: build bridge interface dictionary
+  ansible.builtin.set_fact:
+    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'bridge', 'access': bridge_pvid } ] } } ] }}"
+  with_items: "{{ bridge_interfaces }}"
+
+- name: build bridge interface dictionary
+  ansible.builtin.set_fact:
+    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item.id, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'bridge', 'access': item.pvid } ] } } ] }}"
+  with_items: "{{ bridge_interfaces_pvids }}"
+
+- name: add vlan interface ips
+  ansible.builtin.set_fact:
+    vlan_interface_dict: "{{ vlan_interface_dict|default( [ ] ) + [ { 'id': 'vlan'+item.id, 'vlan': item.id, 'type': 'svi', 'link': { 'state': [ {'id': 'up'} ] }, 'ip': {'address': [ { 'id': item.network | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('1') } ] } } ] }}"
+  with_items: "{{ vlan_interfaces }}"
+
+- name: merge in vlan and south facing interfaces
+  ansible.builtin.set_fact:
+    bridge_interface_dict: "{{ breakout_dict | default([]) + bridge_interface_dict|default([]) + vlan_interface_dict|default( [ ] )  }}"
+
+- name: output
+  debug:
+    var: bridge_interface_dict
+
+- name: Create new revision
+  nvidia.nvue.config:
+    state: new
+  register: revision
+
+- name: dump revision
+  debug:
+    msg: "{{ revision.revid }}"
+
+- name: Configure bridge interfaces
+  nvidia.nvue.interface:
+    state: merged
+    force: true
+    revid: "{{ revision.revid }}"
+    data: "{{ bridge_interface_dict }}"
+
+- name: Apply new revision
+  nvidia.nvue.config:
+    state: apply
+    revid: "{{ revision.revid }}"
+    force: true
+    wait: 60
+  register: revision
+
+- name: dump previous output
+  debug:
+    msg: "{{ revision }}"
+
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars
+
+- name: set configured interfaces variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      configured_interfaces: true
+
+- name: combine into inventory
+  ansible.builtin.set_fact:
+    host_added_vars: "{{ host_temp_vars | ansible.builtin.combine(temp_fact) }}"
+
+- name: Update inventory
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "host_vars/{{ fqdn }}.yml"
+    content: "{{ host_added_vars | to_nice_yaml }}"

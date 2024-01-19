@@ -1,0 +1,54 @@
+---
+- name: check if node already configured for evpn component
+  ansible.builtin.meta: end_host
+  when: configured_evpn | default(false)
+
+- name: Create new revision - evpn config
+  nvidia.nvue.config:
+    state: new
+  register: revision
+
+- name: dump revision
+  debug:
+    msg: "{{ revision.revid }}"
+
+- name: evpn config
+  nvidia.nvue.evpn:
+    state: merged
+    revid: "{{ revision.revid }}"
+    data:
+      enable: 'on'
+      route_advertise:
+        default_gateway: 'on'
+
+- name: Apply new revision - evpn config
+  nvidia.nvue.config:
+    state: apply
+    revid: "{{ revision.revid }}"
+    force: true
+    wait: 60
+  register: revision
+
+- name: dump previous output
+  debug:
+    msg: "{{ revision }}"
+
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars
+
+- name: set configured evpn variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      configured_evpn: true
+
+- name: combine into inventory
+  ansible.builtin.set_fact:
+    host_added_vars: "{{ host_temp_vars | ansible.builtin.combine(temp_fact) }}"
+
+- name: Update inventory
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "host_vars/{{ fqdn }}.yml"
+    content: "{{ host_added_vars | to_nice_yaml }}"

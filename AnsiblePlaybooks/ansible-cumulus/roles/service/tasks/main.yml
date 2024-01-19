@@ -1,0 +1,89 @@
+---
+- name: check if node already configured for service component
+  ansible.builtin.meta: end_host
+  when: configured_service | default(false)
+
+- name: Create new revision
+  nvidia.nvue.config:
+    state: new
+  register: revision
+
+- name: dump revision
+  debug:
+    msg: "{{ revision.revid }}"
+
+- name: build bridge_vlan
+  set_fact:
+    bridge_vlan: "vlan{{bridge_pvid}}"
+
+- name: build dhcp_relay_interface
+  ansible.builtin.set_fact:
+    dhcp_relay_interfaces: "{{ dhcp_relay_interfaces|default( [ { 'id': bridge_vlan } ] ) + [ { 'id': item } ] }}"
+  with_items: "{{ north_interfaces }}"
+
+- name: build snmp config
+  ansible.builtin.set_fact:
+    snmp_listeners:
+      - id: "{{ ansible_host }}"
+        vrf: "mgmt"
+
+- name: Service config
+  nvidia.nvue.service:
+    revid: "{{ revision.revid }}"
+    state: merged
+    data:
+      dhcp_relay:
+        - id: "default"
+          interface: "{{ dhcp_relay_interfaces }}"
+          server:
+            - id: "{{ dhcp_relay_server }}"
+      snmp_server:
+        enable: "on"
+        listening_address: "{{ snmp_listeners }}"
+        readonly_community:
+          - id: "{{ vault_snmp_readonly_community }}"
+            access: "{{ snmp_readonly_community_access }}"
+        system_contact: "{{ system_contact }}"
+        system_name: "{{ fqdn }}"
+        system_location: "{{ system_location }}"
+      dns:
+        - id: "mgmt"
+          server: "{{ dns_servers }}"
+      syslog:
+        - id: "mgmt"
+          server: "{{ syslog_servers }}"
+      ntp:
+        - id: "mgmt"
+          server: "{{ ntp_servers }}"
+
+- name: Apply new revision
+  nvidia.nvue.config:
+    state: apply
+    revid: "{{ revision.revid }}"
+    force: true
+    wait: 30
+  register: revision
+
+- name: dump previous output
+  debug:
+    msg: "{{ revision }}"
+
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars
+
+- name: set configured service flag variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      configured_service: true
+
+- name: combine into inventory
+  ansible.builtin.set_fact:
+    host_added_vars: "{{ host_temp_vars | ansible.builtin.combine(temp_fact) }}"
+
+- name: Update inventory
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "host_vars/{{ fqdn }}.yml"
+    content: "{{ host_added_vars | to_nice_yaml }}"

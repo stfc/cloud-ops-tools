@@ -1,0 +1,37 @@
+---
+ansible_user: "cumulus"
+cumulus_password: "{{ vault_cumulus_password }}"
+default_password: "{{ vault_default_password }}"
+
+dns_servers:
+  - {id: "10.0.1.21"}
+ntp_servers:
+  - {id: "10.0.1.10", iburst: "on"}
+syslog_servers:
+  - {id: "10.0.1.16"}
+  - {id: "10.0.1.17"}
+snmp_readonly_community_access:
+    - {id: "10.1.11.147/32"}
+    - {id: "10.5.0.252/32"}
+system_contact: "Tier1 Fabric/Cloud Team"
+bridge_pvid: 450
+cumulus_os_image_path: "http://10.0.1.2:81/mellanox/cumulus/"
+cumulus_os_image: "cumulus-linux-5.7.0-mlx-amd64.bin"
+cumulus_ztp_script: "http://10.0.1.2/cumulus/ztp-ironic.sh"
+apt_cumulus_proxy: 'http://proxy.pscs.internal:8084'
+apt_deb_proxy: 'proxy.pscs.internal:8081'
+dhcp_relay_server: "130.246.210.40"
+vlans:
+  - {id: 451, vni: 51}
+  - {id: 452, vni: 52}
+  - {id: 453, vni: 53}
+  - {id: 454, vni: 54}
+  - {id: 455, vni: 55}
+  - {id: 456, vni: 56}
+  - {id: 457, vni: 57}
+  - {id: 458, vni: 58}
+  - {id: 459, vni: 59}
+vni_vlan_start: 1600
+vni_vlan_end: 1999
+bridge_interfaces_pvids: []
+breakout_ports: []

@@ -1,0 +1,114 @@
+---
+- name: check if node already configured for system component
+  ansible.builtin.meta: end_host
+  when: configured_system | default(false)
+
+- name: Output message
+  debug:
+    msg: "Starting System Role {{ hostname }} - {{ ansible_host }}"
+
+- name: Create new revision
+  nvidia.nvue.config:
+    state: new
+  register: revision
+
+- name: dump revision
+  debug:
+    msg: "{{ revision.revid }}"
+
+- name: Set system settings
+  nvidia.nvue.system:
+    state: merged
+    revid: "{{ revision.revid }}"
+    data:
+      hostname: "{{ hostname }}"
+      timezone: "Etc/UTC"
+      message:
+        post_login: |
+          #######################################################
+          #  ____ _____ _____ ____    ____ _                 _  #
+          # / ___|_   _|  ___/ ___|  / ___| | ___  _   _  __| | #
+          # \___ \ | | | |_ | |     | |   | |/ _ \| | | |/ _` | #
+          #  ___) || | |  _|| |___  | |___| | (_) | |_| | (_| | #
+          # |____/ |_| |_|   \____|  \____|_|\___/ \__,_|\__,_| #
+          #                                                     #
+          #######################################################
+          #####################################################################################
+              You are successfully logged in to: {{ fqdn }}             
+          #####################################################################################
+          All changes should be made using the cloud ansible repo
+        pre_login: |
+          #######################################################
+          #  ____ _____ _____ ____    ____ _                 _  #
+          # / ___|_   _|  ___/ ___|  / ___| | ___  _   _  __| | #
+          # \___ \ | | | |_ | |     | |   | |/ _ \| | | |/ _` | #
+          #  ___) || | |  _|| |___  | |___| | (_) | |_| | (_| | #
+          # |____/ |_| |_|   \____|  \____|_|\___/ \__,_|\__,_| #
+          #                                                     #
+          #######################################################
+          Are You Sure You Want To Be Here?
+
+- name: Set interface
+  nvidia.nvue.interface:
+    state: merged
+    revid: "{{ revision.revid }}"
+    data:
+      - id: "eth0"
+        link: 
+          state:
+            - id: "up"
+        ip:
+          address:
+            - id: "{{ eth0_ip }}"
+          vrf: "mgmt"
+        type: "eth"
+      - id: "lo"
+        ip:
+          address:
+            - id: "{{ lo_ip | default( eth0_ip ) }}"
+        type: "loopback"
+- name: Set MGMT Default route
+  nvidia.nvue.vrf:
+    state: "merged"
+    revid: "{{ revision.revid }}"
+    data:
+      - id: "mgmt"
+        router:
+          static:
+            - id: "0.0.0.0/0"
+              address_family: "ipv4-unicast"
+              via:
+                - id: "10.5.0.1"
+                  type: "ipv4-address"
+
+- name: Apply new revision
+  nvidia.nvue.config:
+    state: apply
+    revid: "{{ revision.revid }}"
+    force: true
+    wait: 60
+  register: revision
+
+- name: dump previous output
+  debug:
+    msg: "{{ revision }}"
+
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars
+
+- name: set configured system variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      configured_system: true
+
+- name: combine into inventory
+  ansible.builtin.set_fact:
+    host_added_vars: "{{ host_temp_vars | ansible.builtin.combine(temp_fact) }}"
+
+- name: Update inventory
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "host_vars/{{ fqdn }}.yml"
+    content: "{{ host_added_vars | to_nice_yaml }}"

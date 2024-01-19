@@ -1,0 +1,4 @@
+---
+north_interfaces:
+  - swp15
+  - swp16

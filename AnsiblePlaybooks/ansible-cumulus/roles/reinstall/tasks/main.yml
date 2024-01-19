@@ -1,0 +1,74 @@
+---
+- name: check if node needs reinstall
+  ansible.builtin.meta: end_host
+  when: not reinstall | default(false)
+
+- name: Reinstall cumulus
+  become: true
+  ansible.builtin.shell:
+    cmd: "yes | onie-install -a -i {{ cumulus_os_image_path }}/{{ cumulus_os_image }} -z {{cumulus_ztp_script}} "
+  register: onie_result
+
+- name: Reboot to apply new image
+  become: true
+  ansible.builtin.reboot:
+    msg: "Switch rebooted by Ansible"
+    reboot_timeout: 3600
+  when: onie_result.rc  == 0
+
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars
+
+- name: remove ip from known_hosts
+  delegate_to: localhost
+  ansible.builtin.known_hosts:
+    name: "{{ansible_host}}"
+    state: "absent"
+
+- name: Remove short host name from known_hosts
+  delegate_to: localhost
+  ansible.builtin.known_hosts:
+    name: "{{ ansible_host }}"
+    state: "absent"
+
+- name: Remove fqdn from known_hosts
+  delegate_to: localhost
+  ansible.builtin.known_hosts:
+    name: "{{ hostname }}"
+    state: "absent"
+
+- name: Add new key to known_hosts
+  delegate_to: localhost
+  ansible.builtin.shell: ssh-keyscan {{ ansible_host }} >> ~/.ssh/known_hosts
+
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars
+
+- name: set reinstall variables
+  ansible.builtin.set_fact:
+    temp_fact:
+      reinstall: false
+      bootstrap: true
+      update: true
+      configured_system: false
+      configured_service: false
+      configured_interfaces: false
+      configured_bridge: false
+      configured_router: false
+
+- name: combine into inventory
+  ansible.builtin.set_fact:
+    host_added_vars: "{{ host_temp_vars | ansible.builtin.combine(temp_fact) }}"
+
+- name: Update inventory
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "host_vars/{{ fqdn }}.yml"
+    content: "{{ host_added_vars | to_nice_yaml }}"
+
+- name: reload inventory
+  ansible.builtin.meta: refresh_inventory
