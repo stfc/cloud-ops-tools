@@ -1,4 +1,6 @@
 ---
 collections:
-  - name: nvidia.nvue
+  - name: https://gitlab.com/apdibbo/nvue
+    type: 'git'
+    version: 'main'
   - name: ansible.netcommon
