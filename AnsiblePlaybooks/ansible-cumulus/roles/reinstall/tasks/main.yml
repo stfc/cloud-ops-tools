@@ -52,7 +52,7 @@
   ansible.builtin.set_fact:
     temp_fact:
       reinstall: false
-      bootstrap: true
+      bootstrapped: false
       update: true
       configured_system: false
       configured_service: false

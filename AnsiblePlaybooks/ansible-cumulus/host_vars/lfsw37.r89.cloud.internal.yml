@@ -1,7 +1,6 @@
 ansible_host: 10.5.0.233
 bgp_router_id: 3.3.2.37
-bootstrap: true
-bootstrapped: false
+bootstrapped: true
 configured_bridge: true
 configured_evpn: true
 configured_interfaces: true

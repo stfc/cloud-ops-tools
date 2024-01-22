@@ -1,7 +1,6 @@
 ansible_host: 10.5.0.149
 bgp_router_id: 3.3.2.33
-bootstrap: true
-bootstrapped: false
+bootstrapped: true
 breakout_ports:
 -   breakout: 4x
     id: swp1
