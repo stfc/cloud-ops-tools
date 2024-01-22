@@ -1,0 +1,8 @@
+- name: Run benchmark
+  shell: ./benchmark.sh
+  register: script_output
+
+- name: Print script_output
+  debug:
+    msg: "{{ script_output }}"
+
