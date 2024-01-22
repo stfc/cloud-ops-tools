@@ -46,7 +46,8 @@ vm_info=$(openstack server show $server_UUID --os-cloud openstack)
 flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
 image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
-DB="http://172.16.101.186:4242/api/put"
+
+DB="http://{{ db_ip }}:{{ db_port }}/api/put"
 
 benchmark_and_send_data "1000" "0.001" "kb" "local"
 benchmark_and_send_data "1000" "1" "mb" "local"

@@ -5,6 +5,8 @@
         timeout: 200
 
 - hosts: Meerkat_storage
+  vars_files:
+     - ./vars/storage.yaml
   roles:
     - role: wait_for_connection
       tags: [ always ]
@@ -18,9 +20,8 @@
     - role: setup_storage_benchmark
       tags: [ storage ]
 
-    - role: run_storage_benchmark
-      tags: [ storage ]
+      #- role: run_storage_benchmark
+      #tags: [ storage ]
 
     - role: hepscore
       tags: [ cpu ]
-

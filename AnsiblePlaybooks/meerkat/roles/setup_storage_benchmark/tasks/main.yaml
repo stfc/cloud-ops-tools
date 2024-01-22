@@ -4,9 +4,15 @@
     dest: ~/
     mode: '0755'
   loop:
-    - benchmark.sh
     - sysbench.sh
     - get-vm-info.sh
+
+- name: copy over benchmark.sh
+  ansible.builtin.template:
+    src: benchmark.sh.j2
+    dest: ~/benchmark.sh
+    mode: '0755'
+
 
 - name: Install sysbench
   apt:
