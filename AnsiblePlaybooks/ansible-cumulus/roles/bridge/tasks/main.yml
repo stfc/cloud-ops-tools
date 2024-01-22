@@ -27,7 +27,7 @@
     state: merged
     revid: "{{ revision.revid }}"
     data:
-      - id: bridge
+      - id: 'br_default'
         type: "vlan-aware"
         untagged: "{{ bridge_pvid }}"
         vlan: "{{ vlan_mappings }}"
