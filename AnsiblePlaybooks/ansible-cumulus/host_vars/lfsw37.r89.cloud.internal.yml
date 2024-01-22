@@ -5,7 +5,7 @@ bootstrapped: false
 configured_bridge: true
 configured_evpn: true
 configured_interfaces: true
-configured_router: false
+configured_router: true
 configured_service: true
 configured_system: true
 eth0_ip: 10.5.0.233/16

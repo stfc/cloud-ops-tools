@@ -1,10 +1,2 @@
 ---
 bgp_asn: "64512"
-north_prefix_list:
-  - {index: 1, id: "10.10.10.0/24"}
-  - {index: 2, id: "172.16.192.0/21"}
-  - {index: 3, id: "172.16.100.0/20"}
-  - {index: 4, id: "130.246.208.0/21"}
-  - {index: 5, id: "130.246.80.0/22"}
-south_prefix_list:
-  - {index: 1, id: "0.0.0.0/16", max_prefix_len: 16}

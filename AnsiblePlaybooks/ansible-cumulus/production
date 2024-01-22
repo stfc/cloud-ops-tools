@@ -3,17 +3,15 @@ lfsw37.r89.cloud.internal
 
 
 
-[sn2100s]
-
-[sn2700s]
-
-[sn4600s]
-
 [r89spines]
 
 [r26spines]
 
-[r89leafs]
+[r89leaf-sn2100s]
+lfsw33.r89.cloud.internal
+
+[r89leafs:children]
+r89leaf-sn2100s
 
 [r26leafs]
 
@@ -38,8 +36,15 @@ r26leafs
 r89spines
 r26spines
 
+[sn2100s:children]
+r89leaf-sn2100s
+
+[sn2700s:children]
+
+[sn4600s]
+
+
 [switches:children]
 borders
 leafs
 spines
-
