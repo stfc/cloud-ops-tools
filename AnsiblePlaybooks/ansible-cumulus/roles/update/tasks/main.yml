@@ -27,7 +27,7 @@
     file: "host_vars/{{ fqdn }}.yml"
     name: host_temp_vars
 
-- name: set bootstrapped variable
+- name: set update variable
   ansible.builtin.set_fact:
     temp_fact:
       update: false
