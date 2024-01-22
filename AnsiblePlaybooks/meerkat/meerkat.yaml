@@ -15,7 +15,7 @@
     - role: update_machine
       tags: [ always ]
 
-    - role: setup_torage_benchmark
+    - role: setup_storage_benchmark
       tags: [ storage ]
 
     - role: run_storage_benchmark
