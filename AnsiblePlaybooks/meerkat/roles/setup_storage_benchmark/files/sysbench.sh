@@ -1,5 +1,4 @@
 #!/bin/bash
-echo "Hello Chris"
 # Docs: https://imysql.com/wp-content/uploads/2014/10/sysbench-manual.pdf
 while getopts "n:s:" arg; do
 	case $arg in

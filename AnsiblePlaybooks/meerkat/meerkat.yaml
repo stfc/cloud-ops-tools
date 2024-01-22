@@ -15,7 +15,10 @@
     - role: update_machine
       tags: [ always ]
 
-    - role: storage_benchmark
+    - role: setup_torage_benchmark
+      tags: [ storage ]
+
+    - role: run_storage_benchmark
       tags: [ storage ]
 
     - role: hepscore
