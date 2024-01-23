@@ -19,6 +19,7 @@
 - name: Reboot to apply updates
   nvidia.nvue.command:
     commands:
+      - "config save"
       - "action reboot system no-confirm"
 
 - name: Wait for reboot to finish
