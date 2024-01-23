@@ -1,0 +1,75 @@
+---
+- name: get openstack idp mapping
+  hosts: localhost
+  tasks:
+    - name: check age of mappings
+      ansible.builtin.stat:
+        path: "files/{{current_mappings_file}}"
+      register: mapping_stats
+    - name: output age of mappings
+      debug:
+        msg: "{{ (ansible_date_time.epoch|float - mapping_stats.stat.mtime )  }}"
+    - name: remind user to fetch updated mappings
+      debug:
+        msg: "Mappings havent been fetched for a while, you should do that"
+      when: (ansible_date_time.epoch|float - mapping_stats.stat.mtime ) > 3600
+    - name: end if mappings are old
+      ansible.builtin.meta: end_play
+      when: (ansible_date_time.epoch|float - mapping_stats.stat.mtime ) > 3600
+
+
+
+    - name: load in template
+      ansible.builtin.include_vars:
+        dir: files
+        files_matching: template-rule.yml
+    - name: output template
+      debug:
+        var: template_rule
+    - name: load in new mappings
+      ansible.builtin.include_vars:
+        dir: files
+        files_matching: "{{ new_mapping_file }}"
+    - name: load in current mappings
+      ansible.builtin.include_vars:
+        dir: files
+        files_matching: "{{ current_mappings_file }}"
+
+    - name: check if new mappings already exist
+      debug:
+        msg: "{{ item }} already exists"
+      register: already_existing_mappings
+      with_items: "{{ new_mappings }}"
+      when: item in current_mappings
+
+    # - name: end if mapping already exists
+    #   ansible.builtin.meta: end_play
+    #   when: already_existing_mappings is defined
+
+    - name: output new mappings
+      debug:
+        var: new_mappings
+    - name: build mapping complete
+      ansible.builtin.set_fact: 
+        complete_mappings: "{{ complete_mappings| default([]) + [ { 'local': [ template_rule.local | combine(item.local, recursive=true) ], 'remote':  template_rule.remote + item.remote  } ] }}"
+      with_items: "{{ current_mappings }}"
+    - name: output remote rule before new
+      debug:
+        var: complete_mappings
+    - name: build mapping complete
+      ansible.builtin.set_fact: 
+        complete_mappings: "{{ complete_mappings| default([]) + [ { 'local': [ template_rule.local | combine(item.local, recursive=true) ], 'remote':  template_rule.remote + item.remote  } ] }}"
+      with_items: "{{ new_mappings }}"
+   
+    - name: output remote rule
+      debug:
+        var: complete_mappings
+
+    - name: add mappings to openstack
+      openstack.cloud.federation_mapping:
+        cloud: "{{cloud_name}}"
+        name: "{{mapping_name}}"_mapping
+        rules: "{{ complete_mappings }}"
+
+
+    

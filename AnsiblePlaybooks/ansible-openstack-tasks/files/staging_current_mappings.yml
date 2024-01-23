@@ -1,0 +1,9 @@
+current_mappings:
+-   local:
+        group:
+            id: 24efd25df0e5406aa3c02dd982e0b3d0
+    remote:
+    -   any_one_of:
+        - stfc-cloud-dev
+        regex: true
+        type: OIDC-groups

@@ -1,0 +1,154 @@
+current_mappings:
+-   local:
+        group:
+            id: b36d8a915ebc47578b96c5f79f281be0
+    remote:
+    -   any_one_of:
+        - stfc-cloud-prod
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 07f8be479c0c462c9fb8fbd271aede18
+    remote:
+    -   any_one_of:
+        - stfc-cloud/aai-dev
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 700a764fba7c461bb164047d9d08cc7e
+    remote:
+    -   any_one_of:
+        - ccfe/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 9f0ac369a37d476eb3c9b6171af5b068
+    remote:
+    -   any_one_of:
+        - euclid/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: b9b07c2e7a8b40569ec196ddcaf69051
+    remote:
+    -   any_one_of:
+        - lsst/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 7cfe18f58a954edba1600e282ae1d3d0
+    remote:
+    -   any_one_of:
+        - aeneas/stfccloud
+        - ska/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 4c2b215fa5724034a93e22e2400dca1b
+    remote:
+    -   any_one_of:
+        - excalibur/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 7a0594ded77b4b12a83184295b71792b
+    remote:
+    -   any_one_of:
+        - stfc-cloud/megan-testing
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 5f08d280c3214db3900aec91befbfe88
+    remote:
+    -   any_one_of:
+        - jupyterhub-da/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 295e369c6db54f8093ea90503520c764
+    remote:
+    -   any_one_of:
+        - ska/skadatachallenge2
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 60e099699fc74873a349d98762d134b8
+    remote:
+    -   any_one_of:
+        - emerlin/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 185e07adae0e447cbb42c47427804e73
+    remote:
+    -   any_one_of:
+        - ska/techOps
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 01cc19c11ab6422190c693536f81d8d7
+    remote:
+    -   any_one_of:
+        - ska/TechSDH&P
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 98745ba937194c3db0fa9f45c82cc251
+    remote:
+    -   any_one_of:
+        - dune/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 400cda4b208b4b869fcf0ac2b415b6ac
+    remote:
+    -   any_one_of:
+        - aiscreening/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 75ce602d66144fb0ba15c99c536de2e5
+    remote:
+    -   any_one_of:
+        - sciml
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 6c7ebdc2de1b425fbb842de45d042af9
+    remote:
+    -   any_one_of:
+        - ska/src-aai-development
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: 0aba3adb624c4638b9a6cb6cdfda339d
+    remote:
+    -   any_one_of:
+        - intertwin/stfccloud
+        regex: true
+        type: OIDC-groups
+-   local:
+        group:
+            id: d60dacd9a38e4e1685fdc56c74b607f0
+    remote:
+    -   any_one_of:
+        - mrc/stfccloud
+        regex: true
+        type: OIDC-groups
