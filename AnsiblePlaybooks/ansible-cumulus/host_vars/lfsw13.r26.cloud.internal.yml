@@ -1,0 +1,13 @@
+ansible_host: 10.5.0.31
+bgp_router_id: 3.3.2.13
+bootstrapped: true
+eth0_ip: "{{ansible_host}}/16"
+fqdn: lfsw13.r26.cloud.internal
+hostname: lfsw13
+lo_ip: 10.10.20.13/32
+reinstall: true
+system_location: r26rack885
+update: true
+vlan_interfaces:
+-   id: '450'
+    network: 172.16.208.160/27

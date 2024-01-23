@@ -1,5 +1,5 @@
 ansible_host: 10.5.0.149
-bgp_router_id: 3.3.2.33
+bgp_router_id: 3.3.1.33
 bootstrapped: true
 breakout_ports:
 -   breakout: 4x
@@ -27,6 +27,10 @@ bridge_interfaces:
 - swp4s1
 - swp4s2
 - swp4s3
+- swp5
+- swp6
+- swp7
+- swp8
 configured_bridge: true
 configured_evpn: true
 configured_interfaces: true
