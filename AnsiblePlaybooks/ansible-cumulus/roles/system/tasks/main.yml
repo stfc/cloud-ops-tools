@@ -17,7 +17,7 @@
       hostname: "{{ hostname }}"
       timezone: "Etc/UTC"
       reboot: 
-        mode: "warm"
+        mode: "fast"
       message:
         post_login: |
           #######################################################
