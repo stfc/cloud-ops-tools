@@ -1,6 +1,6 @@
 ---
 - name: Configure border switches for STFC Cloud
-  hosts: borders
+  hosts: switches
   connection: paramiko
   gather_facts: false
   vars:
