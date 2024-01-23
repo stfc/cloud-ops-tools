@@ -9,5 +9,9 @@
     dest: "host_vars/{{ fqdn }}.yml"
     content: "{{ host_added_vars | to_nice_yaml }}"
 
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+
 - name: reload inventory
   ansible.builtin.meta: refresh_inventory
