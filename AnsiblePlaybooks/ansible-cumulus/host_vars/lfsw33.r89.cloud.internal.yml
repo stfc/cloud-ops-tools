@@ -1,5 +1,4 @@
 ansible_host: 10.5.0.149
-bgp_router_id: 3.3.1.33
 bootstrapped: true
 breakout_ports:
 -   breakout: 4x
@@ -37,10 +36,7 @@ configured_interfaces: true
 configured_router: true
 configured_service: true
 configured_system: true
-eth0_ip: 10.5.0.149/16
-fqdn: lfsw33.r89.cloud.internal
 hostname: lfsw33
-lo_ip: 10.10.10.133/32
 reinstall: false
 system_location: r89rack187
 update: false

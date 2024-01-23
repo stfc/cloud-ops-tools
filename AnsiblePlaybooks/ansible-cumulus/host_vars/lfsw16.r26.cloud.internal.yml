@@ -1,7 +1,14 @@
 ansible_host: 10.5.0.35
+bootstrapped: false
+configured_bridge: true
+configured_interfaces: true
+configured_router: true
+configured_service: true
+configured_system: true
 hostname: lfsw16
-reinstall: true
+reinstall: false
 system_location: r26rack891
+update: false
 vlan_interfaces:
 -   id: '450'
     network: 172.16.209.0/27

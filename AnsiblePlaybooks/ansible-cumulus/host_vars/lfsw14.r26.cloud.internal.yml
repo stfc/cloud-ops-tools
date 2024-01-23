@@ -1,15 +1,11 @@
 ansible_host: 10.5.0.32
-bgp_router_id: 3.3.2.14
 bootstrapped: false
 configured_bridge: true
 configured_interfaces: true
 configured_router: true
 configured_service: true
 configured_system: true
-eth0_ip: 10.5.0.32/16
-fqdn: lfsw14.r26.cloud.internal
 hostname: lfsw14
-lo_ip: 10.10.20.14/32
 reinstall: false
 system_location: r26rack887
 update: false
