@@ -34,4 +34,9 @@ variable "VM_group" {
     description = "Group to add VMs to for ansible"
     default = "Meerkat_storage"
 }
+
+variable "tags" {
+    description = "Tags to determine which benchmark to run"
+    default = "storage"
+}
 	
