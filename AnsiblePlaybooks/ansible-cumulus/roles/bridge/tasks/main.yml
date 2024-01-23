@@ -1,7 +1,7 @@
 ---
 - name: check if node already configured for bridge component
   ansible.builtin.meta: end_host
-  when: configured_bridge | default(false)
+  when: configured_bridge | default(true)
 
 - name: build vlan mappings
   ansible.builtin.set_fact:

@@ -1,7 +1,7 @@
 ---
 - name: check if node already configured for router component
   ansible.builtin.meta: end_host
-  when: configured_router | default(false)
+  when: configured_router | default(true)
 
 - name: build north bgp_neighbors
   ansible.builtin.set_fact:

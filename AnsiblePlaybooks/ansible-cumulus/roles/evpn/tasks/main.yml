@@ -1,7 +1,7 @@
 ---
 - name: check if node already configured for evpn component
   ansible.builtin.meta: end_host
-  when: configured_evpn | default(false)
+  when: configured_evpn | default(true)
 
 - ansible.builtin.include_tasks: "common/tasks/new_revision.yml"
 

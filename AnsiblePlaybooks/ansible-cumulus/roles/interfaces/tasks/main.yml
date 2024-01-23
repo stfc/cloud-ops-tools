@@ -1,7 +1,7 @@
 ---
 - name: check if node already configured for interfaces component
   ansible.builtin.meta: end_host
-  when: configured_interfaces | default(false)
+  when: configured_interfaces | default(true)
 
 - name: build breakoutports dictionary
   ansible.builtin.set_fact:

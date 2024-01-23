@@ -1,7 +1,7 @@
 ---
 - name: check if node already configured for system component
   ansible.builtin.meta: end_host
-  when: configured_system | default(false)
+  when: configured_system | default(true)
 
 - name: Output message
   debug:

@@ -1,4 +1,4 @@
 ---
 - name: check if node already bootstrapped
   ansible.builtin.meta: end_host
-  when: bootstrapped | default(false)
+  when: bootstrapped | default(true)

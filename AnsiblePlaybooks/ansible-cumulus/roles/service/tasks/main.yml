@@ -1,7 +1,7 @@
 ---
 - name: check if node already configured for service component
   ansible.builtin.meta: end_host
-  when: configured_service | default(false)
+  when: configured_service | default(true)
 
 - ansible.builtin.include_tasks: "common/tasks/new_revision.yml"
 
