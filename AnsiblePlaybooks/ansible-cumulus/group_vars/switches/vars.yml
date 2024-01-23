@@ -2,7 +2,7 @@
 ansible_user: "cumulus"
 cumulus_password: "{{ vault_cumulus_password }}"
 default_password: "{{ vault_default_password }}"
-
+eth0_ip: "{{ ansible_host }}/16"
 dns_servers:
   - {id: "10.0.1.21"}
 ntp_servers:

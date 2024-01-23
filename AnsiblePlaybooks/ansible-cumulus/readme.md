@@ -19,3 +19,9 @@ Then install the requirements for this set of ansible playbooks
 Then run the setup playbook to install additionally required packages
 
 `ansible-playbook setup.yml`
+
+# Adding a new switch
+
+Add the name (FQDN) of the new switch to the appropriate group in the production inventory
+
+Create a new file in the `host_vars` directory based on the template in the same directory

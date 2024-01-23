@@ -1,6 +1,8 @@
 [borders]
 lfsw37.r89.cloud.internal
 
+[exits]
+
 [r89spines]
 
 [r26spines]
@@ -30,7 +32,7 @@ exits
 r26leafs
 r26spines
 
-[exits]
+
 
 [leafs:children]
 borders

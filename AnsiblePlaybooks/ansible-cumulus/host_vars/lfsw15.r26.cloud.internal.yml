@@ -1,7 +1,12 @@
 ansible_host: 10.5.0.34
 bgp_router_id: 3.3.2.15
-bootstrapped: true
-eth0_ip: "{{ansible_host}}/16"
+bootstrapped: false
+configured_bridge: true
+configured_interfaces: true
+configured_router: true
+configured_service: true
+configured_system: true
+eth0_ip: 10.5.0.34/16
 fqdn: lfsw15.r26.cloud.internal
 hostname: lfsw15
 lo_ip: 10.10.20.15/32
