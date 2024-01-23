@@ -24,6 +24,7 @@
 - name: Wait for reboot to finish
   ansible.builtin.wait_for_connection:
     timeout: 3600
+    delay: 15
 # - name: Reboot to apply updates
 #   become: true
 #   ansible.builtin.reboot:
