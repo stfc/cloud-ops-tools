@@ -248,6 +248,8 @@
     data:
       bgp:
         enable: "on"
+        graceful_restart:
+          mode: "full"
       vrr:
         enable: "on"
 

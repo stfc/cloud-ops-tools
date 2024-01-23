@@ -16,6 +16,8 @@
     data:
       hostname: "{{ hostname }}"
       timezone: "Etc/UTC"
+      reboot: 
+        mode: "warm"
       message:
         post_login: |
           #######################################################

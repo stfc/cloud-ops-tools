@@ -17,10 +17,18 @@
     update_cache: true
 
 - name: Reboot to apply updates
-  become: true
-  ansible.builtin.reboot:
-    msg: "Switch rebooted by Ansible"
-    reboot_timeout: 3600
+  nvidia.nvue.command:
+    commands:
+      - "action reboot system no-confirm"
+
+- name: Wait for reboot to finish
+  ansible.builtin.wait_for_connection:
+    timeout: 3600
+# - name: Reboot to apply updates
+#   become: true
+#   ansible.builtin.reboot:
+#     msg: "Switch rebooted by Ansible"
+#     reboot_timeout: 3600
 
 - ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
 
