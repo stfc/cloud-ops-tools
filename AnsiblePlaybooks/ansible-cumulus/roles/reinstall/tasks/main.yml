@@ -57,15 +57,4 @@
       configured_bridge: false
       configured_router: false
 
-- name: combine into inventory
-  ansible.builtin.set_fact:
-    host_added_vars: "{{ host_temp_vars | ansible.builtin.combine(temp_fact) }}"
-
-- name: Update inventory
-  delegate_to: localhost
-  ansible.builtin.copy:
-    dest: "host_vars/{{ fqdn }}.yml"
-    content: "{{ host_added_vars | to_nice_yaml }}"
-
-- name: reload inventory
-  ansible.builtin.meta: refresh_inventory
+- ansible.builtin.include_tasks: "common/tasks/write_host_inventory.yml"
