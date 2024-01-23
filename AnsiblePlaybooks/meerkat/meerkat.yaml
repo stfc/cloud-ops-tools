@@ -7,6 +7,7 @@
 - hosts: Meerkat_storage
   vars_files:
      - ./vars/storage.yaml
+     - ./vars/hepscore.yaml
   roles:
     - role: wait_for_connection
       tags: [ always ]

@@ -9,4 +9,4 @@ IMAGE=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
 
 SCORE=$(jq '.score' results/*/HEPscore23Beta.json)
-curl -v -H 'Content-Type: application/json' -d 'hepscore,flavour="$FLAVOR",image="$IMAGE" value="$SCORE"' -X POST '{{ victoria_url }}'
+curl -v -H 'Content-Type: application/json' -d 'hepscore,flavour="$FLAVOR",image="$IMAGE" value="$SCORE"' -X POST 'http://{{ db_ip }}:{{ db_port }}/write'
