@@ -32,7 +32,7 @@ This will give you a yaml file in `./files` with each of the mappings listed in 
 
 Copy the template mappings file to new mappings
 
-`cp files/template-mappings.yml files/new-mappings.yml`
+`cp files/templates/template-mappings.yml files/new-mappings.yml`
 
 Edit the file with the appropriate details for the mapping you are creating
 

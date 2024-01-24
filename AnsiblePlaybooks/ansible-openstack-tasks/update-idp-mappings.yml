@@ -21,7 +21,7 @@
 
     - name: load in template
       ansible.builtin.include_vars:
-        dir: files
+        dir: files\templates
         files_matching: template-rule.yml
     - name: output template
       debug:
