@@ -9,6 +9,7 @@ lfsw37.r89.cloud.internal
 
 [r89leaf_sn2100s]
 lfsw33.r89.cloud.internal
+lfsw34.r89.cloud.internal
 
 [r89leafs:children]
 r89leaf_sn2100s

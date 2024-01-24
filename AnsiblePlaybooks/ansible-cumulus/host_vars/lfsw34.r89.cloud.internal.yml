@@ -1,0 +1,42 @@
+ansible_host: 10.5.0.164
+breakout_ports:
+-   breakout: 4x
+    id: swp1
+-   breakout: 4x
+    id: swp2
+-   breakout: 4x
+    id: swp3
+-   breakout: 4x
+    id: swp4
+-   breakout: 4x
+    id: swp5
+bridge_interfaces:
+- swp1s0
+- swp1s1
+- swp1s2
+- swp1s3
+- swp2s0
+- swp2s1
+- swp2s2
+- swp2s3
+- swp3s0
+- swp3s1
+- swp3s2
+- swp3s3
+- swp4s0
+- swp4s1
+- swp4s2
+- swp4s3
+- swp5s0
+- swp5s1
+- swp5s2
+- swp5s3
+- swp6
+- swp7
+- swp8
+hostname: lfsw34
+reinstall: true
+system_location: r89rack185
+vlan_interfaces:
+-   id: '450'
+    network: 172.16.196.32/27
