@@ -20,8 +20,8 @@
     - role: setup_storage_benchmark
       tags: [ storage ]
 
-      #- role: run_storage_benchmark
-      #tags: [ storage ]
+    - role: run_storage_benchmark
+      tags: [ storage ]
 
     - role: hepscore
       tags: [ cpu ]

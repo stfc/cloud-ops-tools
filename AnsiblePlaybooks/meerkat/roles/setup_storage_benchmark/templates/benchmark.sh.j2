@@ -47,7 +47,7 @@ flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
 image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
 
-DB="http://{{ db_ip }}:{{ db_port }}/api/put"
+DB="http://{{ db_ip }}:{{ db_port }}/write"
 
 benchmark_and_send_data "1000" "0.001" "kb" "local"
 benchmark_and_send_data "1000" "1" "mb" "local"
