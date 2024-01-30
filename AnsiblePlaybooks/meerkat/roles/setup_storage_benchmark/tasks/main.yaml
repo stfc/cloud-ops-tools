@@ -32,24 +32,3 @@
   become: true
   when: ansible_distribution == 'Rocky'
 
-- name: Install openstack
-  apt:
-    name: python3-openstackclient
-    state: present
-  become: true
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Install openstack Rocky
-  dnf:
-    name: python3-openstackclient
-    state: present
-  become: true
-  register: result
-  retries: 5
-  delay: 30
-  until: result is not failed
-  when: ansible_distribution == 'Rocky'
-
-
-
-

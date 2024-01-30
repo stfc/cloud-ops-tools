@@ -12,7 +12,7 @@
     - role: wait_for_connection
       tags: [ always ]
 
-    - role: move_clouds_yaml
+    - role: setup_openstack
       tags: [ always ]
 
     - role: update_machine
