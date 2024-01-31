@@ -3,7 +3,7 @@ This is the Meerkat benchmarking tool, which uses Ansible to spin up VMs in Open
 
 Currently Meerkat has the following benchmarks available:
 - HEPScore, a CPU benchmark
-- A custom storage benchmark (to be added)
+- A custom storage benchmark
 
 ## Running Meerkat
 Meerkat requires Openstack credentials to create or delete VMs. These can be obtained by creating an application credential and putting it in the clouds.yaml file in ~/.config/openstack.
