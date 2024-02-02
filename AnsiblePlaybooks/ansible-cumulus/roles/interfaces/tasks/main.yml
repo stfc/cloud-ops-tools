@@ -10,12 +10,12 @@
 
 - name: build bridge interface dictionary
   ansible.builtin.set_fact:
-    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'br_default', 'access': bridge_pvid } ] } } ] }}"
+    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'br_default' } ] } } ] }}"
   with_items: "{{ bridge_interfaces }}"
 
 - name: build bridge interface dictionary
   ansible.builtin.set_fact:
-    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item.id, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'br_default', 'access': item.pvid } ] } } ] }}"
+    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item.id, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'br_default' } ] } } ] }}"
   with_items: "{{ bridge_interfaces_pvids }}"
 
 - name: build vlan interfaces
