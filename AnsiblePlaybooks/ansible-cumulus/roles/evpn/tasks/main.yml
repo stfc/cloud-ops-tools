@@ -12,7 +12,7 @@
     data:
       enable: 'on'
       route_advertise:
-        default_gateway: 'on'
+        default_gateway: 'off'
 
 - ansible.builtin.include_tasks: "common/tasks/apply_revision.yml"
 

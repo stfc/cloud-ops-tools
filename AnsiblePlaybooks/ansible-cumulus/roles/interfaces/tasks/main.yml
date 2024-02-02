@@ -18,6 +18,16 @@
     bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item.id, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'br_default', 'access': item.pvid } ] } } ] }}"
   with_items: "{{ bridge_interfaces_pvids }}"
 
+- name: build vlan interfaces
+  ansible.builtin.set_fact:
+    vlan_interface_dict: "{{ vlan_interface_dict|default( [ ] ) + [ { 'id': 'vlan'+item.id|string , 'vlan': item.id, 'type': 'svi' } ] }}"
+  with_items: "{{ vlans }}"
+
+- name: build more vlan interfaces
+  ansible.builtin.set_fact:
+    vlan_interface_dict: "{{ vlan_interface_dict|default([] ) + [ { 'id': 'vlan'+item|string , 'vlan': item, 'type': 'svi' } ] }}"
+  loop: "{{ range(vni_vlan_start, vni_vlan_end) | list() }}"
+
 - name: add vlan interface ips
   ansible.builtin.set_fact:
     vlan_interface_dict: "{{ vlan_interface_dict|default( [ ] ) + [ { 'id': 'vlan' + item.id, 'vlan': item.id, 'type': 'svi', 'link': { 'state': [ {'id': 'up'} ] }, 'ip': {'address': [ { 'id': item.network | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('1') } ] } } ] }}"
@@ -25,7 +35,7 @@
 
 - name: merge in vlan and south facing interfaces
   ansible.builtin.set_fact:
-    bridge_interface_dict: "{{ breakout_dict | default([]) + bridge_interface_dict|default([]) + vlan_interface_dict|default( [ ] )  }}"
+    bridge_interface_dict: "{{ breakout_dict | default([]) + bridge_interface_dict|default([]) + vlan_interface_dict|default( [ ] ) }}"
 
 - name: output
   debug:
