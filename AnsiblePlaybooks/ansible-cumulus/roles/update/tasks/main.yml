@@ -38,5 +38,6 @@
   ansible.builtin.set_fact:
     temp_fact:
       update: false
+      bootstrapped: true
 
 - ansible.builtin.include_tasks: "common/tasks/write_host_inventory.yml"
