@@ -1,76 +1,28 @@
-- name: Automatically create and destroy VMs
-  hosts: localhost
-  tags:
-    - create
-  vars:
-    images: ["ubuntu-focal-20.04-nogui"]
-    vm_name: "Meerkat_Benchmark_2"
-    key_name: "{{ key_name }}"
-      
-  pre_tasks:
-    - package:
-        name: python3-openstacksdk
-        state: present
-      become: true
-
-    - name: Query openstack
-      openstack.cloud.compute_flavor_info:
-        ram: "<20000"
-      register: flavor_list
-
-    - name: Generate list
-      block: 
-        - name: Use "openstack_flavors"
-          ansible.builtin.set_fact:
-            flavors: "{{ flavors | default([]) + [item.name | string] }}"
-          with_items:
-            - "{{ flavor_list.openstack_flavors }}"
-      rescue:
-        - name: Use "flavors"
-          ansible.builtin.set_fact:
-            flavors: "{{ flavors | default([]) + [item.name | string] }}"
-          with_items:
-            - "{{ flavor_list.flavors }}"
- 
-    - name: Remove GPU flavors
-      ansible.builtin.set_fact:
-        flavors: "{{ flavors | reject('search', flavor_list_search) | list }}"
-      vars:
-        flavor_list_search: 'g-'
-
-    - name: Print flavors
-      debug: var=flavors
-
-    - name: Print images
-      debug: var=images
-
+- hosts: Meertkat_storage
   tasks:
-    - name: Create VMs
-      include_role: 
-        name: create_vm
-      with_nested:
-        - "{{ flavors }}"
-        - "{{ images }}"
-    
-- name: Storage benchmark
-  hosts: all
-  gather_facts: no
-  remote_user: ubuntu
-  tags:
-    - benchmark
-  roles:
-    - role: storage_benchmark
+    - name: Wait target connection to become reachable/usable
+      ansible.builtin.wait_for_connection:
+        timeout: 200
 
-- name: HEPScore Benchmark
-  hosts: all
-  gather_facts: yes
-  remote_user: ubuntu
-  tags:
-    - hepscore
+- hosts: Meerkat_storage
+  vars_files:
+     - ./vars/storage.yaml
+     - ./vars/hepscore.yaml
   roles:
+    - role: wait_for_connection
+      tags: [ always ]
+
+    - role: setup_openstack
+      tags: [ always ]
+
+    - role: update_machine
+      tags: [ always ]
+
+    - role: setup_storage_benchmark
+      tags: [ storage ]
+
+    - role: run_storage_benchmark
+      tags: [ storage ]
+
     - role: hepscore
-
-- name: delete VMs
-  hosts: localhost
-  roles:
-    - destroy_vm
+      tags: [ cpu ]

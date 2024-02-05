@@ -1,0 +1,34 @@
+- name: Copy over benchmarking files
+  copy:
+    src: "{{ item }}"
+    dest: ~/
+    mode: '0755'
+  loop:
+    - sysbench.sh
+    - get-vm-info.sh
+
+- name: copy over benchmark.sh
+  ansible.builtin.template:
+    src: benchmark.sh.j2
+    dest: ~/benchmark.sh
+    mode: '0755'
+
+
+- name: Install sysbench
+  apt:
+    name: sysbench
+    state: present
+  become: true
+  register: result
+  retries: 5
+  delay: 30
+  until: result is not failed
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install sysbench Rocky
+  yum:
+    name: sysbench
+    state: present
+  become: true
+  when: ansible_distribution == 'Rocky'
+

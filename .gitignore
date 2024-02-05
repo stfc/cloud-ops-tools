@@ -1,1 +1,5 @@
 .vscode
+clouds.yaml
+*.terraform*
+*.tfplan
+*.tfstate*
