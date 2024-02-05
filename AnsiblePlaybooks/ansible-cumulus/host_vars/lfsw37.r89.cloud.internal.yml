@@ -1,0 +1,15 @@
+ansible_host: 10.5.0.233
+bootstrapped: true
+configured_bridge: true
+configured_evpn: true
+configured_interfaces: true
+configured_router: true
+configured_service: true
+configured_system: true
+hostname: lfsw37
+reinstall: false
+system_location: r89rack241
+update: false
+vlan_interfaces:
+-   id: '450'
+    network: 10.195.0.0/28

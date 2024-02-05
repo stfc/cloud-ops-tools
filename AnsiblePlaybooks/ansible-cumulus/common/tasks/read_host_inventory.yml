@@ -1,0 +1,5 @@
+---
+- name: Read inventory
+  ansible.builtin.include_vars:
+    file: "host_vars/{{ fqdn }}.yml"
+    name: host_temp_vars

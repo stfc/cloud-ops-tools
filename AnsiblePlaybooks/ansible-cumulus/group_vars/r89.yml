@@ -1,0 +1,3 @@
+---
+bgp_asn: "64512"
+fqdn: "{{hostname}}.r89.cloud.internal"

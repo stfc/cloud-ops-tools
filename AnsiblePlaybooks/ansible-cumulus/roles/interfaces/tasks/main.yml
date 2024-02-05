@@ -1,0 +1,62 @@
+---
+- name: check if node already configured for interfaces component
+  ansible.builtin.meta: end_host
+  when: configured_interfaces | default(true)
+
+- name: build breakoutports dictionary
+  ansible.builtin.set_fact:
+    breakout_dict: "{{ breakout_dict | default([]) + [ { 'id': item.id , 'type': 'swp', 'link': { 'breakout': [{ 'id': item.breakout }] } } ] }}"
+  with_items: "{{ breakout_ports | default([]) }}"
+
+- name: build bridge interface dictionary
+  ansible.builtin.set_fact:
+    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'br_default' } ] } } ] }}"
+  with_items: "{{ bridge_interfaces }}"
+
+- name: build bridge interface dictionary
+  ansible.builtin.set_fact:
+    bridge_interface_dict: "{{ bridge_interface_dict|default( [ ] ) + [ { 'id': item.id, 'type':'swp', 'link': { 'state': [ {'id': 'up'} ] }, 'bridge': {'domain': [ { 'id': 'br_default' } ] } } ] }}"
+  with_items: "{{ bridge_interfaces_pvids }}"
+
+- name: build vlan interfaces
+  ansible.builtin.set_fact:
+    vlan_interface_dict: "{{ vlan_interface_dict|default( [ ] ) + [ { 'id': 'vlan'+item.id|string , 'vlan': item.id, 'type': 'svi' } ] }}"
+  with_items: "{{ vlans }}"
+
+- name: build more vlan interfaces
+  ansible.builtin.set_fact:
+    vlan_interface_dict: "{{ vlan_interface_dict|default([] ) + [ { 'id': 'vlan'+item|string , 'vlan': item, 'type': 'svi' } ] }}"
+  loop: "{{ range(vni_vlan_start, vni_vlan_end) | list() }}"
+
+- name: add vlan interface ips
+  ansible.builtin.set_fact:
+    vlan_interface_dict: "{{ vlan_interface_dict|default( [ ] ) + [ { 'id': 'vlan' + item.id, 'vlan': item.id, 'type': 'svi', 'link': { 'state': [ {'id': 'up'} ] }, 'ip': {'address': [ { 'id': item.network | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('1') } ] } } ] }}"
+  with_items: "{{ vlan_interfaces }}"
+
+- name: merge in vlan and south facing interfaces
+  ansible.builtin.set_fact:
+    bridge_interface_dict: "{{ breakout_dict | default([]) + bridge_interface_dict|default([]) + vlan_interface_dict|default( [ ] ) }}"
+
+- name: output
+  debug:
+    var: bridge_interface_dict
+
+- ansible.builtin.include_tasks: "common/tasks/new_revision.yml"
+
+- name: Configure bridge interfaces
+  nvidia.nvue.interface:
+    state: merged
+    force: true
+    revid: "{{ revision.revid }}"
+    data: "{{ bridge_interface_dict }}"
+
+- ansible.builtin.include_tasks: "common/tasks/apply_revision.yml"
+
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+
+- name: set configured interfaces variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      configured_interfaces: true
+
+- ansible.builtin.include_tasks: "common/tasks/write_host_inventory.yml"

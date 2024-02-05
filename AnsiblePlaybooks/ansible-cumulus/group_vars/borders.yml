@@ -1,0 +1,19 @@
+---
+bgp_router_id: "3.3.1.{{hostname | replace('lfsw', '') }}"
+lo_ip: "10.10.10.1{{ hostname | replace('lfsw', '') }}/32"
+north_interfaces:
+  - swp9
+  - swp10
+  - swp11
+  - swp12
+  - swp13
+  - swp14
+  - swp15
+  - swp16
+bridge_interfaces:
+  - swp1
+  - swp2
+  - swp3
+  - swp4
+  - swp5
+  - swp6

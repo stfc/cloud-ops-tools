@@ -1,0 +1,7 @@
+---
+north_prefix_list:
+  - {index: 1, id: "10.10.20.0/24"}
+  - {index: 2, id: "172.16.208.0/21"}
+south_prefix_list:
+  - {index: 1, id: "0.0.0.0/16", max_prefix_len: 16}
+  - {index: 2, id: "0.0.0.0/0"}

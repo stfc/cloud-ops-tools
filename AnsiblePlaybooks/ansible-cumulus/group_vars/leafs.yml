@@ -1,0 +1,5 @@
+---
+north_peer_group: "SPINE"
+south_peer_group: "HOSTS"
+north_remote_as: internal
+south_remote_as: internal

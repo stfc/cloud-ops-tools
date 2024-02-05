@@ -1,0 +1,9 @@
+---
+- name: Create new revision
+  nvidia.nvue.config:
+    state: new
+  register: revision
+
+- name: dump revision
+  debug:
+    msg: "{{ revision.revid }}"

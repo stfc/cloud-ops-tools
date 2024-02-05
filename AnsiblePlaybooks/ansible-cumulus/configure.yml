@@ -1,0 +1,96 @@
+---
+- name: Output message
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - ansible.builtin.meta: refresh_inventory
+    - name: Read inventory
+      ansible.builtin.include_vars:
+        file: "host_vars/{{ fqdn }}.yml"
+    - name: Print message
+      debug:
+        msg: "Starting Borders Playbook"
+
+- name: Configure system component for STFC Cloud Network
+  hosts: switches
+  connection: ansible.netcommon.httpapi
+  gather_facts: false
+  vars:
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_httpapi_port: 8765
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_command_timeout: 180
+  roles:
+    - system
+
+- name: Configure service component for STFC Cloud Network
+  hosts: switches
+  connection: ansible.netcommon.httpapi
+  gather_facts: false
+  vars:
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_httpapi_port: 8765
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_command_timeout: 180
+  roles:
+    - service
+
+- name: Configure bridge component for STFC Cloud Network
+  hosts: switches
+  connection: ansible.netcommon.httpapi
+  gather_facts: false
+  vars:
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_httpapi_port: 8765
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_command_timeout: 180
+  roles:
+    - bridge
+
+- name: Configure evpn component for STFC Cloud Network
+  hosts: switches
+  connection: ansible.netcommon.httpapi
+  gather_facts: false
+  vars:
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_httpapi_port: 8765
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_command_timeout: 180
+  roles:
+    - evpn
+
+- name: Configure router component for STFC Cloud Network
+  hosts: switches
+  connection: ansible.netcommon.httpapi
+  gather_facts: false
+  vars:
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_httpapi_port: 8765
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_command_timeout: 180
+  roles:
+    - router
+
+- name: Configure interfaces component for STFC Cloud Network
+  hosts: switches
+  connection: ansible.netcommon.httpapi
+  gather_facts: false
+  vars:
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_httpapi_port: 8765
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_command_timeout: 180
+  roles:
+    - interfaces

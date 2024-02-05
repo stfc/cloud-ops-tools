@@ -1,0 +1,26 @@
+---
+- name: check if node already configured for evpn component
+  ansible.builtin.meta: end_host
+  when: configured_evpn | default(true)
+
+- ansible.builtin.include_tasks: "common/tasks/new_revision.yml"
+
+- name: evpn config
+  nvidia.nvue.evpn:
+    state: merged
+    revid: "{{ revision.revid }}"
+    data:
+      enable: 'on'
+      route_advertise:
+        default_gateway: 'off'
+
+- ansible.builtin.include_tasks: "common/tasks/apply_revision.yml"
+
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+
+- name: set configured evpn variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      configured_evpn: true
+
+- ansible.builtin.include_tasks: "common/tasks/write_host_inventory.yml"
