@@ -34,4 +34,4 @@
   rescue:
     - name: Print errored VM
       debug:
-        msg: HEPScore failed to run for flavor {{ vm_flavor }} image {{ vm_image }}
+        msg: HEPScore failed to run
