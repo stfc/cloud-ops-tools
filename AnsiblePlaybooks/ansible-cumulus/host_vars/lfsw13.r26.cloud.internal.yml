@@ -1,5 +1,5 @@
 ansible_host: 10.5.0.31
-bootstrapped: false
+bootstrapped: true
 configured_bridge: true
 configured_evpn: true
 configured_interfaces: true
