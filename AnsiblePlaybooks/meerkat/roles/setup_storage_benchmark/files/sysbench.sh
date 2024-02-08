@@ -7,8 +7,6 @@ while getopts "n:s:" arg; do
 	esac
 done
 
-cd $path
-
 ####################################################################
 # This section handles file sizes < 1 Mb
 if [[ "$file_size" == *"."* ]]; then
