@@ -16,7 +16,7 @@ variable "instance_name" {
 variable "image_name" {
     description = "The image name to be used."
     type = list
-    default  = ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
+    default  = ["ubuntu-focal-20.04-nogui"]
 }
 
 variable "flavor_name" {
@@ -32,6 +32,6 @@ variable "security_groups" {
 }
 variable "VM_group" {
     description = "Group to add VMs to for ansible"
-    default = "Meerkat_storage"
+    default = "storage"
 }
 	

@@ -1,5 +1,15 @@
 #!/bin/bash
 
+
+
+while getopts "p:s:" arg; do
+        case $arg in
+                p) storage_path=$OPTARG;;
+		s) storage_type=$OPTARG
+        esac
+done
+
+
 run_benchmark () {
 	echo -------------------------------------------------------
 	echo $file_number x $file_size MB files
@@ -18,25 +28,18 @@ run_benchmark () {
 }
 
 send_data() {
-	local metric=$1
-	local result=$2
-
-	"curl -H 'Content-Type: application/json' -d '{"metric":"'$metric'","value":"'$result'","tags":{"flavor":"'$flavor'", "image":"'$image'","test_type":"'$test_size'", "storage_type":"'$storage_type'"}}' $DB"
-        #echo "curl -H 'Content-Type: application/json' -d '{"metric":"$metric","value":"$result","tags":{"flavor":"$flavor", "image":"$image","test_type":"$test_size", "storage_type":"$storage_type"}}' $DB"
+	curl -d 'terra3,image='"$image"',flavor='"$flavor"',file_size='"$units"',storage_type='"$storage_type"' seqw='"$seqw"',seqr='"$seqr"',randw='"$randw"',randr='"$randr"'' -X POST $DB
 }
 
 
 benchmark_and_send_data () {
 	file_number=$1
 	file_size=$2
-	test_size=$3
-        storage_type=$4
+	units=$3
 
 	run_benchmark
-	send_data "sequential_write" "$seqw"
-	send_data "sequential_read" "$seqr"
-	send_data "random_write" "$randw"
-	send_data "random_read" "$randr"
+	send_data
+
 }
 
 # Get VM infor
@@ -46,10 +49,12 @@ vm_info=$(openstack server show $server_UUID --os-cloud openstack)
 flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
 image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
-
 DB="http://{{ db_ip }}:{{ db_port }}/write"
 
-benchmark_and_send_data "1000" "0.001" "kb" "local"
-benchmark_and_send_data "1000" "1" "mb" "local"
-benchmark_and_send_data "10" "1000" "gb" "local"
+cp sysbench.sh $storage_path
+cd $storage_path
+
+benchmark_and_send_data "1000" "0.001" "kb"
+benchmark_and_send_data "1000" "1" "mb"
+benchmark_and_send_data "10" "1000" "gb"
 
