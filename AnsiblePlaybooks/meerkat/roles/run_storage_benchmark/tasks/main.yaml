@@ -1,5 +1,5 @@
 - name: Run benchmark
-  shell: ./benchmark.sh
+  shell: ./benchmark.sh -p /home/diz41711 -s local
   register: script_output
 
 - name: Print script_output
