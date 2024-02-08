@@ -26,10 +26,9 @@
     src: /dev/vdb
   become: true
 
-
-  #- name: change owner
-  #  shell: chown diz41711 /mnt/volume
-  #  become: true
+- name: change owner
+  shell: chown diz41711 /mnt/volume
+  become: true
 
  
 

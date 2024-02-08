@@ -1,14 +1,11 @@
 #!/bin/bash
 
-
-
 while getopts "p:s:" arg; do
         case $arg in
                 p) storage_path=$OPTARG;;
 		s) storage_type=$OPTARG
         esac
 done
-
 
 run_benchmark () {
 	echo -------------------------------------------------------
@@ -24,13 +21,11 @@ run_benchmark () {
 	echo Seq read: $seqr MB/s
 	echo Rand write: $randw MB/s
 	echo Rand read: $randr MB/s
-
 }
 
 send_data() {
 	curl -d 'terra3,image='"$image"',flavor='"$flavor"',file_size='"$units"',storage_type='"$storage_type"' seqw='"$seqw"',seqr='"$seqr"',randw='"$randw"',randr='"$randr"'' -X POST $DB
 }
-
 
 benchmark_and_send_data () {
 	file_number=$1
@@ -39,7 +34,6 @@ benchmark_and_send_data () {
 
 	run_benchmark
 	send_data
-
 }
 
 # Get VM infor
