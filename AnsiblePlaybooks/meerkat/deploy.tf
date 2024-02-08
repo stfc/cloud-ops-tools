@@ -5,12 +5,17 @@ terraform {
       source  = "terraform-provider-openstack/openstack"
       version = "~> 1.53.0"
     }
+    ansible = {
+      source = "ansible/ansible"
+      version = "~> 1.1.0"
+    }
   }
 }
 
 provider "openstack" {
   cloud = "openstack"	# Uses the section called “openstack” from our app creds
 }
+
 
 
 locals {
@@ -31,12 +36,12 @@ resource "openstack_compute_instance_v2" "Instance" {
   metadata = {
     group = var.VM_group
   }
-    provisioner "local-exec" {
-         command = "ANSIBLE_HOST_KEY_CHECKING=False ansible -m wait_for_connection -i staging-openstack.yaml ${self.name}"
-    }
-    provisioner "local-exec" {
-         command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${self.name} meerkat.yaml --tags storage"
-    }
+#    provisioner "local-exec" {
+#         command = "ANSIBLE_HOST_KEY_CHECKING=False ansible -m wait_for_connection -i staging-openstack.yaml ${self.name}"
+#    }
+#    provisioner "local-exec" {
+#         command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${self.name} meerkat.yaml --tags storage"
+#    }
 }
 
 resource "openstack_blockstorage_volume_v3" "volumes" {
@@ -50,6 +55,7 @@ resource "openstack_blockstorage_volume_v3" "volumes" {
 
 locals {
   vm_ids = [ for val in openstack_compute_instance_v2.Instance : val.id]
+  vm_names = [ for val in openstack_compute_instance_v2.Instance : val.name]
   volume_ids = [ for val in openstack_blockstorage_volume_v3.volumes : val.id]
 }
 
@@ -57,6 +63,38 @@ resource "openstack_compute_volume_attach_v2" "vol_attach" {
   count = length(openstack_compute_instance_v2.Instance)
   instance_id = local.vm_ids[count.index]
   volume_id = local.volume_ids[count.index]
+
+     provisioner "local-exec" {
+        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} /home/diz41711/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml --tags storage"
+   }
 }
+
+#resource "openstack_compute_volume_attach_v2" "vol_attach" {
+#  count = length(openstack_compute_instance_v2.Instance)
+#  instance_id = local.vm_ids[count.index]
+#  volume_id = local.volume_ids[count.index]
+#}
+
+#locals {
+#  vm_names = [ for val in openstack_compute_instance_v2.Instance: val.id]
+#}
+
+#resource "ansible_playbook" "playbook" {
+#  playbook = "/home/diz41711/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml"
+#  name = "meerkat-l3.tiny-ubuntu-focal-20.04-nogui"
+#  groups = [ var.VM_group ]
+#  tags = [ "storage" ]
+#  verbosity = 3
+#}
+
+
+
+
+
+
+
+
+
+
 
 
