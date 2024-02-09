@@ -82,3 +82,14 @@
     ansible_command_timeout: 180
   roles:
     - interfaces
+
+- name: Write config to startup on disk
+  hosts: switches
+  connection: paramiko
+  gather_facts: false
+  vars:
+    ansible_host_key_checking: false
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_become_password: "{{ ansible_password }}"
+  roles:
+    - save_config
