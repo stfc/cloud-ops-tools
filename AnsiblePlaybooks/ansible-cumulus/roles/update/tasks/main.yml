@@ -26,11 +26,6 @@
   ansible.builtin.wait_for_connection:
     timeout: 3600
     delay: 15
-# - name: Reboot to apply updates
-#   become: true
-#   ansible.builtin.reboot:
-#     msg: "Switch rebooted by Ansible"
-#     reboot_timeout: 3600
 
 - ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
 
