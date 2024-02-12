@@ -50,7 +50,8 @@
                             },
                             'bridge': {
                               'domain': [ {
-                                'id': 'br_default'
+                                'id': 'br_default',
+                                'access': item.vlan
                               } ]
                             }
                           } ] }}"
