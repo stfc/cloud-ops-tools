@@ -1,7 +1,10 @@
 ---
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+  when: remote_inventory is not defined
+
 - name: check if node already configured for interfaces component
   ansible.builtin.meta: end_host
-  when: configured_interfaces | default(true)
+  when: configured_interfaces | default(true)  and remote_inventory["configured_interfaces"]
 
 - name: build breakoutports dictionary
   ansible.builtin.set_fact:
@@ -51,8 +54,6 @@
     data: "{{ bridge_interface_dict }}"
 
 - ansible.builtin.include_tasks: "common/tasks/apply_revision.yml"
-
-- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
 
 - name: set configured interfaces variable
   ansible.builtin.set_fact:

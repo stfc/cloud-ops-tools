@@ -1,0 +1,2 @@
+---
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"

@@ -1,7 +1,10 @@
 ---
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+  when: remote_inventory is not defined
+
 - name: check if node already configured for service component
   ansible.builtin.meta: end_host
-  when: configured_service | default(true)
+  when: configured_service | default(true)  and remote_inventory["configured_service"]
 
 - ansible.builtin.include_tasks: "common/tasks/new_revision.yml"
 
@@ -50,8 +53,6 @@
           server: "{{ ntp_servers }}"
 
 - ansible.builtin.include_tasks: "common/tasks/apply_revision.yml"
-
-- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
 
 - name: set configured service flag variable
   ansible.builtin.set_fact:
