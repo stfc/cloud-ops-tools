@@ -4,7 +4,8 @@
 
 - name: check if node already configured for system component
   ansible.builtin.meta: end_host
-  when: configured_system | default(true)  and remote_inventory["configured_system"]
+  when: configured_system | default(true)
+        and remote_inventory["configured_system"]
 
 - name: Output message
   debug:

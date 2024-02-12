@@ -4,32 +4,47 @@
 
 - name: check if node already configured for router component
   ansible.builtin.meta: end_host
-  when: configured_router | default(true)  and remote_inventory["configured_router"]
+  when: configured_router | default(true)
+        and remote_inventory["configured_router"]
 
 - name: build north bgp_neighbors
   ansible.builtin.set_fact:
-    bgp_neighbors: "{{ bgp_neighbors|default( [ ] ) + [ { 'id': item , 'peer_group': north_peer_group, 'type': 'unnumbered' } ] }}"
+    bgp_neighbors: "{{ bgp_neighbors|default( [ ] ) + [ {
+                    'id': item ,
+                    'peer_group': north_peer_group,
+                    'type': 'unnumbered'
+                  } ] }}"
   with_items: "{{ north_interfaces | default([]) }}"
 
 - name: build south bgp_neighbors
   ansible.builtin.set_fact:
-    bgp_neighbors: "{{ bgp_neighbors|default( [ ] ) + [ { 'id': item , 'peer_group': south_peer_group, 'type': 'unnumbered',  } ] }}"
+    bgp_neighbors: "{{ bgp_neighbors|default( [ ] ) + [ {
+                    'id': item ,
+                    'peer_group': south_peer_group,
+                    'type': 'unnumbered'
+                  } ] }}"
   with_items: "{{ south_interfaces | default([]) }}"
 
 - name: setup ipv4 route exports
   ansible.builtin.set_fact:
-    bgp_ipv4_networks: "{{ bgp_ipv4_networks|default([]) + [ { 'id': lo_ip } ] }}"
+    bgp_ipv4_networks: "{{ bgp_ipv4_networks|default([]) + [ {
+                        'id': lo_ip
+                      } ] }}"
   when: lo_ip is defined
 
 - name: setup ipv4 route exports
   ansible.builtin.set_fact:
-    bgp_ipv4_networks: "{{ bgp_ipv4_networks|default([]) + [ { 'id': item.network } ] }}"
+    bgp_ipv4_networks: "{{ bgp_ipv4_networks|default([]) + [ {
+                        'id': item.network
+                      } ] }}"
   with_items: "{{ vlan_interfaces | default([]) }}"
   when: item.network | ansible.utils.ipaddr('ipv4')
 
 - name: setup ipv6 route exports
   ansible.builtin.set_fact:
-    bgp_ipv6_networks: "{{ bgp_ipv6_networks|default([]) + [ { 'id': item.network } ] }}"
+    bgp_ipv6_networks: "{{ bgp_ipv6_networks|default([]) + [ {
+                        'id': item.network
+                      } ] }}"
   with_items: "{{ vlan_interfaces | default([]) }}"
   when: item.network | ansible.utils.ipv6
 
@@ -69,18 +84,36 @@
 
 - name: merge in ipv4 and ipv6 address families
   ansible.builtin.set_fact:
-    bgp_address_family: "{{ bgp_address_family | ansible.builtin.combine(bgp_ipv4_address_family | default({}), bgp_ipv6_address_family | default({}), recursive=true) }}"
+    bgp_address_family: "{{ bgp_address_family |
+                          ansible.builtin.combine(
+                            bgp_ipv4_address_family | default({}),
+                            bgp_ipv6_address_family | default({}),
+                            recursive=true
+                          ) }}"
 
 - name: build north rules
   ansible.builtin.set_fact:
-    north_rules_ipv4: "{{ north_rules_ipv4 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id}] }] }}"
+    north_rules_ipv4: "{{ north_rules_ipv4 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id
+                        }]
+                       }] }}"
   with_items: "{{ north_prefix_list | default([]) }}"
   when:
     - item.max_prefix_len is not defined
     - item.id | ansible.utils.ipv4
 - name: build north rules
   ansible.builtin.set_fact:
-    north_rules_ipv4: "{{ north_rules_ipv4 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id, 'max_prefix_len': item.max_prefix_len }] }] }}"
+    north_rules_ipv4: "{{ north_rules_ipv4 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id,
+                          'max_prefix_len': item.max_prefix_len
+                        }]
+                      }] }}"
   with_items: "{{ north_prefix_list | default([]) }}"
   when:
     - item.max_prefix_len is defined
@@ -88,14 +121,27 @@
 
 - name: build south rules
   ansible.builtin.set_fact:
-    south_rules_ipv4: "{{ south_rules_ipv4 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id}] }] }}"
+    south_rules_ipv4: "{{ south_rules_ipv4 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id
+                        }]
+                      }] }}"
   with_items: "{{ south_prefix_list | default([]) }}"
   when:
     - item.max_prefix_len is not defined
     - item.id | ansible.utils.ipv4
 - name: build south rules
   ansible.builtin.set_fact:
-    south_rules_ipv4: "{{ south_rules_ipv4 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id, 'max_prefix_len': item.max_prefix_len }] }] }}"
+    south_rules_ipv4: "{{ south_rules_ipv4 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id,
+                          'max_prefix_len': item.max_prefix_len
+                        }]
+                      }] }}"
   with_items: "{{ south_prefix_list | default ([]) }}"
   when:
     - item.max_prefix_len is defined
@@ -104,8 +150,8 @@
 - name: build north prefix list dict
   ansible.builtin.set_fact:
     north_ipv4_prefix_list_dict:
-        - id: "{{ north_peer_group }}_prefix_list_ipv4"
-          rule: "{{ north_rules_ipv4 }}"
+      - id: "{{ north_peer_group }}_prefix_list_ipv4"
+        rule: "{{ north_rules_ipv4 }}"
   when: north_rules_ipv4 is defined
 
 - name: build south prefix list dict
@@ -117,19 +163,34 @@
 
 - name: combine prefix lists
   ansible.builtin.set_fact:
-    prefix_list_ipv4_dict: "{{ south_ipv4_prefix_list_dict | default([]) + north_ipv4_prefix_list_dict | default([])}}"
-  when: (south_ipv4_prefix_list_dict is defined) or (north_ipv4_prefix_list_dict is defined)
+    prefix_list_ipv4_dict: "{{ south_ipv4_prefix_list_dict | default([])
+                            + north_ipv4_prefix_list_dict | default([])}}"
+  when: (south_ipv4_prefix_list_dict is defined)
+        or (north_ipv4_prefix_list_dict is defined)
 
 - name: build north rules
   ansible.builtin.set_fact:
-    north_rules_ipv6: "{{ north_rules_ipv6 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id}] }] }}"
+    north_rules_ipv6: "{{ north_rules_ipv6 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id
+                        }]
+                      }] }}"
   with_items: "{{ north_prefix_list | default([]) }}"
   when:
     - item.max_prefix_len is not defined
     - item.id | ansible.utils.ipv6
 - name: build north rules
   ansible.builtin.set_fact:
-    north_rules_ipv6: "{{ north_rules_ipv6 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id, 'max_prefix_len': item.max_prefix_len }] }] }}"
+    north_rules_ipv6: "{{ north_rules_ipv6 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id,
+                          'max_prefix_len': item.max_prefix_len
+                        }]
+                      }] }}"
   with_items: "{{ north_prefix_list | default([]) }}"
   when:
     - item.max_prefix_len is defined
@@ -137,14 +198,27 @@
 
 - name: build south rules
   ansible.builtin.set_fact:
-    south_rules_ipv6: "{{ south_rules_ipv6 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id}] }] }}"
+    south_rules_ipv6: "{{ south_rules_ipv6 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id
+                        }]
+                      }] }}"
   with_items: "{{ south_prefix_list | default([]) }}"
   when:
     - item.max_prefix_len is not defined
     - item.id | ansible.utils.ipv6
 - name: build south rules
   ansible.builtin.set_fact:
-    south_rules_ipv6: "{{ south_rules_ipv6 | default([]) + [{ 'id': item.index, 'action': 'permit', 'match': [ { 'id': item.id, 'max_prefix_len': item.max_prefix_len }] }] }}"
+    south_rules_ipv6: "{{ south_rules_ipv6 | default([]) + [{
+                        'id': item.index,
+                        'action': 'permit',
+                        'match': [ {
+                          'id': item.id,
+                          'max_prefix_len': item.max_prefix_len
+                        }]
+                      }] }}"
   with_items: "{{ south_prefix_list | default ([]) }}"
   when:
     - item.max_prefix_len is defined
@@ -153,8 +227,8 @@
 - name: build north prefix list dict
   ansible.builtin.set_fact:
     north_ipv6_prefix_list_dict:
-        - id: "{{ north_peer_group }}_prefix_list_ipv6"
-          rule: "{{ north_rules_ipv6 }}"
+      - id: "{{ north_peer_group }}_prefix_list_ipv6"
+        rule: "{{ north_rules_ipv6 }}"
   when: north_rules_ipv6 is defined
 
 - name: build south prefix list dict
@@ -166,15 +240,18 @@
 
 - name: combine prefix lists
   ansible.builtin.set_fact:
-    prefix_list_ipv6_dict: "{{ south_ipv6_prefix_list_dict | default([]) + north_ipv6_prefix_list_dict | default([])}}"
-  when: (south_ipv6_prefix_list_dict is defined) or (north_ipv6_prefix_list_dict is defined)
-
+    prefix_list_ipv6_dict: "{{ south_ipv6_prefix_list_dict | default([])
+                            + north_ipv6_prefix_list_dict | default([])}}"
+  when: (south_ipv6_prefix_list_dict is defined)
+        or (north_ipv6_prefix_list_dict is defined)
 
 
 - name: combine prefix lists
   ansible.builtin.set_fact:
-    prefix_lists: "{{ prefix_list_ipv6_dict | default([]) + prefix_list_ipv4_dict | default([]) }}"
-  when: (prefix_list_ipv6_dict is defined) or (prefix_list_ipv4_dict is defined)
+    prefix_lists: "{{ prefix_list_ipv6_dict | default([])
+                  + prefix_list_ipv4_dict | default([]) }}"
+  when: (prefix_list_ipv6_dict is defined)
+        or (prefix_list_ipv4_dict is defined)
 
 - name: build north policy route_map
   ansible.builtin.set_fact:
@@ -230,8 +307,14 @@
 
 - name: combine into route maps
   ansible.builtin.set_fact:
-    route_maps: "{{  south_ipv6_route_map | default([]) +  south_ipv4_route_map | default([]) +  north_ipv6_route_map | default([]) +  north_ipv4_route_map | default({}) }}"
-  when: (south_ipv6_route_map is defined) or (south_ipv4_route_map is defined) or (north_ipv6_route_map is defined) or (north_ipv4_route_map is defined)
+    route_maps: "{{  south_ipv6_route_map | default([])
+                  +  south_ipv4_route_map | default([])
+                  +  north_ipv6_route_map | default([])
+                  +  north_ipv4_route_map | default({}) }}"
+  when: (south_ipv6_route_map is defined)
+        or (south_ipv4_route_map is defined)
+        or (north_ipv6_route_map is defined)
+        or (north_ipv4_route_map is defined)
 
 - name: combine into policy dict
   ansible.builtin.set_fact:
@@ -307,8 +390,20 @@
 
 - name: combine north route_maps
   ansible.builtin.set_fact:
-    north_address_family: "{{ south_peer_group_ipv6_route_map_dict | default({}) | combine(south_peer_group_ipv4_route_map_dict | default({}), north_peer_group_ipv4_route_map_dict | default({}), north_peer_group_ipv6_route_map_dict | default({}) , recursive=true)}}"
-  when: (south_peer_group_ipv6_route_map_dict is defined) or (south_peer_group_ipv4_route_map_dict is defined) or (north_peer_group_ipv6_route_map_dict is defined) or (north_peer_group_ipv4_route_map_dict is defined)
+    north_address_family: "{{ south_peer_group_ipv6_route_map_dict
+                              | default({})
+                            | combine(
+                              south_peer_group_ipv4_route_map_dict
+                                | default({}),
+                              north_peer_group_ipv4_route_map_dict
+                                | default({}),
+                              north_peer_group_ipv6_route_map_dict
+                                | default({}),
+                              recursive=true)}}"
+  when: (south_peer_group_ipv6_route_map_dict is defined)
+        or (south_peer_group_ipv4_route_map_dict is defined)
+        or (north_peer_group_ipv6_route_map_dict is defined)
+        or (north_peer_group_ipv4_route_map_dict is defined)
 
 - name: configure bgp router
   nvidia.nvue.vrf:
@@ -335,7 +430,10 @@
                 remote_as: "{{ north_remote_as }}"
                 capabilities:
                   extended_nexthop: 'on'
-                address_family: "{{ { 'l2vpn_evpn': {'enable': 'on'} } | combine(north_address_family | default({}) ) }}"
+                address_family: "{{ { 'l2vpn_evpn': {'enable': 'on'} } |
+                                  combine(north_address_family
+                                    | default({})
+                                  ) }}"
     state: merged
     revid: "{{ revision.revid }}"
 

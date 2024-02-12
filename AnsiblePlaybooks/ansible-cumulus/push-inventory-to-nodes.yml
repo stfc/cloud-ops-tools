@@ -7,7 +7,7 @@
     ansible_become_password: "{{ ansible_password }}"
   roles:
     - push_nvue_facts
-    
+
 - name: Fetch config from nodes
   hosts: switches
   gather_facts: false

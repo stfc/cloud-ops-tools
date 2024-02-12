@@ -1,6 +1,7 @@
+---
 ansible_host: 10.5.0.32
 hostname: lfsw14
 system_location: r26rack887
 vlan_interfaces:
--   id: '450'
+  - id: '450'
     network: 172.16.208.192/27

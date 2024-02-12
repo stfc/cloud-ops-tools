@@ -7,4 +7,3 @@ north_prefix_list:
   - {index: 5, id: "130.246.80.0/22"}
 south_prefix_list:
   - {index: 1, id: "0.0.0.0/16", max_prefix_len: 16}
-  

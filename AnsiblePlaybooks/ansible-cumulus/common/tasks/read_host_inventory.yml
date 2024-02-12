@@ -16,7 +16,9 @@
 
 - name: interpret remote file
   ansible.builtin.set_fact:
-    remote_inventory: '{{ remote_inventory_raw.content | b64decode | from_yaml }}'
+    remote_inventory: '{{ remote_inventory_raw.content
+                      | b64decode
+                      | from_yaml }}'
 
 - name: output
   debug:

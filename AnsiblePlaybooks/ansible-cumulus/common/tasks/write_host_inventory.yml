@@ -1,13 +1,15 @@
 ---
 - name: combine into inventory
   vars:
-      ansible_connection: paramiko
+    ansible_connection: paramiko
   ansible.builtin.set_fact:
-    remote_inventory: "{{ remote_inventory | default({}) | ansible.builtin.combine(temp_fact) }}"
+    remote_inventory: "{{ remote_inventory
+                      | default({})
+                      | ansible.builtin.combine(temp_fact) }}"
 
 - name: Update inventory
   vars:
-      ansible_connection: paramiko
+    ansible_connection: paramiko
   ansible.builtin.copy:
     dest: "stfc_facts.yml"
     content: "{{ remote_inventory | to_nice_yaml }}"

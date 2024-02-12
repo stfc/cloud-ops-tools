@@ -9,7 +9,10 @@
 - name: Reinstall cumulus
   become: true
   ansible.builtin.shell:
-    cmd: "yes | onie-install -a -i {{ cumulus_os_image_path }}/{{ cumulus_os_image }} -z {{cumulus_ztp_script}} "
+    cmd: "yes | onie-install -a -i \
+          {{ cumulus_os_image_path }}/\
+          {{ cumulus_os_image }} \
+          -z {{cumulus_ztp_script}}"
   register: onie_result
 
 - name: Reboot to apply new image
