@@ -1,5 +1,4 @@
 ansible_host: 10.5.0.164
-bootstrapped: true
 breakout_ports:
 -   breakout: 4x
     id: swp1
@@ -35,16 +34,8 @@ bridge_interfaces:
 - swp6
 - swp7
 - swp8
-configured_bridge: true
-configured_evpn: true
-configured_interfaces: true
-configured_router: true
-configured_service: true
-configured_system: true
 hostname: lfsw34
-reinstall: false
 system_location: r89rack185
-update: false
 vlan_interfaces:
 -   id: '450'
     network: 172.16.196.32/27
