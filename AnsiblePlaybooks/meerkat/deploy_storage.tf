@@ -36,7 +36,6 @@ resource "openstack_compute_instance_v2" "Instance" {
   }
 }
 
-
 resource "openstack_blockstorage_volume_v3" "volumes" {
   count = length(local.my_product)
   name = format("vol-%02d", count.index + 1)

@@ -12,16 +12,13 @@
     - update_machine
 
 - hosts: storage
-<<<<<<< HEAD
-  name: Run storage playbook
-=======
   name: Run storage roles
->>>>>>> Creates volume before benchmark
   vars_files:
      - ./vars/storage.yaml
+  
   roles:
+    - role: setup_openstack
     - role: update_machine
-    - role: move_clouds_yaml
     - role: setup_storage_benchmark
     - role: attach_volume
     - role: run_storage_benchmark
@@ -30,8 +27,7 @@
 - hosts: compute
   name: Run Compute roles
   vars_files:
-     - ./vars/compute.yaml
+     - ./vars/hepscore.yaml
   roles:
     - role: update_machine
-    - role: move_clouds_yaml
     - role: hepscore
