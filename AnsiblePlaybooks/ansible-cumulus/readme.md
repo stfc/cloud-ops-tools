@@ -2,6 +2,8 @@ This is for configuring STFC Cloud switches with Cumulus 5.x
 
 It currently depends on using Alex Dibbo's version of the ansible nvue collection which is installed using the requirements.yml
 
+See documentation https://galaxy.ansible.com/ui/repo/published/nvidia/nvue/docs/ for explanations of the data structures used
+
 # Getting Started
 
 First install ansible into a virtual environment
