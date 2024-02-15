@@ -1,45 +1,37 @@
+---
 ansible_host: 10.5.0.149
-bootstrapped: true
 breakout_ports:
--   breakout: 4x
+  - breakout: 4x
     id: swp1
--   breakout: 4x
+  - breakout: 4x
     id: swp2
--   breakout: 4x
+  - breakout: 4x
     id: swp3
--   breakout: 4x
+  - breakout: 4x
     id: swp4
 bridge_interfaces:
-- swp1s0
-- swp1s1
-- swp1s2
-- swp1s3
-- swp2s0
-- swp2s1
-- swp2s2
-- swp2s3
-- swp3s0
-- swp3s1
-- swp3s2
-- swp3s3
-- swp4s0
-- swp4s1
-- swp4s2
-- swp4s3
-- swp5
-- swp6
-- swp7
-- swp8
-configured_bridge: true
-configured_evpn: true
-configured_interfaces: true
-configured_router: true
-configured_service: true
-configured_system: true
+  - swp1s0
+  - swp1s1
+  - swp1s2
+  - swp1s3
+  - swp2s0
+  - swp2s1
+  - swp2s2
+  - swp2s3
+  - swp3s0
+  - swp3s1
+  - swp3s2
+  - swp3s3
+  - swp4s0
+  - swp4s1
+  - swp4s2
+  - swp4s3
+  - swp5
+  - swp6
+  - swp7
+  - swp8
 hostname: lfsw33
-reinstall: false
 system_location: r89rack187
-update: false
 vlan_interfaces:
--   id: '450'
+  - id: '450'
     network: 172.16.196.64/27

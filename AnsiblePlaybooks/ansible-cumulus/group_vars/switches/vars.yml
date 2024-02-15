@@ -11,8 +11,8 @@ syslog_servers:
   - {id: "10.0.1.16"}
   - {id: "10.0.1.17"}
 snmp_readonly_community_access:
-    - {id: "10.1.11.147/32"}
-    - {id: "10.5.0.252/32"}
+  - {id: "10.1.11.147/32"}
+  - {id: "10.5.0.252/32"}
 system_contact: "Tier1 Fabric/Cloud Team"
 bridge_pvid: 450
 cumulus_os_image_path: "http://10.0.1.2:81/mellanox/cumulus/"

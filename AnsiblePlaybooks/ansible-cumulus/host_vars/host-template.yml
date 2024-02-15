@@ -1,7 +1,8 @@
-ansible_host: # management ip of host
-hostname: # short hostname of host
-reinstall: false # set to true to trigger reinstallation of switch
-system_location: # system location
+---
+ansible_host:  # management ip of host
+hostname:  # short hostname of host
+reinstall: false  # set to true to trigger reinstallation of switch
+system_location:  # system location
 vlan_interfaces:
--   id: '450'
-    network: # south facing subnet for switch to use
+  - id: '450'
+    network:  # south facing subnet for switch to use

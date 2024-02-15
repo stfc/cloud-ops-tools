@@ -1,16 +1,41 @@
 ---
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+  when: remote_inventory is not defined
+
 - name: check if node already configured for bridge component
   ansible.builtin.meta: end_host
   when: configured_bridge | default(true)
+        and remote_inventory["configured_bridge"]
 
 - name: build vlan mappings
   ansible.builtin.set_fact:
-    vlan_mappings: "{{ vlan_mappings|default( [ { 'id': bridge_pvid } ] ) + [ { 'id': item.id , 'vni': [ { 'id': item.vni, 'flooding': {'enable': 'auto'} } ] } ] }}"
+    vlan_mappings: "{{ vlan_mappings|default(
+                    [ {
+                      'id': bridge_pvid
+                    } ] )
+                    + [ {
+                      'id': item.id ,
+                      'vni': [ {
+                        'id': item.vni,
+                        'flooding': {
+                          'enable': 'auto'
+                        }
+                      } ]
+                    } ] }}"
   with_items: "{{ vlans }}"
 
 - name: build vlan mappings
   ansible.builtin.set_fact:
-    vlan_mappings: "{{ vlan_mappings|default([] ) + [ { 'id': item , 'vni': [ { 'id': item, 'flooding': {'enable': 'auto'} } ] } ] }}"
+    vlan_mappings: "{{ vlan_mappings|default([] )
+                   + [ {
+                    'id': item ,
+                    'vni': [ {
+                      'id': item,
+                      'flooding': {
+                        'enable': 'auto'
+                      }
+                    } ]
+                  } ] }}"
   loop: "{{ range(vni_vlan_start, vni_vlan_end) | list() }}"
 
 - ansible.builtin.include_tasks: "common/tasks/new_revision.yml"
@@ -26,8 +51,6 @@
         vlan: "{{ vlan_mappings }}"
 
 - ansible.builtin.include_tasks: "common/tasks/apply_revision.yml"
-
-- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
 
 - name: set configured bridge variable
   ansible.builtin.set_fact:

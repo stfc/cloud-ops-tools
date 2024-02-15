@@ -1,7 +1,11 @@
 ---
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+  when: remote_inventory is not defined
+
 - name: check if node already configured for system component
   ansible.builtin.meta: end_host
   when: configured_system | default(true)
+        and remote_inventory["configured_system"]
 
 - name: Output message
   debug:
@@ -16,7 +20,7 @@
     data:
       hostname: "{{ hostname }}"
       timezone: "Etc/UTC"
-      reboot: 
+      reboot:
         mode: "fast"
       message:
         post_login: |
@@ -29,7 +33,7 @@
           #                                                     #
           #######################################################
           #####################################################################################
-              You are successfully logged in to: {{ fqdn }}             
+              You are successfully logged in to: {{ fqdn }}
           #####################################################################################
           All changes should be made using the cloud ansible repo
         pre_login: |
@@ -49,7 +53,7 @@
     revid: "{{ revision.revid }}"
     data:
       - id: "eth0"
-        link: 
+        link:
           state:
             - id: "up"
         ip:
@@ -77,8 +81,6 @@
                   type: "ipv4-address"
 
 - ansible.builtin.include_tasks: "common/tasks/apply_revision.yml"
-
-- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
 
 - name: set configured system variable
   ansible.builtin.set_fact:
