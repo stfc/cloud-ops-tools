@@ -21,7 +21,18 @@ locals {
     "${val[0]}-${val[1]}" => val}
 }
 
+
+resource "openstack_sharedfilesystem_share_v2" "shares" {
+#  count = length(openstack_compute_instance_v2.Instance)
+  count = length(local.my_product)
+  name             = format("share-%02d", count.index + 1)
+  description      = "manila terraform share"
+  share_proto      = "CEPHFS"
+  size             = 15
+}
+
 resource "openstack_compute_instance_v2" "Instance" {
+  depends_on = [openstack_sharedfilesystem_share_v2.shares]
   for_each = local.my_product
   name = "${var.instance_name}-${each.value[0]}-${each.value[1]}"
   image_name = each.value[1]
@@ -36,25 +47,39 @@ resource "openstack_compute_instance_v2" "Instance" {
   }
 }
 
-resource "openstack_sharedfilesystem_share_v2" "shares" {
+locals {
+  share_ids = [ for val in openstack_sharedfilesystem_share_v2.shares : val.id]
+
+}
+
+resource "random_password" "access_names" {
   count = length(openstack_compute_instance_v2.Instance)
-  name             = format("share-%02d", count.index + 1)
-  description      = "manila terraform share"
-  share_proto      = "CEPHFS"
-  size             = 15
+  length = 16
+  special = false
 }
 
 locals {
-  share_ids = [ for val in openstack_sharedfilesystem_share_v2.shares : val.id]
+  access_names = [for val in random_password.access_names : val.result]
 }
 
 resource "openstack_sharedfilesystem_share_access_v2" "share_access" {
   count = length(openstack_compute_instance_v2.Instance)
   share_id     = local.share_ids[count.index]
   access_type  = "cephx"
+  access_to = local.access_names[count.index]
+  access_level = "rw"
+  depends_on = [openstack_sharedfilesystem_share_v2.shares]
+}
+
+resource "openstack_sharedfilesystem_share_access_v2" "share_access_2" {
+  count = length(openstack_compute_instance_v2.Instance)
+  share_id     = local.share_ids[count.index]
+  access_type  = "cephx"
   access_to    = "diz41711"
   access_level = "rw"
+  depends_on = [openstack_sharedfilesystem_share_v2.shares]
 }
+
 
 locals {
   access_keys = [ for val in openstack_sharedfilesystem_share_access_v2.share_access : val.access_key]
@@ -62,7 +87,6 @@ locals {
   access_locations = [ for val in openstack_sharedfilesystem_share_v2.shares : val.export_locations]
 
 }
-
 
 resource "openstack_blockstorage_volume_v3" "volumes" {
   count = length(local.my_product)
@@ -81,6 +105,7 @@ locals {
 
 resource "openstack_compute_volume_attach_v2" "vol_attach" {
   count = length(openstack_compute_instance_v2.Instance)
+  depends_on = [openstack_blockstorage_volume_v3.volumes]
   instance_id = local.vm_ids[count.index]
   volume_id = local.volume_ids[count.index]
 
@@ -89,10 +114,9 @@ resource "openstack_compute_volume_attach_v2" "vol_attach" {
     }
 }
 
-
-
 resource "null_resource" "provisioner" {
   count = length(openstack_compute_instance_v2.Instance)
+  depends_on = [openstack_sharedfilesystem_share_access_v2.share_access]
 
   connection {
     type = "ssh"
@@ -103,14 +127,10 @@ resource "null_resource" "provisioner" {
   provisioner "remote-exec" {
     inline = [
       "touch /home/diz41711/manila.sh",
-#      "echo sudo apt install -y python3-manilaclient >> /home/diz41711/manila.sh",
-#      "echo sudo apt install -y ceph-common >> /home/diz41711/manila.sh",
-#      "echo sudo mkdir /mnt/manila >> /home/diz41711/manila.sh",
       "touch manila.sh",
       "chmod +x manila.sh",
       "echo #!/bin/bash >> /home/diz41711/manila.sh",
-      "echo sudo mount -t ceph ${local.access_locations[count.index][0].path} -o name=diz41711,secret=${local.access_keys[count.index]} /mnt/manila >> /home/diz41711/manila.sh",
-#      "echo sudo chown diz41711 /mnt/manila >> /home/diz41711/manila.sh"
+      "echo sudo mount -t ceph ${local.access_locations[count.index][0].path} -o name=${local.access_names[count.index]},secret=${local.access_keys[count.index]} /mnt/manila >> /home/diz41711/manila.sh",
       ]
     }
 }

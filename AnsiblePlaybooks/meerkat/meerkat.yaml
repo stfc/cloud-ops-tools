@@ -21,7 +21,7 @@
     - role: setup_storage_benchmark
     - role: attach_volume
     - role: attach_manila
-    # - role: run_storage_benchmark
+    - role: run_storage_benchmark
 
 
 - hosts: compute

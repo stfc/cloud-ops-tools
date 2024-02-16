@@ -34,7 +34,7 @@
 
 - name: Install ceph-kernel
   dnf:
-    name: ceph-common
+    name: libcephfs2
     state: present
   become: true
   register: result
@@ -55,6 +55,6 @@
   shell: /home/diz41711/manila.sh
   become: true
 
-- name: CHnage manila folder owner
+- name: Change manila folder owner
   shell: chown diz41711 /mnt/manila
   become: true

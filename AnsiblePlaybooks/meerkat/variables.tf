@@ -16,13 +16,13 @@ variable "instance_name" {
 variable "image_name" {
     description = "The image name to be used."
     type = list
-    default  = ["ubuntu-focal-20.04-nogui", "ubuntu-focal-20.04-gui"]
+    default  = ["ubuntu-focal-20.04-nogui", "rocky-8-nogui"]
 }
 
 variable "flavor_name" {
     description = "The flavor name to be used."
     type = list
-    default  = ["l3.nano", "l3.tiny", "l3.micro"]
+    default  = ["l3.nano", "l3.micro"]
 }
 
 variable "security_groups" {
@@ -34,4 +34,9 @@ variable "VM_group" {
     description = "Group to add VMs to for ansible"
     default = "storage"
 }
-	
+
+variable "access_name" {
+    description = "value"
+    type = list
+    default = ["chris01", "chris02", "chris03"]
+}

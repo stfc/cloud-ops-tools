@@ -16,6 +16,10 @@
     autoclean: yes
   become: true
   when: ansible_distribution == 'Ubuntu'
+  register: result
+  until: result is not failed
+  retries: 5
+  delay: 30
 
 - name: Check if a reboot is required
   ansible.builtin.stat:

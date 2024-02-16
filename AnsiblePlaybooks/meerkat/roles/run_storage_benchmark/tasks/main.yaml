@@ -1,10 +1,11 @@
-- name: Run benchmark
+- name: Run local benchmark
   shell: ./benchmark.sh -p /home/diz41711 -s local
-  register: script_output
 
-
-- name: Run benchmark
+- name: Run volume benchmark
   shell: ./benchmark.sh -p /mnt/volume -s volume
-  register: script_output
+
+- name: Run manila benchmark
+  shell: ./benchmark.sh -p /mnt/manila -s manila
+
 
 

@@ -24,7 +24,7 @@ run_benchmark () {
 }
 
 send_data() {
-	curl -d 'terra3,image='"$image"',flavor='"$flavor"',file_size='"$units"',storage_type='"$storage_type"' seqw='"$seqw"',seqr='"$seqr"',randw='"$randw"',randr='"$randr"'' -X POST $DB
+	curl -d 'man,image='"$image"',flavor='"$flavor"',file_size='"$units"',storage_type='"$storage_type"' seqw='"$seqw"',seqr='"$seqr"',randw='"$randw"',randr='"$randr"'' -X POST $DB
 }
 
 benchmark_and_send_data () {
