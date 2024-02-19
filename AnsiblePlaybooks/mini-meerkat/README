@@ -1,0 +1,11 @@
+variables to change can be found in variables.tf
+This includes images, flavors, SSH keys, security groups
+
+To run:  
+terraform plan -out=deploy.tfplan && terraform apply "deploy.tfplan"
+
+To destroy: 
+terraform destroy --auto-approve
+
+To destroy existing and rebuild: 
+terraform destroy --auto-approve && terraform plan -out=deploy.tfplan && terraform apply "deploy.tfplan" 
