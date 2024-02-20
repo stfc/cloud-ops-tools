@@ -10,10 +10,13 @@ IMAGE=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 NUM_CORES=$(nproc)
 CPU_NAME=$(lscpu | grep 'Model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | tr " " _)
 
-START_TIME=$(jq '.environment.start_at' ./HEPscore23Beta.json | tr -d '"' | { read d; date -d "$d" +"%s" ; })
-END_TIME=$(jq '.environment.end_at' ./HEPscore23Beta.json | tr -d '"' | { read d; date -d "$d" +"%s" ; })
+RESULTS_FILE="results/*/HEPscore23Beta.json"
+
+START_TIME=$(jq '.environment.start_at' $RESULTS_FILE | tr -d '"' | { read d; date -d "$d" +"%s" ; })
+END_TIME=$(jq '.environment.end_at' $RESULTS_FILE | tr -d '"' | { read d; date -d "$d" +"%s" ; })
 
 RUN_TIME=$((END_TIME - START_TIME))
 
-SCORE=$(jq '.score' results/*/HEPscore23Beta.json)
+SCORE=$(jq '.score' $RESULTS_FILE)
+
 curl -v -H 'Content-Type: application/json' -d 'hepscore,flavour='$FLAVOR',image='$IMAGE',num_cores='$NUM_CORES',cpu_name='$CPU_NAME',UUID='$server_UUID' score='$SCORE',run_time='$RUN_TIME'' -X POST 'http://{{ db_ip }}:{{ db_port }}/write'
