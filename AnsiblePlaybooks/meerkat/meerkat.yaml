@@ -24,10 +24,11 @@
     - role: run_storage_benchmark
 
 
-- hosts: compute
+- hosts: cpu
   name: Run Compute roles
   vars_files:
      - ./vars/hepscore.yaml
   roles:
+    - role: setup_openstack
     - role: update_machine
     - role: hepscore
