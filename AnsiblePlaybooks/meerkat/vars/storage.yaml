@@ -1,3 +1,4 @@
 ---
-db_ip: "<database_IP>"
-db_port: "<database_port>" # default: 8428
+db_ip: "172.16.114.207"
+db_port: "8428" # default: 8428
+user: diz41711

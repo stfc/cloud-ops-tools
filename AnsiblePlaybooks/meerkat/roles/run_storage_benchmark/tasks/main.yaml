@@ -1,5 +1,5 @@
 - name: Run benchmark
-  shell: ./benchmark.sh -p /home/diz41711 -s local
+  shell: "./benchmark.sh -p /home/{{ user }} -s local"
   register: script_output
 
 

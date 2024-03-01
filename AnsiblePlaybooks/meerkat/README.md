@@ -16,7 +16,7 @@ Where:
 - `<KEYPAIR_NAME>` is the name of the Openstack keypair that will be used to by Meerkat to access VMs.
 
 To select which benchmark to run:
-You must change to groups called in 'staging-openstack.yaml'
+You must change the groups called in 'staging-openstack.yaml'
 
 You must also set some variables in the `vars` folder for the benchmark you want to run:
 - `db_ip`

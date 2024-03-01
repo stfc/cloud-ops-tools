@@ -1,10 +1,10 @@
 #!/bin/bash
 
 while getopts "p:s:" arg; do
-        case $arg in
-            p) storage_path=$OPTARG;;
-			s) storage_type=$OPTARG
-        esac
+	case $arg in
+		p) storage_path=$OPTARG;;
+		s) storage_type=$OPTARG
+	esac
 done
 
 run_benchmark () {
