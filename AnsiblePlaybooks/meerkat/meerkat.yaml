@@ -1,28 +1,33 @@
-- hosts: Meertkat_storage
-  tasks:
-    - name: Wait target connection to become reachable/usable
-      ansible.builtin.wait_for_connection:
-        timeout: 200
+- hosts: storage
+  name: Update Machine
+  gather_facts: false   # We may still be booting
+  pre_tasks:
+    - name: Wait for SSH to come up
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+    - name: Gather facts
+      setup:
+  roles:
+    - update_machine
 
-- hosts: Meerkat_storage
+- hosts: storage
+  name: Run storage roles
   vars_files:
      - ./vars/storage.yaml
+  
+  roles:
+    - role: setup_openstack
+    - role: update_machine
+    - role: setup_storage_benchmark
+    - role: attach_volume
+    - role: run_storage_benchmark
+
+
+- hosts: compute
+  name: Run Compute roles
+  vars_files:
      - ./vars/hepscore.yaml
   roles:
-    - role: wait_for_connection
-      tags: [ always ]
-
-    - role: setup_openstack
-      tags: [ always ]
-
     - role: update_machine
-      tags: [ always ]
-
-    - role: setup_storage_benchmark
-      tags: [ storage ]
-
-    - role: run_storage_benchmark
-      tags: [ storage ]
-
     - role: hepscore
-      tags: [ cpu ]

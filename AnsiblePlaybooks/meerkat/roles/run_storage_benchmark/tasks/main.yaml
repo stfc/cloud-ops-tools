@@ -1,8 +1,10 @@
 - name: Run benchmark
-  shell: ./benchmark.sh
+  shell: "./benchmark.sh -p /home/{{ user }} -s local"
   register: script_output
 
-- name: Print script_output
-  debug:
-    msg: "{{ script_output }}"
+
+- name: Run benchmark
+  shell: ./benchmark.sh -p /mnt/volume -s volume
+  register: script_output
+
 

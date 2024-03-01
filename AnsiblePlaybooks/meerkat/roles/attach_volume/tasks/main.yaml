@@ -1,0 +1,31 @@
+- name: Format volume
+  community.general.filesystem:
+    fstype: ext4
+    dev: /dev/vdb
+  become: true
+
+- name: Make folder for mounting
+  ansible.builtin.file:
+    path: /mnt/volume
+    state: directory
+    owner: diz41711
+    mode: '0660'
+  become: true
+
+- name: Edit fstab
+  lineinfile:
+    dest: /etc/fstab
+    line: "/dev/vdb /mnt/volume ext4 defaults 0 0"
+  become: true
+
+- name: Mount volume
+  ansible.posix.mount:
+    path: /mnt/volume
+    state: mounted
+    fstype: ext4
+    src: /dev/vdb
+  become: true
+
+- name: change owner
+  shell: chown diz41711 /mnt/volume
+  become: true

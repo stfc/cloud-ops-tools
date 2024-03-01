@@ -7,3 +7,7 @@ only_clouds:
   - "openstack"
 strict: true
 private: true
+
+groups: 
+  storage: |
+     'group' in openstack.metadata and 'storage' in openstack.metadata['group']
