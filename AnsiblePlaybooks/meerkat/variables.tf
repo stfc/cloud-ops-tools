@@ -39,4 +39,9 @@ variable "tags" {
     description = "Tags to determine which benchmark to run"
     default = "storage"
 }
+
+variable "deploy_volume" {
+    description = "Whether to deploy volumes"
+    default = 1 # 0 for don't deploy volume, 1 for deploy volume 
+}
 	
