@@ -37,7 +37,7 @@ resource "openstack_compute_instance_v2" "Instance" {
 }
 
 resource "openstack_blockstorage_volume_v3" "volumes" {
-  count = length(local.my_product)
+  count = (var.deploy_volume) * length(local.my_product)
   name = format("vol-%02d", count.index + 1)
   region = "RegionOne"
   description = "volume for benchmark testing"
@@ -51,11 +51,14 @@ locals {
 }
 
 resource "openstack_compute_volume_attach_v2" "vol_attach" {
-  count = length(openstack_compute_instance_v2.Instance)
+  count = (var.deploy_volume) * length(openstack_compute_instance_v2.Instance)
   instance_id = local.vm_ids[count.index]
   volume_id = local.volume_ids[count.index]
+}
 
+resource "null_resource" "ansible_playbook" {
+  count = length(openstack_compute_instance_v2.Instance)
      provisioner "local-exec" {
-        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} /home/diz41711/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml" #--tags storage"
+        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} /home/diz41711/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml"
    }
 }
