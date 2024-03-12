@@ -24,7 +24,12 @@ run_benchmark () {
 }
 
 send_data() {
-	curl -d 'terra3,image='"$image"',flavor='"$flavor"',file_size='"$units"',storage_type='"$storage_type"' seqw='"$seqw"',seqr='"$seqr"',randw='"$randw"',randr='"$randr"'' -X POST $DB
+	curl -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_write' '"$storage_type"'='"$seqw"'' -X POST $DB
+	curl -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_read' '"$storage_type"'='"$seqr"'' -X POST $DB
+	curl -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_write' '"$storage_type"'='"$randw"'' -X POST $DB
+	curl -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_read' '"$storage_type"'='"$randr"'' -X POST $DB
+
+
 }
 
 benchmark_and_send_data () {
