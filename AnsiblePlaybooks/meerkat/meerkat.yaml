@@ -1,4 +1,4 @@
-- hosts: storage
+- hosts: all
   name: Update Machine
   gather_facts: false   # We may still be booting
   pre_tasks:

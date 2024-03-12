@@ -32,7 +32,7 @@ variable "security_groups" {
 }
 variable "VM_group" {
     description = "Group to add VMs to for ansible"
-    default = "storage"
+    default = "cpu"
 }
 
 variable "tags" {
@@ -42,6 +42,6 @@ variable "tags" {
 
 variable "deploy_volume" {
     description = "Whether to deploy volumes"
-    default = 1 # 0 for don't deploy volume, 1 for deploy volume 
+    default = 0 # 0 for don't deploy volume, 1 for deploy volume 
 }
 	
