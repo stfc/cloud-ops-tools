@@ -1,0 +1,4 @@
+---
+bgp_router_id: "3.3.2.{{ hostname | replace('lfsw', '') }}"
+vxlan_ip: "10.10.20.{{ hostname | replace('lfsw', '') }}"
+lo_ip: "{{ vxlan_ip }}/32"

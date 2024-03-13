@@ -1,0 +1,25 @@
+---
+- name: Output message
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Print message
+      debug:
+        msg: "Starting Rebuild Playbook"
+
+- name: Reinstall switch for STFC Cloud
+  hosts: switches
+  connection: paramiko
+  gather_facts: false
+  vars:
+    ansible_host_key_checking: false
+    ansible_password: "{{ vault_cumulus_password }}"
+    ansible_become_password: "{{ ansible_password }}"
+  roles:
+    - reinstall
+
+- name: Bootstrap hosts
+  import_playbook: bootstrap.yml
+
+- name: Configure hosts
+  import_playbook: configure.yml

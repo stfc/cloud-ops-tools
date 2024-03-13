@@ -1,0 +1,12 @@
+---
+- name: Apply new revision
+  nvidia.nvue.config:
+    state: apply
+    revid: "{{ revision.revid }}"
+    force: true
+    wait: 60
+  register: revision
+
+- name: dump previous output
+  debug:
+    msg: "{{ revision }}"

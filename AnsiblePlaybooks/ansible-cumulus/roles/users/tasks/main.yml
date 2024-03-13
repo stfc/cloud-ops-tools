@@ -1,0 +1,38 @@
+---
+- name: create .ssh directory
+  ansible.builtin.file:
+    group: 'cumulus'
+    owner: 'cumulus'
+    mode: "0700"
+    state: 'directory'
+    path: ".ssh"
+
+- name: copy ssh public keys
+  ansible.builtin.copy:
+    src: "files/ssh_pub_keys"
+    dest: "/home/cumulus/.ssh/authorized_keys"
+    mode: 500
+    owner: "cumulus"
+    group: "cumulus"
+
+- name: Set cumulus password
+  become: true
+  ansible.builtin.user:
+    name: "cumulus"
+    password: "{{ vault_cumulus_password | password_hash('sha512') }}"
+    groups:
+      - "sudo"
+      - "nvapply"
+
+- name: Add other users
+  become: true
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+    create_home: true
+    shell: "/bin/bash"
+    home: "/home/{{ item.name }}"
+    groups:
+      - "sudo"
+      - "nvapply"
+  with_items: "{{ vault_other_cumulus_users }}"

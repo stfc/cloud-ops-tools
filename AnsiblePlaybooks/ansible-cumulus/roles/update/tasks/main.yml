@@ -1,0 +1,40 @@
+---
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+  when: remote_inventory is not defined
+
+- name: check if node is flagged for updating
+  ansible.builtin.meta: end_host
+  when: not update | default(false)
+        and not remote_inventory["update"]
+
+- name: update cumulus sources list
+  become: true
+  ansible.builtin.replace:
+    path: "/etc/apt/sources.list"
+    replace: "{{ apt_cumulus_proxy }}"
+    regexp: "https://apt.cumulusnetworks.com"
+
+- name: Update packages
+  become: true
+  apt:
+    upgrade: true
+    update_cache: true
+
+- name: Reboot to apply updates
+  nvidia.nvue.command:
+    commands:
+      - "config save"
+      - "action reboot system no-confirm"
+
+- name: Wait for reboot to finish
+  ansible.builtin.wait_for_connection:
+    timeout: 3600
+    delay: 15
+
+- name: set update variable
+  ansible.builtin.set_fact:
+    temp_fact:
+      update: false
+      bootstrap: false
+
+- ansible.builtin.include_tasks: "common/tasks/write_host_inventory.yml"

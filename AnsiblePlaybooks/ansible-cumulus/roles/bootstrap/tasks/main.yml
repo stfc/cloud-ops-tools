@@ -1,0 +1,7 @@
+---
+- ansible.builtin.include_tasks: "common/tasks/read_host_inventory.yml"
+  when: remote_inventory is not defined
+
+- name: check if node already bootstrap
+  ansible.builtin.meta: end_host
+  when: not bootstrap | default(true) and not remote_inventory["bootstrap"]

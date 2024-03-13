@@ -1,0 +1,7 @@
+---
+ansible_host: 10.5.0.34
+hostname: lfsw15
+system_location: r26rack889
+vlan_interfaces:
+  - id: '450'
+    network: 172.16.208.224/27

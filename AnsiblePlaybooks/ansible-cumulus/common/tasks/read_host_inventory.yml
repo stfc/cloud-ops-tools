@@ -1,0 +1,25 @@
+---
+- name: Check that the stfc_facts.yml exists
+  vars:
+    ansible_connection: paramiko
+  stat:
+    path: stfc_facts.yml
+  register: stat_result
+
+- name: Read inventory
+  vars:
+    ansible_connection: paramiko
+  ansible.builtin.slurp:
+    src: stfc_facts.yml
+  register: remote_inventory_raw
+  when: stat_result.stat.exists
+
+- name: interpret remote file
+  ansible.builtin.set_fact:
+    remote_inventory: '{{ remote_inventory_raw.content
+                      | b64decode
+                      | from_yaml }}'
+
+- name: output
+  debug:
+    var: remote_inventory

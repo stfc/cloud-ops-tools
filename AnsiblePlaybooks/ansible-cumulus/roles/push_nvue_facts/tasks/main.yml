@@ -1,0 +1,15 @@
+---
+- name: Set config to push
+  ansible.builtin.set_fact:
+    temp_fact:
+      bootstrap: false
+      configured_bridge: true
+      configured_evpn: true
+      configured_interfaces: true
+      configured_router: true
+      configured_service: true
+      configured_system: true
+      reinstall: false
+      update: false
+
+- ansible.builtin.include_tasks: "common/tasks/write_host_inventory.yml"
