@@ -59,6 +59,6 @@ resource "openstack_compute_volume_attach_v2" "vol_attach" {
 resource "null_resource" "ansible_playbook" {
   count = length(openstack_compute_instance_v2.Instance)
      provisioner "local-exec" {
-        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} /home/diz41711/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml"
+        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ~/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml"
    }
 }
