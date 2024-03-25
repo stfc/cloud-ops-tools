@@ -9,5 +9,5 @@ strict: true
 private: true
 
 groups: 
-  <group_name>: |
-     'group' in openstack.metadata and '<group_name>' in openstack.metadata['group']
+  storage: |
+     'group' in openstack.metadata and 'storage' in openstack.metadata['group']

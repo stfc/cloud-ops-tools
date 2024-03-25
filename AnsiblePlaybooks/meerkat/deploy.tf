@@ -49,72 +49,21 @@ locals {
 ##############################################################################
 ### Deploy manila shares
 ##############################################################################
-resource "openstack_sharedfilesystem_share_v2" "shares" {
-  count = var.deploy_manila * length(openstack_compute_instance_v2.Instance)
-  name             = format("share-%02d", count.index + 1)
+resource "openstack_sharedfilesystem_share_v2" "share" {
+  name             = "meerkat"
   description      = "manila terraform share"
   share_proto      = "CEPHFS"
-  size             = var.share_size
+  size             = var.share_size * length(openstack_compute_instance_v2.Instance)
 }
 
-# Dummy usernames for inital access rules
-resource "random_password" "access_names" {
-  count = var.deploy_manila * length(openstack_compute_instance_v2.Instance)
-  length = 16
-  special = false
-}
-
-locals {
-  share_ids = [ for val in openstack_sharedfilesystem_share_v2.shares : val.id]
-  access_names = [for val in random_password.access_names : val.result]
-}
-
-# Needs two sets of access rules, as just using one set gives a permission denied error
 resource "openstack_sharedfilesystem_share_access_v2" "share_access" {
-  count = var.deploy_manila * length(openstack_compute_instance_v2.Instance)
-  share_id     = local.share_ids[count.index]
-  access_type  = "cephx"
-  access_to = local.access_names[count.index]
-  access_level = "rw"
-  depends_on = [openstack_sharedfilesystem_share_v2.shares]
-}
-
-resource "openstack_sharedfilesystem_share_access_v2" "share_access_2" {
-  count = var.deploy_manila * length(openstack_compute_instance_v2.Instance)
-  share_id     = local.share_ids[count.index]
+  share_id     = openstack_sharedfilesystem_share_v2.share.id
   access_type  = "cephx"
   access_to    = "${var.user}"
   access_level = "rw"
-  depends_on = [openstack_sharedfilesystem_share_v2.shares]
-}
-
-locals {
-  access_keys = [ for val in openstack_sharedfilesystem_share_access_v2.share_access : val.access_key]
-  access_ids = [ for val in openstack_sharedfilesystem_share_access_v2.share_access : val.id]
-  access_locations = [ for val in openstack_sharedfilesystem_share_v2.shares : val.export_locations]
 }
 
 
-resource "null_resource" "attach_manila" {
-  count = var.deploy_manila * length(openstack_compute_instance_v2.Instance)
-  depends_on = [openstack_sharedfilesystem_share_access_v2.share_access]
-
-  connection {
-    type = "ssh"
-    user = "${var.user}"
-    private_key = file("/home/${var.user}/.ssh/id_rsa")
-    host = local.vm_ips[count.index]
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "touch /home/${var.user}/manila.sh",
-      "touch manila.sh",
-      "chmod +x manila.sh",
-      "echo #!/bin/bash >> /home/${var.user}/manila.sh",
-      "echo sudo mount -t ceph ${local.access_locations[count.index][0].path} -o name=${local.access_names[count.index]},secret=${local.access_keys[count.index]} /mnt/manila >> /home/${var.user}/manila.sh",
-      ]
-    }
-}
 
 ##############################################################################
 ### Deploy volume storage
@@ -143,10 +92,15 @@ resource "openstack_compute_volume_attach_v2" "vol_attach" {
 ##############################################################################
 resource "null_resource" "ansible_playbook" {
   count = length(openstack_compute_instance_v2.Instance)
-     provisioner "local-exec" {
-        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path}"
-   }
+  provisioner "local-exec" {
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path} --extra-vars 'share_path=${openstack_sharedfilesystem_share_v2.share.export_locations[0].path} access_key=${openstack_sharedfilesystem_share_access_v2.share_access.access_key} vm_count=${count.index}'"
+  }
 }
+#pass these to ansible
+#--extra-vars 
+#openstack_sharedfilesystem_share_v2.shares.export_locations.path
+#openstack_sharedfilesystem_share_access_v2.share_access.access_key
+#openstack_sharedfilesystem_share_access_v2.share_access.id
 
 
 

@@ -1,60 +1,12 @@
-- name: Install manila client
-  apt:
-    name: python3-manilaclient
-    state: present
-  become: true
-  register: result
-  retries: 5
-  delay: 30
-  until: result is not failed
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Install manila client Rocky
-  dnf:
-    name: python3-manilaclient
-    state: present
-  become: true
-  register: result
-  retries: 5
-  delay: 30
-  until: result is not failed
-  when: ansible_distribution == 'Rocky'
-
-
-- name: Install ceph-kernel
-  apt:
-    name: ceph-common
-    state: present
-  become: true
-  register: result
-  retries: 5
-  delay: 30
-  until: result is not failed
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Install ceph-kernel
-  dnf:
-    name: libcephfs2
-    state: present
-  become: true
-  register: result
-  retries: 5
-  delay: 30
-  until: result is not failed
-  when: ansible_distribution == 'Rocky'
-
-- name: Make folder for mounting
-  ansible.builtin.file:
-    path: /mnt/manila
-    state: directory
-    owner: diz41711
-    mode: '0660'
-  become: true
-
-- name: Mount manila share
-  shell: /home/diz41711/manila.sh
+- name: Mount ephemeral SMB volume
+  ansible.posix.mount:
+    src: "{{ share_path }}"
+    path: /mnt/manila{{ vm_count }}
+    opts: "name={{ user }},secret={{ access_key }}"
+    fstype: ceph
+    state: ephemeral
   become: true
 
 - name: Change manila folder owner
-  shell: chown diz41711 /mnt/manila
+  shell: chown diz41711 /mnt/manila{{ vm_count }}
   become: true

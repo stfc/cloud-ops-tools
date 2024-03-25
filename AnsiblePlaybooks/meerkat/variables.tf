@@ -4,12 +4,12 @@
 
 variable "user"{
     description = "username for file pathing"
-    default = "<username>"
+    default = "<user>"
 }
 
 variable "playbook_path" {
     description = "Path to playbook to be run"
-    default = "/home/<username>/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml"
+    default = "/home/<user>/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml"
 }
 
 ##############################################################
@@ -68,7 +68,7 @@ variable "deploy_volume" {
 }
 
 variable "volume_size" {
-    description = "The size of the volume to commission"
+    description = "The size of the volume to commission in GB"
     default = 15
 }
 ##############################################################
@@ -77,10 +77,10 @@ variable "volume_size" {
 
 variable "deploy_manila" {
     description = "Whether to deploy manila share, 1 for deploy, 0 for don't deploy"
-    default = 1 
+    default = 1
 }
 
 variable "share_size" {
-    description = "The size of the manila shares to commission"
-    default = 15
+    description = "The size of the manila shares to commission in GB"
+    default = 11
 }
