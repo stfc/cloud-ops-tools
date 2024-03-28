@@ -1,0 +1,31 @@
+---
+- name: get openstack idp mapping
+  hosts: localhost
+  tasks:
+    - name: get mappings
+      openstack.cloud.federation_mapping_info:
+        cloud: "{{cloud_name}}"
+        name: "{{mapping_name}}"
+      register: current_mappings
+    - name: split out rules
+      ansible.builtin.set_fact:
+         current_rules: "{{ item.rules }}"
+      with_items: "{{ current_mappings.mappings }}"
+    - name: output mappings
+      debug:
+        var: current_rules
+    - name: build group based existing rules
+      ansible.builtin.set_fact:
+        hr_rules:  "{{ hr_rules | default([]) + [ { 'local': {'group': item.local[0].group }, 'remote': [ item.remote[6] ]}  ] }}"
+      with_items: "{{ current_rules }}"
+      when: item.local[0].group is defined
+    - name: output hr rules
+      debug:
+        var: hr_rules
+    - name: hr rules dict
+      ansible.builtin.set_fact:
+        current_mappings: "{{ {'current_mappings': hr_rules } }}"
+    - name: write to disk
+      ansible.builtin.copy:
+        dest: "files/{{ current_mappings_file }}"
+        content: "{{ current_mappings | to_nice_yaml }}"

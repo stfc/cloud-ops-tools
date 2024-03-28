@@ -1,0 +1,14 @@
+---
+new_mappings:
+  - local:
+    - groups:
+      - id: "some-id"
+    - projects:
+        - name: "some-project"
+          roles:
+            - name: "user"
+    remote:
+      - type: "OIDC-groups"
+        regex: true
+        any_one_of: 
+          - "some-iam-group"
