@@ -1,0 +1,2 @@
+rm *.tfplan
+rm *.tfstate*

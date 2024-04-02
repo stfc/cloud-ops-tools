@@ -8,5 +8,5 @@
   become: true
 
 - name: Change manila folder owner
-  shell: chown diz41711 /mnt/manila{{ vm_count }}
+  shell: chown {{ user }} /mnt/manila{{ vm_count }}
   become: true

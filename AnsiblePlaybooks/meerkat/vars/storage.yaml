@@ -1,4 +1,4 @@
 ---
 db_ip: "<IP>"
 db_port: "<port>"
-user: <user>
+user: <linux username>

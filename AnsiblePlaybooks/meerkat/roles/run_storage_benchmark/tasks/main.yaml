@@ -1,8 +1,8 @@
-- name: Run local benchmark
+- name: Run local storage benchmark
   shell: "./benchmark.sh -p /home/{{ user }} -s local"
 
-- name: Run volume benchmark
+- name: Run volume storage benchmark
   shell: ./benchmark.sh -p /mnt/volume -s volume
 
-- name: Run manila benchmark
+- name: Run manila share benchmark
   shell: ./benchmark.sh -p /mnt/manila -s manila

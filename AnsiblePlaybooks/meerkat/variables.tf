@@ -30,7 +30,7 @@ variable "image_name" {
 
 variable "keypair_name" {
     description = "The keypair to be used"
-    default  = "keyless"
+    default  = 
 }
 
 variable "network_name" {
@@ -69,7 +69,7 @@ variable "deploy_volume" {
 
 variable "volume_size" {
     description = "The size of the volume to commission in GB"
-    default = 15
+    default = 11
 }
 ##############################################################
 ### Manila details
