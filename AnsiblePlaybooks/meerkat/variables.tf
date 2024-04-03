@@ -50,7 +50,7 @@ variable "security_groups" {
 }
 variable "VM_group" {
     description = "Group to add VMs to for ansible"
-    default = "storage"
+    default = "cpu"
 }
 
 variable "tags" {

@@ -14,17 +14,28 @@
         repo: ppa:apptainer/ppa
         state: present
 
-    - name: Install apptainer
+    - name: Install packeages for HEPScore
       become: true
       ansible.builtin.package:
-        name: apptainer
+        name: 
+          - python3 
+          - python3-pip 
+          - git 
+          - jq
+          - apptainer
         state: present
 
-    - name: Pull apptainer file
-      ansible.builtin.command: apptainer pull -F oras://harbor.stfc.ac.uk/stfc-cloud-staging/hepscore:latest
+    - name: Install HEPScore
+      ansible.builtin.pip:
+        name: git+https://gitlab.cern.ch/hep-benchmarks/hep-score.git
 
-    - name: Run apptainer file
-      ansible.builtin.command: apptainer run ./hepscore_latest.sif
+    - name: Make results directory
+      ansible.builtin.file:
+        path: results
+        state: directory
+
+    - name: Run HEPScore
+      ansible.builtin.command: ~/.local/bin/hepscore -m singularity results
 
     - name: Send score to VictoriaMetrics
       ansible.builtin.command: /usr/local/bin/send_to_victoria.sh

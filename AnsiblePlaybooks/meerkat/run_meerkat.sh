@@ -32,7 +32,9 @@ done
 if [ -z ${KEYPAIR+x} ]; then echo "Please provide the name of a key pair to access VMs"; exit; fi
 
 
+cd ~/cloud-ops-tools/AnsiblePlaybooks/meerkat
+
 terraform init
 terraform destroy --auto-approve
-terraform plan -out=deploy_storage.tfplan -lock=false -var "keypair_name=$KEYPAIR"
-terraform apply "deploy_storage.tfplan"
+terraform plan -out=deploy.tfplan -lock=false -var "keypair_name=$KEYPAIR"
+terraform apply "deploy.tfplan"

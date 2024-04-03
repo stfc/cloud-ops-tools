@@ -1,4 +1,4 @@
-- hosts: storage
+- hosts: all
   name: Update Machine
   gather_facts: false   # We may still be booting
   pre_tasks:
@@ -24,10 +24,11 @@
     - role: run_storage_benchmark
 
 
-- hosts: compute
+- hosts: cpu
   name: Run Compute roles
   vars_files:
      - ./vars/hepscore.yaml
   roles:
+    - role: setup_openstack
     - role: update_machine
     - role: hepscore

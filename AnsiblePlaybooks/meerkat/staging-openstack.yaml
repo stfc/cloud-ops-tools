@@ -11,3 +11,5 @@ private: true
 groups: 
   storage: |
      'group' in openstack.metadata and 'storage' in openstack.metadata['group']
+  cpu: |
+     'group' in openstack.metadata and 'cpu' in openstack.metadata['group']

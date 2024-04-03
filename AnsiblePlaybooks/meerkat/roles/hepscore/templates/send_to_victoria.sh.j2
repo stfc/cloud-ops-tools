@@ -7,6 +7,16 @@ vm_info=$(openstack server show $server_UUID --os-cloud openstack)
 FLAVOR=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
 IMAGE=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
+NUM_CORES=$(nproc)
+CPU_NAME=$(lscpu | grep 'Model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | tr " " _)
 
-SCORE=$(jq '.score' results/*/HEPscore23Beta.json)
-curl -v -H 'Content-Type: application/json' -d 'hepscore,flavour="'$FLAVOR'",image="'$IMAGE'" value="'$SCORE'"' -X POST 'http://{{ db_ip }}:{{ db_port }}/write'
+RESULTS_FILE="results/*/HEPscore23Beta.json"
+
+START_TIME=$(jq '.environment.start_at' $RESULTS_FILE | tr -d '"' | { read d; date -d "$d" +"%s" ; })
+END_TIME=$(jq '.environment.end_at' $RESULTS_FILE | tr -d '"' | { read d; date -d "$d" +"%s" ; })
+
+RUN_TIME=$((END_TIME - START_TIME))
+
+SCORE=$(jq '.score' $RESULTS_FILE)
+
+curl -v -H 'Content-Type: application/json' -d 'hepscore,flavour='$FLAVOR',image='$IMAGE',num_cores='$NUM_CORES',cpu_name='$CPU_NAME',UUID='$server_UUID' score='$SCORE',run_time='$RUN_TIME'' -X POST 'http://{{ db_ip }}:{{ db_port }}/write'
