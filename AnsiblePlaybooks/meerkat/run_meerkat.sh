@@ -38,7 +38,7 @@ terraform init
 terraform destroy --auto-approve
 RESULT=$?
 if [ $RESULT != 0 ]; then
-	rm *.tfplan
+    rm *.tfplan
     rm *.tfstate*
 fi
 
