@@ -36,5 +36,11 @@ cd ~/cloud-ops-tools/AnsiblePlaybooks/meerkat
 
 terraform init
 terraform destroy --auto-approve
+RESULT=$?
+if [ $RESULT != 0 ]; then
+	rm *.tfplan
+    rm *.tfstate*
+fi
+
 terraform plan -out=deploy.tfplan -lock=false -var "keypair_name=$KEYPAIR"
 terraform apply "deploy.tfplan"
