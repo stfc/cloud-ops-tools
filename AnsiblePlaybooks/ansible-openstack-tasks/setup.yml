@@ -1,0 +1,8 @@
+---
+- name: Setup for this ansible-cumulus playbooks
+  hosts: localhost
+  tasks:
+    - name: install pip packages
+      ansible.builtin.pip:
+        name:
+          - openstacksdk

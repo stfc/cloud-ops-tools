@@ -1,0 +1,21 @@
+template_rule:
+  local:
+    - user: 
+        domain: 
+            id: "default"
+        email: "{2}"
+        id: "{0}"
+        name: "{3}_{4}_irisiam"
+        type: "ephemeral"
+  remote: 
+    - type: "OIDC-sub"
+    - type: "OIDC-preferred_username"
+    - type: "OIDC-email"
+    - type: "OIDC-given_name"
+    - type: "OIDC-family_name"
+    - any_one_of: 
+        - "https://iris-iam.stfc.ac.uk/"
+      type: "HTTP_OIDC_ISS"
+    
+      
+    

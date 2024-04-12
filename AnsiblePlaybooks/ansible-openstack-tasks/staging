@@ -1,0 +1,5 @@
+[all:vars]
+cloud_name=dev-admin
+mapping_name=iris_iam_mapping
+current_mappings_file=staging_current_mappings.yml
+new_mapping_file=new_mappings.yml
