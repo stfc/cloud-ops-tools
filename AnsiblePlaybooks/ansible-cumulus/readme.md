@@ -50,6 +50,8 @@ breakout_ports:
     id: swp2
 ```
 
+When making changes here you will need to set `configured_interfaces: false` in the inventory of the host for the changes to take effect
+
 ## Specific port VLANs
 
 If specific ports need to have the PVID set such as for a ceph backend network then set `bridge_interfaces_pvids`
