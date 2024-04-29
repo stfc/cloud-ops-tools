@@ -29,7 +29,6 @@ send_data() {
 	curl -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_write' '"$storage_type"'='"$randw"'' -X POST $DB
 	curl -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_read' '"$storage_type"'='"$randr"'' -X POST $DB
 
-
 }
 
 benchmark_and_send_data () {

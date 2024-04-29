@@ -1,4 +1,4 @@
 ---
-db_ip: "172.16.114.207"
-db_port: "8428" # default: 8428
-user: diz41711
+db_ip: "<IP>"
+db_port: "<port>"
+user: <linux username>

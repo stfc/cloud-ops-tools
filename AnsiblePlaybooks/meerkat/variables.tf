@@ -1,6 +1,36 @@
+##############################################################
+### path and user info
+##############################################################
+
+variable "user"{
+    description = "username for file pathing"
+    default = "<user>"
+}
+
+variable "playbook_path" {
+    description = "Path to playbook to be run"
+    default = "/home/<user>/cloud-ops-tools/AnsiblePlaybooks/meerkat/meerkat.yaml"
+}
+
+##############################################################
+### VM details
+##############################################################
+
+variable "flavor_name" {
+    description = "List of flavor names to be used"
+    type = list
+    default  = ["l3.nano", "l3.micro"]
+}
+
+variable "image_name" {
+    description = "List of image names to be used"
+    type = list
+    default  = ["ubuntu-focal-20.04-nogui"]
+}
+
 variable "keypair_name" {
-    description = "The keypair to be used."
-    default  = "keyless"
+    description = "The keypair to be used"
+    default  = 
 }
 
 variable "network_name" {
@@ -9,24 +39,12 @@ variable "network_name" {
 }
 
 variable "instance_name" {
-    description = "The Instance Name to be used."
+    description = "Instance name prefix"
     default  = "meerkat"
 }
 
-variable "image_name" {
-    description = "The image name to be used."
-    type = list
-    default  = ["ubuntu-focal-20.04-nogui"]
-}
-
-variable "flavor_name" {
-    description = "The flavor name to be used."
-    type = list
-    default  = ["l3.nano", "l3.tiny"]
-}
-
 variable "security_groups" {
-    description = "List of security group"
+    description = "List of security groups"
     type = list
     default = ["default"]
 }
@@ -40,8 +58,29 @@ variable "tags" {
     default = "storage"
 }
 
+##############################################################
+### Volume details
+##############################################################
+
 variable "deploy_volume" {
-    description = "Whether to deploy volumes"
-    default = 0 # 0 for don't deploy volume, 1 for deploy volume 
+    description = "Whether to deploy volumes, 1 for deploy, 0 for don't deploy"
+    default = 1 
 }
-	
+
+variable "volume_size" {
+    description = "The size of the volume to commission in GB"
+    default = 11
+}
+##############################################################
+### Manila details
+##############################################################
+
+variable "deploy_manila" {
+    description = "Whether to deploy manila share, 1 for deploy, 0 for don't deploy"
+    default = 1
+}
+
+variable "share_size" {
+    description = "The size of the manila shares to commission in GB"
+    default = 11
+}
