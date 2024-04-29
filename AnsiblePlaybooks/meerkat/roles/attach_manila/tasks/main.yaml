@@ -7,6 +7,9 @@
     state: ephemeral
   become: true
 
-- name: Change manila folder owner
-  shell: chown {{ user }} /mnt/manila{{ vm_count }}
+- name: change manila folder owner
+  ansible.builtin.file:
+    path: /mnt/manila{{ vm_count }}
+    owner: "{{ user  }}"
+    mode: '0664'
   become: true
