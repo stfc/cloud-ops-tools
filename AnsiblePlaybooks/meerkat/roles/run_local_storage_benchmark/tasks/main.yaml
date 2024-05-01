@@ -1,0 +1,2 @@
+- name: Run local storage benchmark
+  shell: "./benchmark.sh -p /home/{{ user }} -s local"

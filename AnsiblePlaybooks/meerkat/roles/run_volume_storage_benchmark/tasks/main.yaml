@@ -1,0 +1,2 @@
+- name: Run volume storage benchmark
+  shell: ./benchmark.sh -p /mnt/volume -s volume

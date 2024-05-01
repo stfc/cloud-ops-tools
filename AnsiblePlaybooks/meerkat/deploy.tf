@@ -94,7 +94,8 @@ resource "null_resource" "ansible_playbook" {
   depends_on = [openstack_compute_instance_v2.Instance, openstack_sharedfilesystem_share_v2.share, openstack_sharedfilesystem_share_access_v2.share_access, openstack_blockstorage_volume_v3.volumes, openstack_compute_volume_attach_v2.vol_attach]
   count = length(openstack_compute_instance_v2.Instance)
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path} --extra-vars 'share_path=${openstack_sharedfilesystem_share_v2.share.export_locations[0].path} access_key=${openstack_sharedfilesystem_share_access_v2.share_access.access_key} vm_count=${count.index}'"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path}"
+#    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path} --extra-vars 'share_path=${openstack_sharedfilesystem_share_v2.share.export_locations[0].path} access_key=${openstack_sharedfilesystem_share_access_v2.share_access.access_key} vm_count=${count.index}'"
   }
 }
 
