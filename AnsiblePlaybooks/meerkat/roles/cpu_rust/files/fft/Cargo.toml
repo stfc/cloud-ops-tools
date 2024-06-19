@@ -1,0 +1,10 @@
+[package]
+name = "fft"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ndarray = "0.15.6"
+ndrustfft = "0.4.4"
+rand = "0.8.5"
+rustfft = "6.2.0"
