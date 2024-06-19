@@ -1,0 +1,20 @@
+- name: Wait for connection
+  wait_for:
+    port: 22
+  delegate_to: localhost
+
+- name: Copy over benchmarking files
+  copy:
+    src: files/
+    dest: ~/
+
+- name: copy over template script
+  ansible.builtin.template:
+    src: run_benchmark.sh.j2
+    dest: ~/run_benchmark.sh
+    mode: '0755'
+
+- name: run benchmark
+  shell:
+    cmd: ~/run_benchmark.sh
+
