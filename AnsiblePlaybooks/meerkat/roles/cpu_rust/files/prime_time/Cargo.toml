@@ -1,8 +1,8 @@
 [package]
-name = "primes"
+name = "prime_time"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-primes = "0.4.0"
+num_cpus = "1.16.0"
 rayon = "1.10.0"

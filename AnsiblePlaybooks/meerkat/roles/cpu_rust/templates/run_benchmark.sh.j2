@@ -4,15 +4,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 PATH="/$HOME/.cargo/bin:${PATH}"
 rustup install 1.78.0
 
-cd primes
+cd prime_time
 output=$(cargo +1.78.0 run --release)
-primes_single=$(echo "$output" | grep -ioP "time taken: +(?)\d+(?:\.\d+)?" | head -1 | grep -ioP "\d+(?:\.\d+)?")
-primes_multi=$(echo "$output" | grep -ioP "time taken: +(?)\d+(?:\.\d+)?" | tail -n1 | grep -ioP "\d+(?:\.\d+)?")
+primes_single=$(echo "$output" | grep -ioP "Completed iterations: +(?)\d+(?:\.\d+)?" | head -1 | grep -ioP "\d+(?:\.\d+)?")
+primes_multi=$(echo "$output" | grep -ioP "Completed iterations: +(?)\d+(?:\.\d+)?" | tail -n1 | grep -ioP "\d+(?:\.\d+)?")
 
-cd ../fft
+cd ../fft_time
 output=$(cargo +1.78.0 run --release)
-fft_single=$(echo "$output" | grep -ioP "time taken: +(?)\d+(?:\.\d+)?" | head -1 | grep -ioP "\d+(?:\.\d+)?")
-fft_multi=$(echo "$output" | grep -ioP "time taken: +(?)\d+(?:\.\d+)?" | tail -n1 | grep -ioP "\d+(?:\.\d+)?")
+fft_single=$(echo "$output" | grep -ioP "Completed iterations: +(?)\d+(?:\.\d+)?" | head -1 | grep -ioP "\d+(?:\.\d+)?")
+fft_multi=$(echo "$output" | grep -ioP "Completed iterations: +(?)\d+(?:\.\d+)?" | tail -n1 | grep -ioP "\d+(?:\.\d+)?")
 
 # Get VM infor
 server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
@@ -21,7 +21,7 @@ vm_info=$(openstack server show $server_UUID --os-cloud openstack)
 flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
 image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
-DB="http://172.16.114.207:8428/write"
+DB="http://{{ db_ip }}:{{ db_port }}/write"
 
 curl -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_single' 'result'='"$primes_single"'' -X POST $DB
 curl -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_multi' 'result'='"$primes_multi"'' -X POST $DB
