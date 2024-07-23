@@ -9,7 +9,7 @@ done
 
 run_benchmark () {
 	# Runs the benchmarking script and extracts the results
-	
+
 	echo -------------------------------------------------------
 	echo $file_number x $file_size MB files
 	echo -------------------------------------------------------
@@ -27,6 +27,7 @@ run_benchmark () {
 
 send_data() {
 	# Send data to victoria metrics DB
+	# --insecure is used here, for a self-signed cert
 	curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_write' '"$storage_type"'='"$seqw"'' -X POST $DB --insecure
 	curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_read' '"$storage_type"'='"$seqr"'' -X POST $DB --insecure
 	curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_write' '"$storage_type"'='"$randw"'' -X POST $DB --insecure
