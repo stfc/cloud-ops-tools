@@ -1,7 +1,10 @@
 *
-
+# ALLOW
 !.gitignore
+!arg_parse.py
 !get_dns_record.py
 !test_get_dns_record.py
 !requirements.txt
-!reverseforwardrecord/.github/workflows/get_dns_records.yaml
+!reverseforwardrecord/.github
+
+

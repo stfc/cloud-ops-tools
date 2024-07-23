@@ -7,13 +7,11 @@ import argparse
 import subprocess
 
 """
-read from 2 txt files one containing dns name and another containing ip address
-convert into list of dictionaries containing them as keys - dns name and ip address
-write a function that takes 2 lists and converts them into a list of dicts
-just have to change read from netbox
-only converts from xlsx
-xlsx file has to have fqdn in column 8 and idrac_ip in column 10
-otherwise have to set it up with manual user input
+The IP Resolver script is a utility designed to validate and resolve IP addresses and DNS records
+from provided data files. The script supports input files in both XLSX and CSV formats,
+containing specific columns for Fully Qualified Domain Names (FQDN) and IDRAC IP addresses.
+Using these inputs, the script ensures that the IP addresses and DNS records are correctly
+formatted and reachable.
 """
 
 
