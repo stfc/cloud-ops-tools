@@ -24,7 +24,7 @@ image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 DB="https://{{ db_ip }}:{{ db_port }}/write"
 
 # --insecure is used here, for a self-signed cert
-curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_single' 'result'='"$primes_single"'' -X POST $DB --insecure
-curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_multi' 'result'='"$primes_multi"'' -X POST $DB --insecure
-curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_single' 'result'='"$fft_single"'' -X POST $DB --insecure
-curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_multi' 'result'='"$fft_multi"'' -X POST $DB --insecure
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_single' 'result'='"$primes_single"'' -X POST $DB --insecure
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_multi' 'result'='"$primes_multi"'' -X POST $DB --insecure
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_single' 'result'='"$fft_single"'' -X POST $DB --insecure
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_multi' 'result'='"$fft_multi"'' -X POST $DB --insecure

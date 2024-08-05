@@ -1,49 +1,46 @@
 #!/bin/bash
 
 while getopts "p:s:" arg; do
-	case $arg in
-		p) storage_path=$OPTARG;;
-		s) storage_type=$OPTARG
-	esac
+        case $arg in
+                p) storage_path=$OPTARG;;
+                s) storage_type=$OPTARG
+        esac
 done
 
 run_benchmark () {
-	# Runs the benchmarking script and extracts the results
+        echo -------------------------------------------------------
+        echo $file_number x $file_size MB files
+        echo -------------------------------------------------------
 
-	echo -------------------------------------------------------
-	echo $file_number x $file_size MB files
-	echo -------------------------------------------------------
-	
-	local output=$(./sysbench.sh -n $file_number -s $file_size)
-	seqw=$(echo "$output" | grep -ioP "Sequential write: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-	seqr=$(echo "$output" | grep -ioP "Sequential read: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-	randw=$(echo "$output" | grep -ioP "Random write: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-	randr=$(echo "$output" | grep -ioP "Random read: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
-	echo Seq write: $seqw MB/s
-	echo Seq read: $seqr MB/s
-	echo Rand write: $randw MB/s
-	echo Rand read: $randr MB/s
+        local output=$(./sysbench.sh -n $file_number -s $file_size)
+        seqw=$(echo "$output" | grep -ioP "Sequential write: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
+        seqr=$(echo "$output" | grep -ioP "Sequential read: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
+        randw=$(echo "$output" | grep -ioP "Random write: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
+        randr=$(echo "$output" | grep -ioP "Random read: +(?)\d+(?:\.\d+)?" | grep -oP "\d+(?:\.\d+)?")
+        echo Seq write: $seqw MB/s
+        echo Seq read: $seqr MB/s
+        echo Rand write: $randw MB/s
+        echo Rand read: $randr MB/s
 }
 
 send_data() {
-	# Send data to victoria metrics DB
-	# --insecure is used here, for a self-signed cert
-	curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_write' '"$storage_type"'='"$seqw"'' -X POST $DB --insecure
-	curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_read' '"$storage_type"'='"$seqr"'' -X POST $DB --insecure
-	curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_write' '"$storage_type"'='"$randw"'' -X POST $DB --insecure
-	curl -H "Authorization: Basic `echo -n "{{ db_user }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_read' '"$storage_type"'='"$randr"'' -X POST $DB --insecure
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_write' '"$storage_type"'='"$seqw"'' -X POST $DB --insecure
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_read' '"$storage_type"'='"$seqr"'' -X POST $DB --insecure
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_write' '"$storage_type"'='"$randw"'' -X POST $DB --insecure
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_read' '"$storage_type"'='"$randr"'' -X POST $DB --insecure
+
 }
 
 benchmark_and_send_data () {
-	file_number=$1
-	file_size=$2
-	units=$3
+        file_number=$1
+        file_size=$2
+        units=$3
 
-	run_benchmark
-	send_data
+        run_benchmark
+        send_data
 }
 
-# Get VM info
+# Get VM infor
 server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
 vm_info=$(openstack server show $server_UUID --os-cloud openstack)
 #hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
@@ -52,11 +49,9 @@ image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
 DB="https://{{ db_ip }}:{{ db_port }}/write"
 
-
 cp sysbench.sh $storage_path
 cd $storage_path
 
 benchmark_and_send_data "1000" "0.001" "kb"
 benchmark_and_send_data "1000" "1" "mb"
 benchmark_and_send_data "10" "1000" "gb"
-
