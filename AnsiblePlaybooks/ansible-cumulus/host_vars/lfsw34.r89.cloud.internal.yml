@@ -11,6 +11,8 @@ breakout_ports:
     id: swp4
   - breakout: 4x
     id: swp5
+  - breakout: 4x
+    id: swp9
 bridge_interfaces:
   - swp1s0
   - swp1s1
@@ -32,11 +34,17 @@ bridge_interfaces:
   - swp5s1
   - swp5s2
   - swp5s3
+  - swp9s0
+  - swp9s1
+  - swp9s2
+  - swp9s3
   - swp6
   - swp7
   - swp8
+
 hostname: lfsw34
 system_location: r89rack185
 vlan_interfaces:
   - id: '450'
     network: 172.16.196.32/27
+configured_interfaces: false
