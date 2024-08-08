@@ -45,7 +45,6 @@ def test_get_dns_record(mock_create_file,
     mock_parse_netbox_info.assert_called_once_with(mock_read_from_netbox.return_value, mock_reverse_order)
     mock_write_output.assert_called_once_with(mock_parse_netbox_info.return_value, mock_output_filepath,
                                               mock_reverse_order)
-    mock_check_ip.assert_called_once_with(mock_reverse_order, mock_output_filepath)
 
 
 def test_parse_netbox_info_empty():
@@ -265,7 +264,7 @@ def test_write_output_reversed_order():
         write_output(mock_parsed_info, mock_output_filepath, True)
 
     mock_open.assert_called_once_with(mock_output_filepath, "w", encoding="utf-8")
-    mock_open.return_value.__enter__.return_value.write.assert_called_once_with("1.0.168\tIN PTR\twww.google.com\n")
+    mock_open.return_value.__enter__.return_value.writelines.assert_called_once_with(["1.0.168\tIN PTR\twww.google.com\n"])
 
 
 def test_write_output_non_reversed_order():
@@ -280,7 +279,7 @@ def test_write_output_non_reversed_order():
         write_output(mock_parsed_info, mock_output_filepath, False)
 
     mock_open.assert_called_once_with(mock_output_filepath, "w", encoding="utf-8")
-    mock_open.return_value.__enter__.return_value.write.assert_called_once_with("www\tIN A\t192.168.0.1\n")
+    mock_open.return_value.__enter__.return_value.writelines.assert_called_once_with(["www\tIN A\t192.168.0.1\n"])
 
 
 def test_create_file():

@@ -75,7 +75,7 @@ def parse_netbox_info(
         if reverse_order:
             idrac = reduce(
                 lambda x, y: f"{x}.{y}", item["idrac_ip"].split(".")[::-1]
-            )  #
+            )  # Adjusts the text so that they are reversed and split into two variables from the .
             idrac = idrac.rsplit(".", 1)[0]
             parsed_item["ip_address"] = idrac
             parsed_item["hypervisor"] = item["fqdn"]
@@ -96,13 +96,14 @@ def write_output(
     :param reverse_order: use reverse or forward order / if true use forward if false use reverse
     :return: the text written into the file
     """
-    print(output_filepath)
+    lines = []
+    for item in parsed_info:
+        if reverse_order:
+            lines.append(f"{item['ip_address']}\tIN PTR\t{item['hypervisor']}\n")
+        else:
+            lines.append(f"{item['hypervisor']}\tIN A\t{item['ip_address']}\n")
     with open(output_filepath, "w", encoding="utf-8") as out_file:
-        for item in parsed_info:
-            if reverse_order:
-                out_file.write(f"{item['ip_address']}\tIN PTR\t{item['hypervisor']}\n")
-            else:
-                out_file.write(f"{item['hypervisor']}\tIN A\t{item['ip_address']}\n")
+        out_file.writelines(lines)
 
 
 def parse_args_dns(inp_args):
@@ -228,7 +229,6 @@ def get_dns_record(
     netbox_info = read_from_netbox(netbox_filepath, fqdn_column_name, idrac_ip_column_name)
     parsed_netbox_info = parse_netbox_info(netbox_info, reverse_order)
     write_output(parsed_netbox_info, output_filepath, reverse_order)
-    check_ip(reverse_order, output_filepath)
 
 
 def main():
