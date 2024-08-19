@@ -3,6 +3,14 @@
     port: 22
   delegate_to: localhost
 
+- name: install gcc
+  dnf:
+    name: gcc
+    state: present
+  become: true
+  when: ansible_distribution != 'Ubuntu'
+
+
 - name: Copy over benchmarking files
   copy:
     src: files/
