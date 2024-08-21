@@ -41,7 +41,10 @@ bridge_interfaces:
   - swp6
   - swp7
   - swp8
-
+  - swp9s0
+  - swp9s1
+  - swp9s2
+  - swp9s3
 hostname: lfsw34
 system_location: r89rack185
 vlan_interfaces:
