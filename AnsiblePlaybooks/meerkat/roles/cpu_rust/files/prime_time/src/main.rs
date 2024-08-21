@@ -3,51 +3,51 @@ use std::time::Instant;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use num_cpus;
 
+/// checks if a number if prime
 fn is_prime(n: u32) -> bool {
-    /// checks if a number if prime
     (2..=n / 2).all(|i| n % i != 0)
 }
 
 /// Values for the benchmarks
 struct BenchmarkValues {
-    /// Maximum value to check primes up to
+    // Maximum value to check primes up to
     max_value: u32,
-    /// Counter for number of iterations
+    // Counter for number of iterations
     iterations: f64,
-    /// Period to run benchmark
+    // Period to run benchmark
     time_in_secs: u32,
-    /// Time the benchmark has run for
+    // Time the benchmark has run for
     time_taken: f64,
-    /// Start time for benchmark
+    // Start time for benchmark
     start: Instant,
 }
 impl BenchmarkValues {
+    /// Calls single core run of is_prime
     fn single_core(&self) -> usize {
-        /// Calls single core run of is_prime
         let primes: Vec<u32> = (2..self.max_value).filter(|n| is_prime(*n)).collect();
         primes.len()
     }
-
+    
+    /// Calls multi core run of is_prime
     fn multi_core(&self) -> usize {
-        /// Calls multi core run of is_prime
         let primes: Vec<u32> = (2..self.max_value)
         .into_par_iter()
         .filter(|n| is_prime(*n))
         .collect();
         primes.len()
     }
-
+    
+    /// Prints benchmark results
     fn print_results(&self) {
-        /// Prints benchmark results
         println!("--------------------------------------------");
         println!("Time taken: {}", self.time_taken / 1000.0);
         println!("Completed iterations: {}", self.iterations);
         println!("Iterations per second: {:.3}", self.iterations / (self.time_taken / 1000.0) );
         println!("Number of cores: {}", num_cpus::get());
     }
-
+    
+    /// Run single core prime test for a given length of time
     fn run_single_core(&mut self) {
-        /// Run single core prime test for a given length of time
         self.start = Instant::now();
         while self.time_taken < (self.time_in_secs * 1000) as f64 {
             let _primes = self.single_core();
@@ -55,9 +55,9 @@ impl BenchmarkValues {
             self.iterations += 1.0;
         }   
     }
-
+    
+    /// Run multicore prime test for given length of time
     fn run_multi_core(&mut self) {
-        /// Run multicore prime test for given length of time
         self.start = Instant::now();
         while self.time_taken < (self.time_in_secs * 1000) as f64 {
             let _primes = self.multi_core();
@@ -68,8 +68,7 @@ impl BenchmarkValues {
 }
 
 fn main() {
-
-    /// Setting up single core  benchmark parameters
+    // Setting up single core  benchmark parameters
     let mut single_core_values = BenchmarkValues {
         max_value: 100_000,
         iterations: 0.0,
@@ -78,7 +77,7 @@ fn main() {
         start: Instant::now(),
     };
 
-    /// Setting up Multi core benchmark parameters
+    // Setting up Multi core benchmark parameters
     let mut multi_core_values = BenchmarkValues {
         max_value: single_core_values.max_value,
         iterations: 0.0,

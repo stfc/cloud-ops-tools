@@ -7,24 +7,24 @@ use num_cpus;
 
 /// Values for the benchmarks
 struct BenchmarkValues {
-    /// Vector of 2D arrays for input data
+    // Vector of 2D arrays for input data
     data: Vec<Array2::<f64>>,
-    /// Vector of 2D arrays for FFT result
+    // Vector of 2D arrays for FFT result
     results: Vec<Array2::<Complex<f64>>>,
-    /// Vector for FFT handler
+    // Vector for FFT handler
     fft_handler: Vec<R2cFftHandler::<f64>>,
-    /// Number of iterations counter
+    // Number of iterations counter
     iterations: f64,
-    /// Time to run the benchmark
+    // Time to run the benchmark
     time_in_secs: f64,
-    /// Time the benchmark has run for
+    // Time the benchmark has run for
     time_taken: f64,
-    /// Start time of the benchmark
+    // Start time of the benchmark
     start: Instant,
 }
 impl BenchmarkValues {
+    /// Setup data array with random data
     fn setup_data(&mut self) {
-        /// Setup data array with random data
         let mut rng = rand::thread_rng();
         for i in 0..self.data.len(){
             for v in self.data[i].iter_mut() {
@@ -33,8 +33,8 @@ impl BenchmarkValues {
         }
     }
     
+    /// Single core fft of data for a given length of time    
     fn single_core(&mut self) {
-        /// Single core fft of data for a given length of time
         self.start = Instant::now();
         while self.time_taken < (self.time_in_secs * 1000.0)  {
             for i in 0..self.data.len() {
@@ -50,8 +50,8 @@ impl BenchmarkValues {
         }
     }
 
+    /// Multicore fft of data for a given length of time
     fn multi_core(&mut self) {
-        /// Multicore fft of data for a given length of time
         self.start = Instant::now();
         while self.time_taken < (self.time_in_secs * 1000.0)  {
             for i in 0..self.data.len() {
@@ -66,9 +66,9 @@ impl BenchmarkValues {
             self.iterations += 1.0;
         }
     }
-
+    
+    /// Print benchmark results
     fn print_results(&self) {
-        /// Print benchmark results
         println!("--------------------------");
         println!("Time taken: {}", self.time_taken / 1000.0);
         println!("Completed iterations: {}", self.iterations);
@@ -79,12 +79,12 @@ impl BenchmarkValues {
 
 
 fn main() {
-    /// Data array dimensions
+    // Data array dimensions
     let nx = 1024;
     let ny = 1024;
     let nz = 10;
 
-    /// Single core benchmark parameters
+    // Single core benchmark parameters
     let mut single_core_values = BenchmarkValues {
         data: vec![Array2::<f64>::zeros((nx, ny)); nz],
         results: vec![Array2::<Complex<f64>>::zeros((nx / 2 + 1, ny)); nz],
@@ -95,7 +95,7 @@ fn main() {
         start: Instant::now(),
     };
 
-    /// Multicore benchmark parameters
+    // Multicore benchmark parameters
     let mut multi_core_values = BenchmarkValues {
         data: vec![Array2::<f64>::zeros((nx, ny)); nz],
         results: vec![Array2::<Complex<f64>>::zeros((nx / 2 + 1, ny)); nz],
@@ -106,12 +106,12 @@ fn main() {
         start: Instant::now(),
     };
 
-    /// Run single core benchmark
+    // Run single core benchmark
     single_core_values.setup_data();
     single_core_values.single_core();
     single_core_values.print_results();
 
-    /// Run Multicore benchmark
+    // Run Multicore benchmark
     multi_core_values.setup_data();
     multi_core_values.multi_core();
     multi_core_values.print_results();
