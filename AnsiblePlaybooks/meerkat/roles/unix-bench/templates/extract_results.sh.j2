@@ -1,0 +1,71 @@
+#! /bin/bash
+
+# get file name
+cd ~/byte-unixbench/UnixBench/results/
+pattern="unix*"
+files=( $pattern )
+file="${files[0]}"
+echo $file
+
+sed -i -e 's/(//g' $file
+sed -i -e 's/)//g' $file
+
+extract_data() {
+        string=$1
+        # Extarct the number of numbers in the string to calculate which ones to extract
+        numbers=$(echo $string | grep -oP "\d+(?:\.\d+)?" | wc -l)
+        n1=$((1 + $numbers))
+        n2=$(($n1 + $numbers + $numbers + 2))
+        # Index score only appears twice, not 4 times
+        if [[ $string == 'System Benchmarks Index Score' ]]; then
+                n2=2
+        fi
+        # extract benchmark results
+        echo ------------------------------------
+        r1=$(grep -ioP "$string +(?)\d+(?:\.\d+)?" $file | grep -oP "\d+(?:\.\d+)?" | head -n$n1 | tail -1)
+        r2=$(grep -ioP "$string +(?)\d+(?:\.\d+)?" $file | grep -oP "\d+(?:\.\d+)?" | head -n$n2 | tail -1)
+        # Remove spaces from benchmark name for sending results to DB
+        bench=$(echo $string | sed -r 's/[ -]/_/g')
+        echo $bench
+        echo $r1
+        echo $r2
+        # Specify if benchmarks are single core or multicore
+        bench1="${bench}_single_core"
+        bench2="${bench}_multi_core"
+        # Send data to DB
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'unix_bench,image='"$image"',flavor='"$flavor"' '"$bench1"'='"$r1"'' -X POST $DB --insecure
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'unix_bench,image='"$image"',flavor='"$flavor"' '"$bench2"'='"$r2"'' -X POST $DB --insecure
+
+}
+
+
+# Get VM infor
+server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
+vm_info=$(openstack server show $server_UUID --os-cloud openstack)
+#hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
+flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
+image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
+
+DB="https://{{ db_ip }}:{{ db_port }}/write"
+
+
+benchmarks=(
+        'Dhrystone 2 using register variables'
+        'Double-Precision Whetstone'
+        'Execl Throughput'
+        'File Copy 1024 bufsize 2000 maxblocks'
+        'File Copy 256 bufsize 500 maxblocks'
+        'File Copy 4096 bufsize 8000 maxblocks'
+        'Pipe Throughput'
+        'Pipe-based Context Switching'
+        'Process Creation'
+        'Shell Scripts 1 concurrent'
+        'Shell Scripts 8 concurrent'
+        'System Call Overhead'
+        'System Benchmarks Index Score'
+)
+
+
+for i in ${!benchmarks[@]}; do
+        extract_data "${benchmarks[$i]}"
+done
