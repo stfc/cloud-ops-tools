@@ -33,6 +33,7 @@ extract_data() {
         bench1="${bench}_single_core"
         bench2="${bench}_multi_core"
         # Send data to DB
+	# -- insecure is used to to self-signed certs
         curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'unix_bench,image='"$image"',flavor='"$flavor"' '"$bench1"'='"$r1"'' -X POST $DB --insecure
         curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'unix_bench,image='"$image"',flavor='"$flavor"' '"$bench2"'='"$r2"'' -X POST $DB --insecure
 
