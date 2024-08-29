@@ -15,9 +15,7 @@ formatted and reachable.
 """
 
 
-def create_file(
-        out_filepath: str = "output.txt"
-):
+def create_file(out_filepath: str = "output.txt"):
     """
     makes a txt file for the results to be returned into
     :return: output.txt
@@ -27,7 +25,7 @@ def create_file(
 
 
 def read_from_netbox(
-        netbox_filepath: str, fqdn_column: str = "FQDN", idrac_ip_column: str = "IDRAC IP"
+    netbox_filepath: str, fqdn_column: str = "FQDN", idrac_ip_column: str = "IDRAC IP"
 ) -> List[Dict]:
     """
     reads from netbox file, in a xlsx format
@@ -43,7 +41,9 @@ def read_from_netbox(
     workbook_info = []
 
     for i, sheet in enumerate(sheetnames, 1):
-        workbook = pd.read_excel(netbox_filepath, sheet_name=sheet, engine='openpyxl').to_dict()
+        workbook = pd.read_excel(
+            netbox_filepath, sheet_name=sheet, engine="openpyxl"
+        ).to_dict()
 
         if fqdn_column not in workbook or idrac_ip_column not in workbook:
             raise RuntimeError(
@@ -51,17 +51,14 @@ def read_from_netbox(
                 f"following column in workbook: {fqdn_column}, {idrac_ip_column}"
             )
         for key, fqdn_val in workbook[fqdn_column].items():
-            workbook_info.extend([
-                {
-                    "fqdn": fqdn_val,
-                    "idrac_ip": workbook[idrac_ip_column][key]
-                }
-            ])
+            workbook_info.extend(
+                [{"fqdn": fqdn_val, "idrac_ip": workbook[idrac_ip_column][key]}]
+            )
     return workbook_info
 
 
 def parse_netbox_info(
-        netbox_info: List[Dict], reverse_order: bool = False
+    netbox_info: List[Dict], reverse_order: bool = False
 ) -> List[Dict]:
     """
     Parse info from netbox and create corresponding hypervisor fqdn and ip value
@@ -87,7 +84,7 @@ def parse_netbox_info(
 
 
 def write_output(
-        parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False
+    parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False
 ):
     """
     write parsed netbox info to a file
@@ -112,20 +109,33 @@ def parse_args_dns(inp_args):
     :param inp_args: the arguments putted in via command line from cmd_args to inp_args
     :return: the function according to the flags used
     """
-    ap = argparse.ArgumentParser(description='option-selector')
+    ap = argparse.ArgumentParser(description="option-selector")
     ap.add_argument("input_filepath", type=argparse.FileType("r"))
-    ap.add_argument("output_filepath", default="output.txt", nargs="?", type=argparse.FileType("w"))
-    ap.add_argument("-r", "--reverse", default=False, help="if set reverses format if not set forwards format",
-                    action="store_true")
+    ap.add_argument(
+        "output_filepath", default="output.txt", nargs="?", type=argparse.FileType("w")
+    )
+    ap.add_argument(
+        "-r",
+        "--reverse",
+        default=False,
+        help="if set reverses format if not set forwards format",
+        action="store_true",
+    )
     ap.add_argument("-c", "--check", default=False, help="check ips if they would work")
-    ap.add_argument("-d", "--fqdn-column-name", default="FQDN", help="set FQDN column name")
-    ap.add_argument("-i", "--idrac-ip-column-name", default="IDRAC IP", help="set IDRAC IP column name")
+    ap.add_argument(
+        "-d", "--fqdn-column-name", default="FQDN", help="set FQDN column name"
+    )
+    ap.add_argument(
+        "-i",
+        "--idrac-ip-column-name",
+        default="IDRAC IP",
+        help="set IDRAC IP column name",
+    )
     args, _ = ap.parse_known_args(inp_args)
     return args
 
 
-def check_ip(reverse_order: bool = False,
-             output_filepath: str = "output.txt"):
+def check_ip(reverse_order: bool = False, output_filepath: str = "output.txt"):
     """
     checks for the ips and then appends them to lists to be checked on from later on in the script
     :param reverse_order: reverse order tracks where to use the position in the function to be able
@@ -142,10 +152,10 @@ def check_ip(reverse_order: bool = False,
         position_ip = 0
     ips_found = []
     dns_found = []
-    with open(using_file, 'r') as outfile:
+    with open(using_file, "r") as outfile:
         for line in outfile.read().splitlines():
-            ips_found.append(line.split('\t')[position_ip])
-            dns_found.append(line.split('\t')[position_dns])
+            ips_found.append(line.split("\t")[position_ip])
+            dns_found.append(line.split("\t")[position_dns])
     return ips_found, dns_found
 
 
@@ -177,8 +187,9 @@ def is_reachable_dns(dns_name: str) -> bool:
         return False
 
 
-def check_reachability(ips_found: List[str], dns_found: List[str]) \
-        -> Tuple[List[str], List[str], List[str], List[str]]:
+def check_reachability(
+    ips_found: List[str], dns_found: List[str]
+) -> Tuple[List[str], List[str], List[str], List[str]]:
     """
     checks whether the ips and dns names are reachable, using two previous functions and then
     appending the results of those to the lists which are after displayed to the command line
@@ -209,11 +220,12 @@ def check_reachability(ips_found: List[str], dns_found: List[str]) \
 
 
 def get_dns_record(
-        netbox_filepath: str,
-        fqdn_column_name: str = "FQDN",
-        idrac_ip_column_name: str = "IDRAC IP",
-        reverse_order: bool = False,
-        output_filepath: str = "output.txt", ):
+    netbox_filepath: str,
+    fqdn_column_name: str = "FQDN",
+    idrac_ip_column_name: str = "IDRAC IP",
+    reverse_order: bool = False,
+    output_filepath: str = "output.txt",
+):
     """
     this function will create a file for the output for dns records
     also testing each of the ips and dns to see whether they are usable or not printing after
@@ -226,7 +238,9 @@ def get_dns_record(
     :return: None
     """
     create_file(output_filepath)
-    netbox_info = read_from_netbox(netbox_filepath, fqdn_column_name, idrac_ip_column_name)
+    netbox_info = read_from_netbox(
+        netbox_filepath, fqdn_column_name, idrac_ip_column_name
+    )
     parsed_netbox_info = parse_netbox_info(netbox_info, reverse_order)
     write_output(parsed_netbox_info, output_filepath, reverse_order)
 
@@ -238,10 +252,12 @@ def main():
         cmd_args.fqdn_column_name,
         cmd_args.idrac_ip_column_name,
         cmd_args.reverse,
-        cmd_args.output_filepath.name
+        cmd_args.output_filepath.name,
     )
     ips_found, dns_found = check_ip(cmd_args.check)
-    reachable_ips, unreachable_ips, reachable_dns, unreachable_dns = check_reachability(ips_found, dns_found)
+    reachable_ips, unreachable_ips, reachable_dns, unreachable_dns = check_reachability(
+        ips_found, dns_found
+    )
     print(f"Reachable IPs: {reachable_ips}")
     print(f"Unreachable IPs: {unreachable_ips}")
     print(f"Reachable DNS: {reachable_dns}")

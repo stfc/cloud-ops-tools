@@ -28,6 +28,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r reverseforwardrecord/requirements.txt
 
+      - name: Format code
+        uses: psf/black@stable
+        with:
+          src: "reverseforwardrecord"
+
       - name: Run tests
         run: cd reverseforwardrecord/ && python3 -m pytest .
 
