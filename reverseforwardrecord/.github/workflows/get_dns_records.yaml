@@ -33,4 +33,4 @@ jobs:
 
       - name: Analyse with pylint
         run: |
-          cd reverseforwardrecord && pylint $(git ls-files *.py)
+          pylint reverseforwardrecord
