@@ -1,20 +1,15 @@
-- name: Generate random string with length 12
-  ansible.builtin.debug:
-    var: lookup('community.general.random_string', length=12)
-  register: share_id
-
 - name: Mount ephemeral SMB volume
   ansible.posix.mount:
     src: "{{ share_path }}"
-    path: /mnt/manila_{{ share_id }}
-    opts: "name={{ user }},secret={{ access_key }}" 
+    path: /mnt/manila{{ vm_count }}
+    opts: "name={{ user }},secret={{ access_key }}"
     fstype: ceph
     state: ephemeral
   become: true
 
 - name: change manila folder owner
   ansible.builtin.file:
-    path: /mnt/manila_{{ share_id }}
-    owner: "{{ user  }}"
+    path: /mnt/manila{{ vm_count }}
+    owner: "{{ user }}"
     mode: '0664'
   become: true
