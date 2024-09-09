@@ -1,0 +1,41 @@
+#! /bin/bash
+
+send_data () {
+        block_size=$1
+        # --insecure is used as using a self signed cert
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'ram,image='"$image"',flavor='"$flavor"',block_size='"$block_size"' 'read_speed'='"$read_speed"','write_speed'='"$write_speed"','read_latency'='"$read_latency"','write_latency'='"$write_latency"'' -X POST $DB --insecure
+}
+
+run_benchmark () {
+        block_size=$1
+        total_size=$2
+
+        # RAM read speed benchmark
+        output=$(sysbench memory --memory-block-size=$block_size --memory-total-size=$total_size --memory-oper=read run)
+        read_speed=$(echo $output | grep -ioP "transferred \((?)\d+(?:\.\d+)?" | grep -ioP "(?)\d+(?:\.\d+)?")
+        read_latency=$(echo $output | grep -ioP "avg: +(?)\d+(?:\.\d+)?" | grep -ioP "(?)\d+(?:\.\d+)?")
+
+        # RAM write speed benchmark
+        output=$(sysbench memory --memory-block-size=$block_size --memory-total-size=$total_size --memory-oper=write run)
+        write_speed=$(echo $output | grep -ioP "transferred \((?)\d+(?:\.\d+)?" | grep -ioP "(?)\d+(?:\.\d+)?")
+        write_latency=$(echo $output | grep -ioP "avg: +(?)\d+(?:\.\d+)?" | grep -ioP "(?)\d+(?:\.\d+)?")
+
+
+
+        send_data "$block_size"
+}
+
+# Get VM info
+server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
+vm_info=$(openstack server show $server_UUID --os-cloud openstack)
+#hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
+flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
+image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
+
+DB="https://{{ db_ip }}:{{ db_port }}/write"
+
+# Run RAM benchmark with different block sizes
+# 1Kb, 1Mb, and 1Gb block size, with a total of 20Gb being used
+run_benchmark "1K" "20G"
+run_benchmark "1M" "20G"
+run_benchmark "1G" "20G"
