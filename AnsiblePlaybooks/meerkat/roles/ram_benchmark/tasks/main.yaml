@@ -1,0 +1,26 @@
+- name: Install sysbench
+  apt:
+    name: sysbench
+    state: present
+  become: true
+  register: result
+  retries: 5
+  delay: 30
+  until: result is not failed
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install sysbench Rocky
+  yum:
+    name: sysbench
+    state: present
+  become: true
+  when: ansible_distribution == 'Rocky'
+
+- name: copy over ram_benchmark.sh
+  ansible.builtin.template:
+    src: ram_benchmark.sh.j2
+    dest: ~/ram_benchmark.sh
+    mode: '0755'
+
+- name: Run ram benchmark
+  shell: ~/ram_benchmark.sh
