@@ -1,18 +1,21 @@
-import sys
-from typing import List, Dict, Tuple
-from functools import reduce
-import socket
-import pandas as pd
-import argparse
-import subprocess
-
 """
 The IP Resolver script is a utility designed to validate and resolve IP addresses and DNS records
 from provided data files. The script supports input files in both XLSX and CSV formats,
 containing specific columns for Fully Qualified Domain Names (FQDN) and IDRAC IP addresses.
 Using these inputs, the script ensures that the IP addresses and DNS records are correctly
 formatted and reachable.
+
+Provides functions to use for obtaining ips,
+formatting them, sending requests to them and sheets
+to be used in a data format.
 """
+import sys
+from typing import List, Dict, Tuple
+from functools import reduce
+import socket
+import argparse
+import subprocess
+import pandas as pd
 
 
 def create_file(out_filepath: str = "output.txt"):
@@ -20,12 +23,12 @@ def create_file(out_filepath: str = "output.txt"):
     makes a txt file for the results to be returned into
     :return: output.txt
     """
-    with open(out_filepath, "w"):
+    with open(out_filepath, "w", encoding="UTF-8"):
         pass
 
 
 def read_from_netbox(
-    netbox_filepath: str, fqdn_column: str = "FQDN", idrac_ip_column: str = "IDRAC IP"
+        netbox_filepath: str, fqdn_column: str = "FQDN", idrac_ip_column: str = "IDRAC IP"
 ) -> List[Dict]:
     """
     reads from netbox file, in a xlsx format
@@ -47,7 +50,8 @@ def read_from_netbox(
 
         if fqdn_column not in workbook or idrac_ip_column not in workbook:
             raise RuntimeError(
-                f"Error: you've provided an excel sheet: (no. {i}) which does not contain one or more of these "
+                f"Error: you've provided an excel sheet: (no. {i})"
+                f" which does not contain one or more of these "
                 f"following column in workbook: {fqdn_column}, {idrac_ip_column}"
             )
         for key, fqdn_val in workbook[fqdn_column].items():
@@ -58,7 +62,7 @@ def read_from_netbox(
 
 
 def parse_netbox_info(
-    netbox_info: List[Dict], reverse_order: bool = False
+        netbox_info: List[Dict], reverse_order: bool = False
 ) -> List[Dict]:
     """
     Parse info from netbox and create corresponding hypervisor fqdn and ip value
@@ -84,7 +88,7 @@ def parse_netbox_info(
 
 
 def write_output(
-    parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False
+        parsed_info: List[Dict], output_filepath: str, reverse_order: bool = False
 ):
     """
     write parsed netbox info to a file
@@ -152,7 +156,7 @@ def check_ip(reverse_order: bool = False, output_filepath: str = "output.txt"):
         position_ip = 0
     ips_found = []
     dns_found = []
-    with open(using_file, "r") as outfile:
+    with open(using_file, "r", encoding="UTF-8") as outfile:
         for line in outfile.read().splitlines():
             ips_found.append(line.split("\t")[position_ip])
             dns_found.append(line.split("\t")[position_dns])
@@ -166,10 +170,10 @@ def is_reachable_ip(ip: str) -> bool:
     :return: returns boolean result
     """
     try:
-        result = subprocess.run(["ping", "-c", "1", ip], capture_output=True)
+        result = subprocess.run(["ping", "-c", "1", ip], check=True, capture_output=True)
         return result.returncode == 0
-    except Exception as e:
-        print(f"Error pinging IP {ip}: {e}")
+    except subprocess.CalledProcessError as excepted:
+        print(f"Error pinging IP {ip}: {excepted}")
         return False
 
 
@@ -188,7 +192,7 @@ def is_reachable_dns(dns_name: str) -> bool:
 
 
 def check_reachability(
-    ips_found: List[str], dns_found: List[str]
+        ips_found: List[str], dns_found: List[str]
 ) -> Tuple[List[str], List[str], List[str], List[str]]:
     """
     checks whether the ips and dns names are reachable, using two previous functions and then
@@ -220,11 +224,11 @@ def check_reachability(
 
 
 def get_dns_record(
-    netbox_filepath: str,
-    fqdn_column_name: str = "FQDN",
-    idrac_ip_column_name: str = "IDRAC IP",
-    reverse_order: bool = False,
-    output_filepath: str = "output.txt",
+        netbox_filepath: str,
+        fqdn_column_name: str = "FQDN",
+        idrac_ip_column_name: str = "IDRAC IP",
+        reverse_order: bool = False,
+        output_filepath: str = "output.txt",
 ):
     """
     this function will create a file for the output for dns records
@@ -246,6 +250,14 @@ def get_dns_record(
 
 
 def main():
+    """
+
+    Provides the compilation of all functions above
+
+    Main function that compiles all other functions
+    together and will be able to be used by arg parse in the command line
+    prints out all the reachable and unreachable ips
+    """
     cmd_args = parse_args_dns(sys.argv[1:])
     get_dns_record(
         cmd_args.input_filepath.name,
@@ -265,6 +277,7 @@ def main():
 
 
 # input filepath name, fqdn row name, idrac ip row name, -r or -f for order, output path or file
+#i.e python .\get_dns_record.py test.xlsx
 
 
 if __name__ == "__main__":
