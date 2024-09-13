@@ -1,0 +1,5 @@
+pandas
+pytest
+pylint
+black
+openpyxl
