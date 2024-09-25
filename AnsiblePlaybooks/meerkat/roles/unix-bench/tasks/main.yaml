@@ -1,0 +1,37 @@
+- name: install gcc
+  dnf:
+    name: gcc
+    state: present
+  become: true
+  when: ansible_distribution != 'Ubuntu'
+
+- name: install make
+  dnf:
+    name: make
+    state: present
+  become: true
+  when: ansible_distribution != 'Ubuntu'
+
+- name: Install git
+  dnf:
+    name: git
+    state: present
+  become: true
+  when: ansible_distribution != 'Ubuntu'
+
+- name: copy over data extraction
+  ansible.builtin.template:
+    src: extract_results.sh.j2
+    dest: ~/extract_results.sh
+    mode: '0755'
+
+- name: Install unix-bench
+  git:
+    repo: https://github.com/kdlucas/byte-unixbench
+    dest: ~/byte-unixbench
+
+- name: Run Unix bench
+  shell: cd byte-unixbench/UnixBench; ./Run
+
+- name: extract results
+  shell: cd results; ./extract_results.sh
