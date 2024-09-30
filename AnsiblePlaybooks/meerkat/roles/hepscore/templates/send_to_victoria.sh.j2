@@ -1,11 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
-vm_info=$(openstack server show $server_UUID --os-cloud openstack)
-#hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
-FLAVOR=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
-IMAGE=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
+# VM info
+FLAVOR="{{ flavor }}"
+IMAGE="{{ image }}"
+
 
 NUM_CORES=$(nproc)
 CPU_NAME=$(lscpu | grep 'Model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | tr " " _)
@@ -19,4 +18,6 @@ RUN_TIME=$((END_TIME - START_TIME))
 
 SCORE=$(jq '.score' $RESULTS_FILE)
 
-curl -v -H 'Content-Type: application/json' -d 'hepscore,flavour='$FLAVOR',image='$IMAGE',num_cores='$NUM_CORES',cpu_name='$CPU_NAME',UUID='$server_UUID' score='$SCORE',run_time='$RUN_TIME'' -X POST 'http://{{ db_ip }}:{{ db_port }}/write'
+DB="https://{{ db_ip }}:{{ db_port }}/write"
+
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'hepscore,flavour='$FLAVOR',image='$IMAGE' score='$SCORE',run_time='$RUN_TIME'' -X POST $DB --insecure
