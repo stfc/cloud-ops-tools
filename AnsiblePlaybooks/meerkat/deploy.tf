@@ -50,19 +50,30 @@ locals {
 ### Deploy manila shares
 ##############################################################################
 resource "openstack_sharedfilesystem_share_v2" "share" {
+  count            = var.deploy_volume 
   name             = "meerkat"
   description      = "manila terraform share"
   share_proto      = "CEPHFS"
   size             = var.share_size * length(openstack_compute_instance_v2.Instance)
 }
 
+locals {
+  share_ids = [ for val in openstack_sharedfilesystem_share_v2.share : val.id]
+  share_paths = [ for val in openstack_sharedfilesystem_share_v2.share : val.export_locations[0].path]
+}
+
 resource "openstack_sharedfilesystem_share_access_v2" "share_access" {
-  share_id     = openstack_sharedfilesystem_share_v2.share.id
+  count = var.deploy_manila
+  depends_on   = [openstack_sharedfilesystem_share_v2.share]
+  share_id     = local.share_ids[count.index]
   access_type  = "cephx"
-  access_to    = "${var.user}"
+  access_to    = "askndsal"
   access_level = "rw"
 }
 
+locals {
+  share_access_key = [for val in openstack_sharedfilesystem_share_access_v2.share_access : val.access_key]
+}
 
 
 ##############################################################################
@@ -90,11 +101,20 @@ resource "openstack_compute_volume_attach_v2" "vol_attach" {
 ##############################################################################
 ### Run ansible playbook
 ##############################################################################
+### Run playbook normally
 resource "null_resource" "ansible_playbook" {
-  depends_on = [openstack_compute_instance_v2.Instance, openstack_sharedfilesystem_share_v2.share, openstack_sharedfilesystem_share_access_v2.share_access, openstack_blockstorage_volume_v3.volumes, openstack_compute_volume_attach_v2.vol_attach]
-  count = length(openstack_compute_instance_v2.Instance)
+  depends_on = [openstack_compute_instance_v2.Instance, openstack_blockstorage_volume_v3.volumes, openstack_compute_volume_attach_v2.vol_attach]
+  count = length(openstack_compute_instance_v2.Instance) * (var.deploy_manila == 0 ? 1 : 0)
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path} --extra-vars 'share_path=${openstack_sharedfilesystem_share_v2.share.export_locations[0].path} access_key=${openstack_sharedfilesystem_share_access_v2.share_access.access_key} vm_count=${count.index}'"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path}"
   }
 }
 
+### Run playbook if deployed manila share, and pass on share information to ansible with --extra-vars
+resource "null_resource" "ansible_playbook_manila" {
+  depends_on = [openstack_compute_instance_v2.Instance, openstack_blockstorage_volume_v3.volumes, openstack_compute_volume_attach_v2.vol_attach, openstack_sharedfilesystem_share_v2.share, openstack_sharedfilesystem_share_access_v2.share_access]
+  count = length(openstack_compute_instance_v2.Instance) * (var.deploy_manila)
+  provisioner "local-exec" {
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i staging-openstack.yaml -l ${local.vm_names[count.index]} ${var.playbook_path} --extra-vars 'share_path=${local.share_paths[0]} access_key=${local.share_access_key[0]} vm_count=${count.index}'"
+  }
+}
