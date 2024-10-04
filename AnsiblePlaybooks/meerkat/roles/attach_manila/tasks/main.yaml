@@ -10,6 +10,6 @@
 - name: change manila folder owner
   ansible.builtin.file:
     path: /mnt/manila{{ vm_count }}
-    owner: "{{ user  }}"
+    owner: "{{ user }}"
     mode: '0664'
   become: true
