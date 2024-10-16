@@ -69,7 +69,7 @@ resource "openstack_sharedfilesystem_share_access_v2" "share_access" {
   depends_on   = [openstack_sharedfilesystem_share_v2.share]
   share_id     = local.share_ids[count.index]
   access_type  = "cephx"
-  access_to    = "askndsal"
+  access_to    = "meerkat-manila"
   access_level = "rw"
 }
 

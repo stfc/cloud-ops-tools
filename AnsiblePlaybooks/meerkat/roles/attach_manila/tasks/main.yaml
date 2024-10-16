@@ -1,15 +1,15 @@
 - name: Mount ephemeral SMB volume
   ansible.posix.mount:
     src: "{{ share_path }}"
-    path: /mnt/manila{{ vm_count }}
-    opts: "name={{ user }},secret={{ access_key }}"
+    path: /home/{{ user }}/manila{{ vm_count }}
+    opts: "name=meerkat-manila,secret={{ access_key }}"
     fstype: ceph
     state: ephemeral
   become: true
 
 - name: change manila folder owner
   ansible.builtin.file:
-    path: /mnt/manila{{ vm_count }}
-    owner: "{{ user  }}"
+    path: /home/{{ user }}/manila{{ vm_count }}
+    owner: "{{ user }}"
     mode: '0664'
   become: true
