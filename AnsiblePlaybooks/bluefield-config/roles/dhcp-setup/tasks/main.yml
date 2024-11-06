@@ -1,0 +1,47 @@
+- name: Install DHCP
+  ansible.builtin.apt:
+    name: isc-dhcp-server
+  become: true
+
+- name: Add MAC address to config
+  ansible.builtin.lineinfile:
+    path: ./roles/dhcp-setup/dhcpd.conf
+    regexp: '<EDITABLE-MAC>'
+    line: '  hardware ethernet {{ MAC }}'
+
+- name: Add IP address to config
+  ansible.builtin.lineinfile:
+    path: ./roles/dhcp-setup/dhcpd.conf
+    regexp: 'fixed-address'
+    line: '  fixed-address {{ IP }};'
+
+- name: Remove existing config
+  ansible.builtin.file:
+    path: /etc/dhpc/dhcpd.conf
+    state: absent
+  become: true
+
+- name: Copy dummy to config location
+  ansible.builtin.copy:
+    src: ./roles/dhcp-setup/dhcpd.conf
+    dest: /etc/dhcp/dhcpd.conf
+  become: true
+
+- name: Cleanup DHCP dummy
+  ansible.builtin.lineinfile:
+    path: ./roles/dhcp-setup/dhcpd.conf
+    regexp: '{{ MAC }}'
+    line: '  hardware ethernet <EDITABLE-MAC>'
+
+- name: Adding interface to DHCP config
+  ansible.builtin.lineinfile:
+    path: /etc/default/isc-dhcp-server
+    regexp: 'INTERFACESv4='
+    line: 'INTERFACESv4="eth0"'
+
+- name: Restart DHCP
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: true
+    name: isc-dhcp-server.service
+  become: true

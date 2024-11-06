@@ -1,0 +1,56 @@
+- name: Changing default password
+  uri:
+    url: 'https://{{ IP }}/redfish/v1/AccountService/Accounts/root'
+    method: PATCH
+    body:
+      Password: '{{ PASSWORD }}'
+    body_format: json
+    headers:
+      Content-Type: application/json
+    url_username: root
+    url_password: 0penBmc
+    validate_certs: false
+  register: result
+  when: FIRSTSTART == true
+
+- name: Making certain that NTP is enabled
+  uri:
+    url: 'https://{{ IP }}/redfish/v1/Managers/Bluefield_BMC/NetworkProtocol'
+    method: PATCH
+    body: '{"NTP": {"ProtocolEnabled": true}}'
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+    url_username: root
+    url_password: '{{ PASSWORD }}'
+    validate_certs: false
+  register: result
+
+- name: Configuring NTP
+  uri:
+    url: 'https://{{ IP }}/redfish/v1/Managers/Bluefield_BMC/NetworkProtocol'
+    method: PATCH
+    body: '{"NTP": {"NTPServers": ["<NTPIPPLACEHOLDER>"]}}'
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+    url_username: root
+    url_password: '{{ PASSWORD }}'
+    validate_certs: false
+  register: result
+
+- name: Fetch network information
+  uri:
+    url: 'https://{{ IP }}/redfish/v1/Managers/Bluefield_BMC/NetworkProtocol'
+    method: GET
+    url_username: root
+    url_password: '{{ PASSWORD }}'
+    validate_certs: false
+  register: result
+
+- name: Fetch eth0 config
+  uri:
+    url: 'https://{{ IP }}/redfish/1/Managers/Bluefield_BMC/EthernetInterfaces/eth0'
+    method: GET
+    url_username: root
+    url_password: '{{ PASSWORD }}'
+    validate_certs: false
+  register: result

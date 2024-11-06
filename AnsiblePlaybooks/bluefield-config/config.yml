@@ -1,0 +1,7 @@
+---
+- name: Start network configuration
+  hosts: localhost
+  roles:
+    - dhcp-setup
+      #- networking
+
