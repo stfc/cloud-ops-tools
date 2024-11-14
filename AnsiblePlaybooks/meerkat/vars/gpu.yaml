@@ -1,0 +1,6 @@
+---
+db_ip: "<IP>"
+db_port: "<port>"
+db_username: "<db username>"
+db_password: "<db password>"
+user: <linux username>
