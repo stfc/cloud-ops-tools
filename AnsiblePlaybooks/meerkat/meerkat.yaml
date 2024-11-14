@@ -25,6 +25,14 @@
     - role: attach_manila
     - role: run_manila_storage_benchmark
 
+- hosts: all
+  name: Run gpu roles
+  vars_files:
+     - ./vars/gpu.yaml
+  roles:
+     - role: setup_iris
+     - role: update_machine
+     - role: run_gpu_benchmark
 
 - hosts: cpu
   name: Run Compute roles

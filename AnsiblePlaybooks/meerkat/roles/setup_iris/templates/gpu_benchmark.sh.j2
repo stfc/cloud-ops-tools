@@ -1,0 +1,26 @@
+#!/bin/bash
+
+run_benchmark () {
+        echo -------------------------------------------------------
+        echo Run GPU Benchmark
+        echo -------------------------------------------------------
+
+        local output=$(./get-iris.sh)
+}
+
+benchmark_and_send_data () {
+        run_benchmark
+}
+
+# Get VM infor
+server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
+vm_info=$(openstack server show $server_UUID --os-cloud openstack)
+#hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
+flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
+image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
+
+DB="https://{{ db_ip }}:{{ db_port }}/write"
+
+cp get-iris.sh $storage_path
+
+benchmark_and_send_data 
