@@ -8,3 +8,4 @@ Still need to:
 Add interface to dhcp config
 Get NTP config working
 Get a working DHCP on start
+DNSMasq?
