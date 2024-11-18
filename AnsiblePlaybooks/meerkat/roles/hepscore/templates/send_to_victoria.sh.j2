@@ -20,4 +20,4 @@ SCORE=$(jq '.score' $RESULTS_FILE)
 
 DB="https://{{ db_ip }}:{{ db_port }}/write"
 
-curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'hepscore,flavour='$FLAVOR',image='$IMAGE' score='$SCORE',run_time='$RUN_TIME'' -X POST $DB --insecure
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'hepscore,flavour='$FLAVOR',image='$IMAGE' score='$SCORE',run_time='$RUN_TIME'' -X POST $DB
