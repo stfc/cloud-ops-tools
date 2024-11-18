@@ -26,6 +26,7 @@
 
 - name: Add other users
   become: true
+  no_log: true
   ansible.builtin.user:
     name: "{{ item.name }}"
     password: "{{ item.password | password_hash('sha512') }}"

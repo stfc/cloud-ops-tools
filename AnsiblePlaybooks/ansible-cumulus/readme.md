@@ -14,7 +14,7 @@ Then git clone this repo and move into it
 
 `git clone https://github.com/stfc/cloud-ops-tools && cd cloud-ops-tools/AnsiblePlaybooks/ansible-cumulus`
 
-Then install the requirements for this set of ansible playbooks
+Then install the requirements for this set of ansible playbooks. It is worth reinstalling the collection everytime you need to do anything by adding `--force` to the below command
 
 `ansible-galaxy collection install -r requirements.yml`
 

@@ -30,7 +30,7 @@ variable "image_name" {
 
 variable "keypair_name" {
     description = "The keypair to be used"
-    default  = 
+    default  = "<ssh-key>"
 }
 
 variable "network_name" {
