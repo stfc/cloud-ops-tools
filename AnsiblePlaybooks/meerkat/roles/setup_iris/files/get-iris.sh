@@ -1,30 +1,39 @@
 #!/bin/bash
 
-# Install Drivers
+# Check if VM has GPU
 
-sudo ubuntu-drivers autoinstall
+if lspci | grep -i 'vga\|3d\|display' > /dev/null; then
 
-# Set up benchmark enviroment
+  # Install Drivers
 
-mkdir iris_bench
-cd iris_bench
+  sudo ubuntu-drivers autoinstall
 
-git clone https://github.com/bryceshirley/iris-bench.git
+  # Set up benchmark enviroment
 
-cd iris-gpubench
+  mkdir iris_bench
+  cd iris_bench
 
-sudo groupadd docker
-sudo username -aG docker $user
-newgrp docker
+  git clone https://github.com/bryceshirley/iris-bench.git
 
-python3 -m venv env
+  cd iris-gpubench
 
-source env/bin/activate
+  sudo groupadd docker
+  sudo username -aG docker $user
+  newgrp docker
 
-pip install wheel
+  python3 -m venv env
 
-pip install .
+  source env/bin/activate
 
-./dockerfiles/build_images.sh
+  pip install wheel
 
-iris-gpubench --benchmark_image "synthetic_regression" --export_to_meerkat
+  pip install .
+
+  ./dockerfiles/build_images.sh
+
+  # Run Benchmark
+
+  iris-gpubench --benchmark_image "synthetic_regression" --export_to_meerkat
+
+else
+  echo "GPU benchmarking skipped: No GPU detected"
