@@ -1,0 +1,8 @@
+IP: "xxx.xx.xxx.xxx"
+MAC: "xx:xx:xx:xx:xx"
+FIRSTSTART: false
+PASSWORD: "xxxxxxx"
+NETMASK: "xx"
+GATEWAY: "XX.XX.XXX.XXX"
+NTPSERV: "XXX.XX.XXX.XXX"
+INTERFACE: "eth0"

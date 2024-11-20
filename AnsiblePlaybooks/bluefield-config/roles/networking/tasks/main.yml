@@ -13,6 +13,18 @@
   register: result
   when: FIRSTSTART == true
 
+- name: 'Setting Static IP'
+  uri:
+    url: 'https://192.168.100.155/redfish/v1/Managers/Bluefield_BMC/EthernetInterfaces/eth0'
+    method: PATCH
+    body: '{"IPv4StaticAddresses": [{"Address": "{{ IP }}","SubnetMask": "{{ NETMASK }}","Gateway":"{{ GATEWAY }}"}]}'
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+    url_username: root
+    url_password: '{{ PASSWORD }}'
+    validate_certs: false
+  register: result
+
 - name: Making certain that NTP is enabled
   uri:
     url: 'https://{{ IP }}/redfish/v1/Managers/Bluefield_BMC/NetworkProtocol'
@@ -29,13 +41,14 @@
   uri:
     url: 'https://{{ IP }}/redfish/v1/Managers/Bluefield_BMC/NetworkProtocol'
     method: PATCH
-    body: '{"NTP": {"NTPServers": ["<NTPIPPLACEHOLDER>"]}}'
+    body: '{"NTP": {"NTPServers": ["{{ NTPSERV }}"]}}'
     headers:
       Content-Type: application/x-www-form-urlencoded
     url_username: root
     url_password: '{{ PASSWORD }}'
     validate_certs: false
   register: result
+
 
 - name: Fetch network information
   uri:

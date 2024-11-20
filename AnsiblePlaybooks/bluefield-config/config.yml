@@ -3,5 +3,5 @@
   hosts: localhost
   roles:
     - dhcp-setup
-      #- networking
+    - networking
 
