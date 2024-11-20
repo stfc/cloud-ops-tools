@@ -1,6 +1,6 @@
 - name: Changing default password
   uri:
-    url: 'https://{{ IP }}/redfish/v1/AccountService/Accounts/root'
+    url: 'https://192.168.100.245/redfish/v1/AccountService/Accounts/root'
     method: PATCH
     body:
       Password: '{{ PASSWORD }}'
@@ -15,7 +15,7 @@
 
 - name: 'Setting Static IP'
   uri:
-    url: 'https://192.168.100.155/redfish/v1/Managers/Bluefield_BMC/EthernetInterfaces/eth0'
+    url: 'https://192.168.100.245/redfish/v1/Managers/Bluefield_BMC/EthernetInterfaces/eth0'
     method: PATCH
     body: '{"IPv4StaticAddresses": [{"Address": "{{ IP }}","SubnetMask": "{{ NETMASK }}","Gateway":"{{ GATEWAY }}"}]}'
     headers:

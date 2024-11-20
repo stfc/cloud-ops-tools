@@ -7,7 +7,7 @@
   ansible.builtin.lineinfile:
     path: ./roles/dhcp-setup/dhcpd.conf
     regexp: '<EDITABLE-MAC>'
-    line: '  hardware ethernet {{ MAC }}'
+    line: '  hardware ethernet {{ MAC }};'
 
 - name: Add IP address to config
   ansible.builtin.lineinfile:
@@ -37,7 +37,8 @@
   ansible.builtin.lineinfile:
     path: /etc/default/isc-dhcp-server
     regexp: 'INTERFACESv4='
-    line: 'INTERFACESv4="eth0"'
+    line: 'INTERFACESv4="{{ INTERFACE }}"'
+  become: true
 
 - name: Restart DHCP
   ansible.builtin.systemd:
