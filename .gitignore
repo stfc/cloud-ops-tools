@@ -1,4 +1,5 @@
 .vscode
+.idea/*
 clouds.yaml
 *.terraform*
 *.tfplan

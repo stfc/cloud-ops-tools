@@ -205,8 +205,8 @@ def test_construct_file(mock_crt_block_list):
         mock_open_ctx.assert_called_once_with("full_chain.pem", "w", encoding="utf-8")
 
 
-# Disabling this pylint error as I am testing the main function.
-# pylint: disable=too-many-arguments
+# Disabling this for patching
+# pylint: disable=R0917,R0913
 @patch("reverse_chain.read_crt")
 @patch("reverse_chain.read_key")
 @patch("reverse_chain.construct_blocks")
