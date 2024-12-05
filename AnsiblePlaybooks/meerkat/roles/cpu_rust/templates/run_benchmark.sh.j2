@@ -14,17 +14,14 @@ output=$(cargo +1.78.0 run --release)
 fft_single=$(echo "$output" | grep -ioP "Completed iterations: +(?)\d+(?:\.\d+)?" | head -1 | grep -ioP "\d+(?:\.\d+)?")
 fft_multi=$(echo "$output" | grep -ioP "Completed iterations: +(?)\d+(?:\.\d+)?" | tail -n1 | grep -ioP "\d+(?:\.\d+)?")
 
-# Get VM infor
-server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
-vm_info=$(openstack server show $server_UUID --os-cloud openstack)
-#hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
-flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
-image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
+# VM info
+flavor="{{ flavor }}"
+image="{{ image }}"
+
 
 DB="https://{{ db_ip }}:{{ db_port }}/write"
 
-# --insecure is used here, for a self-signed cert
-curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_single' 'result'='"$primes_single"'' -X POST $DB --insecure
-curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_multi' 'result'='"$primes_multi"'' -X POST $DB --insecure
-curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_single' 'result'='"$fft_single"'' -X POST $DB --insecure
-curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_multi' 'result'='"$fft_multi"'' -X POST $DB --insecure
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_single' 'result'='"$primes_single"'' -X POST $DB
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='primes_multi' 'result'='"$primes_multi"'' -X POST $DB
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_single' 'result'='"$fft_single"'' -X POST $DB
+curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'cpu_rust,image='"$image"',flavor='"$flavor"',test_type='fft_multi' 'result'='"$fft_multi"'' -X POST $DB

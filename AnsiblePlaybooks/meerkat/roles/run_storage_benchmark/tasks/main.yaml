@@ -5,4 +5,4 @@
   shell: ./benchmark.sh -p /mnt/volume -s volume
 
 - name: Run manila share benchmark
-  shell: ./benchmark.sh -p /mnt/manila -s manila
+  shell: ./benchmark.sh -p /home/{{ user }}/manila{{ vm_count }} -s manila

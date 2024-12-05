@@ -24,10 +24,10 @@ run_benchmark () {
 }
 
 send_data() {
-        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_write' '"$storage_type"'='"$seqw"'' -X POST $DB --insecure
-        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_read' '"$storage_type"'='"$seqr"'' -X POST $DB --insecure
-        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_write' '"$storage_type"'='"$randw"'' -X POST $DB --insecure
-        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_read' '"$storage_type"'='"$randr"'' -X POST $DB --insecure
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_write' '"$storage_type"'='"$seqw"'' -X POST $DB
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='sequential_read' '"$storage_type"'='"$seqr"'' -X POST $DB
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_write' '"$storage_type"'='"$randw"'' -X POST $DB
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'storage,image='"$image"',flavor='"$flavor"',file_size='"$units"',test_type='random_read' '"$storage_type"'='"$randr"'' -X POST $DB
 
 }
 
@@ -40,12 +40,9 @@ benchmark_and_send_data () {
         send_data
 }
 
-# Get VM infor
-server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
-vm_info=$(openstack server show $server_UUID --os-cloud openstack)
-#hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
-flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
-image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
+# VM info
+flavor="{{ flavor }}"
+image="{{ image }}"
 
 DB="https://{{ db_ip }}:{{ db_port }}/write"
 
