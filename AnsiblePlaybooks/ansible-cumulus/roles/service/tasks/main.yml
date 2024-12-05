@@ -43,7 +43,6 @@
           - id: "{{ vault_snmp_readonly_community }}"
             access: "{{ snmp_readonly_community_access }}"
         system_contact: "{{ system_contact }}"
-        system_name: "{{ fqdn }}"
         system_location: "{{ system_location }}"
       dns:
         - id: "mgmt"

@@ -22,7 +22,7 @@
       timezone: "Etc/UTC"
       reboot:
         mode: "fast"
-      message:
+      login_message:
         post_login: |
           #######################################################
           #  ____ _____ _____ ____    ____ _                 _  #
