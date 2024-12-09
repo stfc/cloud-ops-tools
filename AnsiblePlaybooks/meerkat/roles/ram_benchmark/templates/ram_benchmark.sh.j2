@@ -3,7 +3,7 @@
 send_data () {
         block_size=$1
         # --insecure is used as using a self signed cert
-        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'ram,image='"$image"',flavor='"$flavor"',block_size='"$block_size"' 'read_speed'='"$read_speed"','write_speed'='"$write_speed"','read_latency'='"$read_latency"','write_latency'='"$write_latency"'' -X POST $DB --insecure
+        curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'ram,image='"$image"',flavor='"$flavor"',block_size='"$block_size"' 'read_speed'='"$read_speed"','write_speed'='"$write_speed"','read_latency'='"$read_latency"','write_latency'='"$write_latency"'' -X POST $DB
 }
 
 run_benchmark () {
