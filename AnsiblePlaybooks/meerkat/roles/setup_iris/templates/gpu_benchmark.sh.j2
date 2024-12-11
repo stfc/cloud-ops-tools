@@ -1,11 +1,6 @@
 #!/bin/bash
 
 data_file="matrics.yml"
-DB="https://{{ db_ip }}:{{ db_port }}/write"
-server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
-vm_info=$(openstack server show $server_UUID --os-cloud openstack)
-flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
-image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
 
 run_benchmark () {
 	echo -------------------------------------------------------
@@ -17,8 +12,8 @@ run_benchmark () {
 }
 
 send_data () {
-	curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'gpu_benchmark,image='"$image"',flavor='"$flavor"',test_type='$benchmark' 'result'='"$bench_score"'' -X POST $DB --insecure
-	curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'gpu_benchmark,image='"$image"',flavor='"$flavor"',test_type='${benchmark} Emisions' 'result'='"$gpu_emisions_"'' -X POST $DB --insecure
+	curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'gpu_benchmark,image='"$image"',flavor='"$flavor"',test_type='$benchmark' 'result'='"$bench_score"'' -X POST $DB
+	curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'gpu_benchmark,image='"$image"',flavor='"$flavor"',test_type='${benchmark} Emisions' 'result'='"$gpu_emisions"'' -X POST $DB
 }
 
 read_data () {
@@ -36,11 +31,8 @@ benchmark_and_send_data () {
 }
 
 # Get VM infor
-server_UUID=$(curl  http://169.254.169.254/openstack/latest/meta_data.json -s  | grep -ioP .{8}-.{4}-.{4}-.{4}-.{12})
-vm_info=$(openstack server show $server_UUID --os-cloud openstack)
-hypervisor=$(echo $vm_info | grep -ioP "\w*.nubes.rl.ac.uk" | head -1)
-flavor=$(echo $vm_info | grep -ioP "flavor\s\|\s\S*" | cut -c 10-)
-image=$(echo $vm_info | grep -ioP "image\s\|\s\S*" | cut -c 9-)
+flavor="{{ flavor }}"
+image="{{ image }}"
 
 DB="https://{{ db_ip }}:{{ db_port }}/write"
 

@@ -10,11 +10,9 @@ if lspci | grep -i 'vga\|3d\|display' > /dev/null; then
 
   # Set up benchmark enviroment
 
-  #Expected run location 
-  mkdir /home/<user>
-  cd /home/<user>
-
   git clone https://github.com/Chris-green-stfc/iris-bench.git
+
+  # Expected run location: /home/<user>
 
   cd iris-gpubench
 
@@ -32,7 +30,7 @@ if lspci | grep -i 'vga\|3d\|display' > /dev/null; then
 
   ./dockerfiles/build_images.sh
 
-  ./setup_vm_docker.sh 
+  ./setup_vm_docker.sh
 
 else
   echo "GPU benchmarking skipped: No GPU detected"
