@@ -192,11 +192,8 @@ def convert_to_pdf(input_file, output_file):
             bottomMargin=72,
         )
         doc.build(flowables)
-
     except Exception as e:
         print(f"Error occurred: {e}")
-
-def main():
 
 def main():
     parser = argparse.ArgumentParser(description="Convert an input file to a PDF file.")
@@ -211,11 +208,7 @@ def main():
         # replace the extension from the input_filename when it exists
         # otherwise, just add .pdf 
         output_filename = f"{base_name}.pdf" if ext else f"{input_filename}.pdf"
-    print(input_filename)
-    print(output_filename)
     convert_to_pdf(input_filename, output_filename)
 
 if __name__ == '__main__':
     main()
-
-
