@@ -13,9 +13,13 @@ lfsw34.r89.cloud.internal
 
 [r89leaf_sn2700s]
 
+[r89leaf_sn3700s]
+lfsw38.r89.cloud.internal
+
 [r89leafs:children]
 r89leaf_sn2100s
 r89leaf_sn2700s
+r89leaf_sn3700s
 
 [r26leaf_sn2100s]
 lfsw13.r26.cloud.internal
@@ -26,9 +30,14 @@ lfsw16.r26.cloud.internal
 [r26leaf_sn2700s]
 lfsw17.r26.cloud.internal
 
+[r26leaf_sn3700s]
+lfsw21.r26.cloud.internal
+lfsw22.r26.cloud.internal
+
 [r26leafs:children]
 r26leaf_sn2100s
 r26leaf_sn2700s
+r26leaf_sn3700s
 
 [r89:children]
 borders
@@ -39,8 +48,6 @@ exits
 [r26:children]
 r26leafs
 r26spines
-
-
 
 [leafs:children]
 borders
@@ -58,6 +65,10 @@ r26leaf_sn2100s
 [sn2700s:children]
 r26leaf_sn2700s
 r89leaf_sn2700s
+
+[sn3700s:children]
+r26leaf_sn3700s
+r89leaf_sn3700s
 
 [sn4600s]
 

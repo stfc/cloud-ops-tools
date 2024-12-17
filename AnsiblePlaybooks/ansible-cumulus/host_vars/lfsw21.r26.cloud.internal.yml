@@ -1,0 +1,15 @@
+---
+ansible_host: 10.5.0.93
+hostname: lfsw21
+configured_bridge: false
+configured_evpn: false
+configured_interfaces: false
+configured_router: false
+configured_service: false
+configured_system: false
+reinstall: false
+update: false
+system_location: r26rack876
+vlan_interfaces:
+  - id: '450'
+    network: 172.16.209.160/27

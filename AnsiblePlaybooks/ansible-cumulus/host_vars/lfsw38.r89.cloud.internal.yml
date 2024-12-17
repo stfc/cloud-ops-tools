@@ -1,0 +1,30 @@
+---
+ansible_host: 10.5.0.38
+hostname: lfsw38
+configured_bridge: false
+configured_interfaces: false
+system_location: r89rack129
+bridge_interfaces:
+  - swp1
+  - swp2
+  - swp3
+  - swp4
+  - swp5
+  - swp6
+  - swp7
+  - swp11
+  - swp12
+  - swp13
+  - swp14
+  - swp15
+  - swp16
+  - swp17
+  - swp19
+  - swp20
+  - swp21
+  - swp23
+  - swp24
+  - swp25
+vlan_interfaces:
+  - id: '450'
+    network: 172.16.196.96/27
