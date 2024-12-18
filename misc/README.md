@@ -20,4 +20,3 @@
 * Improve quality of the code, make it more modular
 * Improve the -h/--help message to explain better the different combinations of input options
 * Add CLOUD-specific code, to enhance the content of the generated document. For example: some **warning** or **critical** alert when some numbers are not good.
-

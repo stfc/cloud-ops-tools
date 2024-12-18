@@ -196,7 +196,6 @@ def convert_to_pdf(input_file, output_file):
     except Exception as e:
         print(f"Error occurred: {e}")
 
-def main():
 
 def main():
     parser = argparse.ArgumentParser(description="Convert an input file to a PDF file.")
@@ -217,5 +216,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
