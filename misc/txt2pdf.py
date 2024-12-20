@@ -186,8 +186,10 @@ def convert_to_pdf(input_file, output_file):
             bottomMargin=72,
         )
         doc.build(flowables)
+
     except Exception as e:
         print(f"Error occurred: {e}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Convert an input file to a PDF file.")
