@@ -22,11 +22,10 @@ def parse_markdown(input_text):
     """
     Parses the input markdown text and converts it into a list of ReportLab flowables.
 
-    Args:
-        input_text (str): The input text containing markdown-like syntax.
-
-    Returns:
-        list: A list of ReportLab flowables (text, tables, etc.) to be included in the PDF.
+    :param input_text: The input text containing markdown-like syntax.
+    :type input_text: str
+    :return: A list of ReportLab flowables (text, tables, etc.) to be included in the PDF.
+    :rtype: list
     """
     flowables = []  # List to store elements to be added to the PDF
     styles = getSampleStyleSheet()  # Get default styles provided by ReportLab
@@ -91,11 +90,10 @@ def process_inline(text):
     """
     Processes inline markdown syntax like bold (**text**) and italic (*text*).
 
-    Args:
-        text (str): The input text with inline markdown syntax.
-
-    Returns:
-        str: Text with ReportLab-compatible HTML tags for styling.
+    :param text: The input text with inline markdown syntax.
+    :type text: str
+    :return: Text with ReportLab-compatible HTML tags for styling.
+    :rtype: str
     """
     bold_pattern = r'(\*\*|__)(.*?)\1'  # Pattern for bold (** or __)
     italic_pattern = r'(\*|_)(.*?)\1'  # Pattern for italic (* or _)
@@ -117,11 +115,10 @@ def parse_table(table_lines):
     """
     Parses markdown table lines into a ReportLab Table object.
 
-    Args:
-        table_lines (list): List of strings representing the table in markdown format.
-
-    Returns:
-        Table: A styled ReportLab Table object.
+    :param table_lines: List of strings representing the table in markdown format.
+    :type table_lines: list
+    :return: A styled ReportLab Table object.
+    :rtype: Table
     """
     if len(table_lines) < 2:  # A valid table requires at least a header and one row
         return None
@@ -159,14 +156,11 @@ def convert_to_pdf(input_file, output_file):
     """
     Converts the input markdown-like file to a PDF.
 
-    Args:
-        input_file (str): Path to the input file containing markdown-like text.
-        output_file (str): Path to save the generated PDF.
+    :param input_file: Path to the input file containing markdown-like text.
+    :type input_file: str
+    :param output_file: Path to save the generated PDF.
+    :type output_file: str
     """
-    if not os.path.exists(input_file):
-        print(f"Error: File '{input_file}' not found.")
-        return
-
     try:
         with open(input_file, 'r', encoding='utf-8') as f:
             input_text = f.read()
