@@ -161,50 +161,50 @@ def convert_to_pdf(input_file, output_file):
     :param output_file: Path to save the generated PDF.
     :type output_file: str
     """
-    try:
-        with open(input_file, 'r', encoding='utf-8') as f:
-            input_text = f.read()
+    with open(input_file, 'r', encoding='utf-8') as f:
+        input_text = f.read()
 
-        flowables = []  # List to store elements for the PDF
+    flowables = []  # List to store elements for the PDF
 
-        # Add a title page with the current date
-        date_str = datetime.now().strftime('%Y-%m-%d')
-        title = Paragraph("Cloud Operations Report", ParagraphStyle('Title', fontSize=36, alignment=TA_CENTER))
-        date = Paragraph(date_str, ParagraphStyle('Date', fontSize=24, alignment=TA_CENTER))
-        flowables.extend([Spacer(1, 100), title, Spacer(1, 50), date, PageBreak()])
+    # Add a title page with the current date
+    date_str = datetime.now().strftime('%Y-%m-%d')
+    title = Paragraph("Cloud Operations Report", ParagraphStyle('Title', fontSize=36, alignment=TA_CENTER))
+    date = Paragraph(date_str, ParagraphStyle('Date', fontSize=24, alignment=TA_CENTER))
+    flowables.extend([Spacer(1, 100), title, Spacer(1, 50), date, PageBreak()])
 
-        # Parse the markdown content and add to flowables
-        flowables.extend(parse_markdown(input_text))
+    # Parse the markdown content and add to flowables
+    flowables.extend(parse_markdown(input_text))
 
-        # Create and build the PDF document
-        doc = SimpleDocTemplate(
-            output_file,
-            pagesize=LETTER,
-            rightMargin=72,
-            leftMargin=72,
-            topMargin=72,
-            bottomMargin=72,
-        )
-        doc.build(flowables)
+    # Create and build the PDF document
+    doc = SimpleDocTemplate(
+        output_file,
+        pagesize=LETTER,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+    )
+    doc.build(flowables)
 
-    except Exception as e:
-        print(f"Error occurred: {e}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Convert an input file to a PDF file.")
-    parser.add_argument("--input", "-i", required=True, help="Path to the input file.")
-    parser.add_argument("--output", "-o", help="Path to the output file (optional).")
-    args = parser.parse_args()
-    input_filename = args.input
-    output_filename = args.output
-    if not output_filename:
-        # if the output_filename has not been provided
-        base_name, ext = os.path.splitext(input_filename)
-        # replace the extension from the input_filename when it exists
-        # otherwise, just add .pdf 
-        output_filename = f"{base_name}.pdf" if ext else f"{input_filename}.pdf"
-    convert_to_pdf(input_filename, output_filename)
+    try:
+        parser = argparse.ArgumentParser(description="Convert an input file to a PDF file.")
+        parser.add_argument("--input", "-i", required=True, help="Path to the input file.")
+        parser.add_argument("--output", "-o", help="Path to the output file (optional).")
+        args = parser.parse_args()
+        input_filename = args.input
+        output_filename = args.output
+        if not output_filename:
+            # if the output_filename has not been provided
+            base_name, ext = os.path.splitext(input_filename)
+            # replace the extension from the input_filename when it exists
+            # otherwise, just add .pdf 
+            output_filename = f"{base_name}.pdf" if ext else f"{input_filename}.pdf"
+        convert_to_pdf(input_filename, output_filename)
+    except Exception as e:
+        print(f"Error occurred: {e}")
 
 if __name__ == '__main__':
     main()
