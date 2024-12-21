@@ -186,25 +186,20 @@ def convert_to_pdf(input_file, output_file):
     )
     doc.build(flowables)
 
-
-
 def main():
-    try:
-        parser = argparse.ArgumentParser(description="Convert an input file to a PDF file.")
-        parser.add_argument("--input", "-i", required=True, help="Path to the input file.")
-        parser.add_argument("--output", "-o", help="Path to the output file (optional).")
-        args = parser.parse_args()
-        input_filename = args.input
-        output_filename = args.output
-        if not output_filename:
-            # if the output_filename has not been provided
-            base_name, ext = os.path.splitext(input_filename)
-            # replace the extension from the input_filename when it exists
-            # otherwise, just add .pdf 
-            output_filename = f"{base_name}.pdf" if ext else f"{input_filename}.pdf"
-        convert_to_pdf(input_filename, output_filename)
-    except Exception as e:
-        print(f"Error occurred: {e}")
+    parser = argparse.ArgumentParser(description="Convert an input file to a PDF file.")
+    parser.add_argument("--input", "-i", required=True, help="Path to the input file.")
+    parser.add_argument("--output", "-o", help="Path to the output file (optional).")
+    args = parser.parse_args()
+    input_filename = args.input
+    output_filename = args.output
+    if not output_filename:
+        # if the output_filename has not been provided
+        base_name, ext = os.path.splitext(input_filename)
+        # replace the extension from the input_filename when it exists
+        # otherwise, just add .pdf 
+        output_filename = f"{base_name}.pdf" if ext else f"{input_filename}.pdf"
+    convert_to_pdf(input_filename, output_filename)
 
 if __name__ == '__main__':
     main()
