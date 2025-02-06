@@ -1,0 +1,39 @@
+#!/bin/bash
+
+data_file="matrics.yml"
+
+run_benchmark () {
+	echo -------------------------------------------------------
+	echo Run GPU Benchmark
+	echo -------------------------------------------------------
+
+	./get-iris.sh
+	./run_iris.sh
+}
+
+send_data () {
+	curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'gpu_benchmark,image='"$image"',flavor='"$flavor"',test_type='$benchmark' 'result'='"$bench_score"'' -X POST $DB
+	curl -H "Authorization: Basic `echo -n "{{ db_username }}:{{ db_password }}" | base64`" -d 'gpu_benchmark,image='"$image"',flavor='"$flavor"',test_type='${benchmark} Emisions' 'result'='"$gpu_emisions"'' -X POST $DB
+}
+
+read_data () {
+	while IFS = read -r line; do
+		benchmark=$(yq '.benchmark' data_file)
+		bench_score=$(yq '.score' data_file)
+		gpu_emisions=$(yq '.total_carbon' data_file)
+	done < $data_file	
+}
+
+benchmark_and_send_data () {
+	run_benchmark
+	read_data
+	send_data
+}
+
+# Get VM infor
+flavor="{{ flavor }}"
+image="{{ image }}"
+
+DB="https://{{ db_ip }}:{{ db_port }}/write"
+
+benchmark_and_send_data

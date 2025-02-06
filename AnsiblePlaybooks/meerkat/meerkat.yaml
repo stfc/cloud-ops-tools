@@ -11,20 +11,28 @@
   roles:
     - update_machine
 
-- hosts: storage
-  name: Run storage roles
-  vars_files:
-     - ./vars/storage.yaml
-  roles:
-    - role: setup_openstack
-    - role: update_machine
-    - role: setup_storage_benchmark
-    - role: run_local_storage_benchmark
-    - role: attach_volume
-    - role: run_volume_storage_benchmark
-    - role: attach_manila
-    - role: run_manila_storage_benchmark
+ - hosts: storage
+   name: Run storage roles
+   vars_files:
+      - ./vars/storage.yaml
+   roles:
+     - role: setup_openstack
+     - role: update_machine
+     - role: setup_storage_benchmark
+     - role: run_local_storage_benchmark
+     - role: attach_volume
+     - role: run_volume_storage_benchmark
+     - role: attach_manila
+     - role: run_manila_storage_benchmark
 
+- hosts: gpu
+  name: Run gpu roles
+  vars_files:
+     - ./vars/gpu.yaml
+  roles:
+     - role: update_machine
+     - role: setup_iris
+     - role: run_gpu_benchmark
 
 - hosts: cpu
   name: Run Compute roles
