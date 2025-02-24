@@ -18,14 +18,13 @@ There is a template yaml file [here](data.yaml)
 ## Instructions:
 
 1. Source your openstack cli venv and OpenStack admin credentials.
+2. Export your Influx API token as `INFLUXDB_API_TOKEN`
 2. Run the `report.sh` script to generate the data file.
-2. Write your token in plain text in a file e.g. "token"
 3. Run `export.py` with the correct arguments, see below:
 
 ```shell
 python3 export.py --host="http://172.16.103.52:8086" \
 --org="cloud" \
 --bucket="weekly-reports-time"
---token-file="token"
 --report-file="data-9.yaml"
 ```

@@ -9,6 +9,7 @@ import argparse
 import yaml
 import configparser
 import datetime
+import os
 
 from influxdb_client.client import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -28,7 +29,7 @@ def main(args: argparse.Namespace):
         points = _create_points_report(args.report_file)
     elif args.inventory_file:
         points = _create_points_inventory(args.inventory_file)
-    api_token = _get_token(args.token_file)
+    api_token = _get_token()
     _write_data(
         points=points, host=args.host, org=args.org, bucket=args.bucket, token=api_token
     )
@@ -45,31 +46,24 @@ def _check_args(args: argparse.Namespace):
         raise RuntimeError("Argument --org not given.")
     if not args.bucket:
         raise RuntimeError("Argument --bucket not given.")
-    if not args.token_file:
-        raise RuntimeError("Argument --token-file not given.")
     if not args.report_file and not args.inventory_file:
         raise RuntimeError("Argument --report-file or --inventory-file not given.")
     if args.report_file and args.inventory_file:
         raise RuntimeError(
             "Argument --report-file and --inventory-file given. Only one data file can be provided."
         )
-    if not Path(args.token_file).is_file():
-        raise RuntimeError(f"Cannot find token file at path {args.token_file}.")
     if args.report_file and not Path(args.report_file).is_file():
         raise RuntimeError(f"Cannot find report file at path {args.report_file}.")
     if args.inventory_file and not Path(args.inventory_file).is_file():
         raise RuntimeError(f"Cannot find inventory file at path {args.inventory_file}.")
 
 
-def _get_token(file_path: str) -> str:
+def _get_token() -> str:
     """
-    Get the token from the token file.
-    :param file_path: File path to token file
+    Get the token from the environment
     :return: Token as string
     """
-    with open(Path(file_path), "r", encoding="utf-8") as file:
-        token = file.read().strip()
-    return token
+    return os.environ.get("INFLUXDB_API_TOKEN")
 
 
 def _create_points_report(file_path: str) -> List[Point]:
@@ -224,7 +218,6 @@ if __name__ == "__main__":
     parser.add_argument("--host", help="InfluxDB host url with port.")
     parser.add_argument("--org", help="InfluxDB organisation.")
     parser.add_argument("--bucket", help="InfluxDB bucket to write to.")
-    parser.add_argument("--token-file", help="InfluxDB access token file path.")
     parser.add_argument("--report-file", help="Report yaml file.")
     parser.add_argument("--inventory-file", help="Inventory ini file.")
     arguments = parser.parse_args()
