@@ -1,9 +1,11 @@
+"""Format the raw data from the report shell script."""
+
 from typing import Dict, List
 from datetime import datetime
 import yaml
 
 
-date = datetime.now().strftime('%Y-%m-%d')
+date = datetime.now().strftime("%Y-%m-%d")
 
 
 def main():
@@ -16,7 +18,9 @@ def main():
     server_list_raw = read_file(f"server_list_{date}.yaml")
 
     hypervisor_list = _format_hypervisor_list(hypervisor_list_raw)
-    enabled_hypervisor_list_hostnames = [hv["Host"] for hv in compute_service_list_raw if hv["Status"] == "enabled"]
+    enabled_hypervisor_list_hostnames = [
+        hv["Host"] for hv in compute_service_list_raw if hv["Status"] == "enabled"
+    ]
 
     cpu = _get_cpu(hypervisor_list, enabled_hypervisor_list_hostnames)
     memory = _get_memory(hypervisor_list, enabled_hypervisor_list_hostnames)
@@ -32,10 +36,11 @@ def main():
     fip = _get_fip(floating_ip_list_raw)
     virtual_worker_nodes = _get_vwn(server_list_raw)
 
-    with open(
-            f"weekly-report-{date}.yaml", "w", encoding="utf-8"
-    ) as file:
-        yaml.dump({**cpu, **memory, **storage, **hv, **vm, **fip, **virtual_worker_nodes}, file)
+    with open(f"weekly-report-{date}.yaml", "w", encoding="utf-8") as file:
+        yaml.dump(
+            {**cpu, **memory, **storage, **hv, **vm, **fip, **virtual_worker_nodes},
+            file,
+        )
 
 
 def _format_hypervisor_list(hypervisor_list: List[Dict]) -> List[Dict]:
@@ -69,7 +74,9 @@ def _format_hypervisor_list(hypervisor_list: List[Dict]) -> List[Dict]:
         fixed_list.append(hv)
 
     if len(fixed_list) != len(hypervisor_list):
-        raise RuntimeError("The formatted hypervisor list does not match the length of the raw hypervisor file.")
+        raise RuntimeError(
+            "The formatted hypervisor list does not match the length of the raw hypervisor file."
+        )
 
     return fixed_list
 
@@ -81,12 +88,22 @@ def _get_cpu(hypervisor_list: List[Dict], enabled_hypervisor_list: List[str]) ->
     :param enabled_hypervisor_list: Hostnames that are enabled as compute service hosts.
     :return: CPU statistics
     """
-    used = sum([hv["vCPUs Used"] for hv in hypervisor_list if hv["Hypervisor Hostname"] in enabled_hypervisor_list])
-    total = sum([hv["vCPUs"] for hv in hypervisor_list if hv["Hypervisor Hostname"] in enabled_hypervisor_list])
+    used = sum(
+        hv["vCPUs Used"]
+        for hv in hypervisor_list
+        if hv["Hypervisor Hostname"] in enabled_hypervisor_list
+    )
+    total = sum(
+        hv["vCPUs"]
+        for hv in hypervisor_list
+        if hv["Hypervisor Hostname"] in enabled_hypervisor_list
+    )
     return {"cpu": {"in_use": used, "total": total}}
 
 
-def _get_memory(hypervisor_list: List[Dict], enabled_hypervisor_list: List[str]) -> Dict:
+def _get_memory(
+    hypervisor_list: List[Dict], enabled_hypervisor_list: List[str]
+) -> Dict:
     """
     Get the memory stats from the hypervisor list.
     :param hypervisor_list: OpenStack Hypervisor hosts
@@ -94,10 +111,22 @@ def _get_memory(hypervisor_list: List[Dict], enabled_hypervisor_list: List[str])
     :return: Memory statistics
     """
     used = round(
-        sum([hv["Memory MB Used"] for hv in hypervisor_list if hv["Hypervisor Hostname"] in enabled_hypervisor_list]) / 1000000, 2
+        sum(
+            hv["Memory MB Used"]
+            for hv in hypervisor_list
+            if hv["Hypervisor Hostname"] in enabled_hypervisor_list
+        )
+        / 1000000,
+        2,
     )
     total = round(
-        sum([hv["Memory MB"] for hv in hypervisor_list if hv["Hypervisor Hostname"] in enabled_hypervisor_list]) / 1000000, 2
+        sum(
+            hv["Memory MB"]
+            for hv in hypervisor_list
+            if hv["Hypervisor Hostname"] in enabled_hypervisor_list
+        )
+        / 1000000,
+        2,
     )
     return {"memory": {"in_use": used, "total": total}}
 
@@ -112,7 +141,9 @@ def _get_vm(server_list: List[Dict]) -> Dict:
     error = len([vm for vm in server_list if vm["Status"] == "ERROR"])
     build = len([vm for vm in server_list if vm["Status"] == "BUILD"])
     shutoff = len([vm for vm in server_list if vm["Status"] == "SHUTOFF"])
-    return {"vm": {"active": active, "error": error, "build": build, "shutoff": shutoff}}
+    return {
+        "vm": {"active": active, "error": error, "build": build, "shutoff": shutoff}
+    }
 
 
 def _get_vwn(server_list: List[Dict]) -> Dict:
@@ -121,7 +152,13 @@ def _get_vwn(server_list: List[Dict]) -> Dict:
     :param server_list:
     :return: VWN statistics
     """
-    active = len([vm for vm in server_list if "vwn-static" in vm["Name"] and vm["Status"] == "ACTIVE"])
+    active = len(
+        [
+            vm
+            for vm in server_list
+            if "vwn-static" in vm["Name"] and vm["Status"] == "ACTIVE"
+        ]
+    )
     return {"virtual_worker_nodes": {"active": active}}
 
 
@@ -143,22 +180,53 @@ def _get_hv(compute_service_list: List[Dict], hypervisor_list: List[Dict]) -> Di
     :param hypervisor_list: OpenStack Hypervisor hosts
     :return: HV statistics
     """
-    up_and_enabled = len([hv for hv in compute_service_list if hv["State"] == "up" and "hv" in hv["Host"] and hv["Status"] == "enabled"])
-    down = len([hv for hv in compute_service_list if hv["State"] == "down" and "hv" in hv["Host"]])
+    up_and_enabled = len(
+        [
+            hv
+            for hv in compute_service_list
+            if hv["State"] == "up" and "hv" in hv["Host"] and hv["Status"] == "enabled"
+        ]
+    )
+    down = len(
+        [
+            hv
+            for hv in compute_service_list
+            if hv["State"] == "down" and "hv" in hv["Host"]
+        ]
+    )
     disabled = len(
-        [hv for hv in compute_service_list if hv["State"] == "up" and hv["Status"] == "disabled" and "hv" in hv["Host"]]
+        [
+            hv
+            for hv in compute_service_list
+            if hv["State"] == "up" and hv["Status"] == "disabled" and "hv" in hv["Host"]
+        ]
     )
     cpu_full = len(
-        [hv for hv in hypervisor_list if hv["vCPUs Used"] == hv["vCPUs"] and hv["State"] == "up"]
+        [
+            hv
+            for hv in hypervisor_list
+            if hv["vCPUs Used"] == hv["vCPUs"] and hv["State"] == "up"
+        ]
     )
     memory_full = len(
         [
             hv
             for hv in hypervisor_list
-            if (hv["Memory MB"] - hv["Memory MB Used"] <= 8192 and not hv["State"] == "down")
+            if (
+                hv["Memory MB"] - hv["Memory MB Used"] <= 8192
+                and not hv["State"] == "down"
+            )
         ]
     )
-    return {"hv": {"cpu_full": cpu_full, "memory_full": memory_full, "down": down, "disabled": disabled, "up": up_and_enabled}}
+    return {
+        "hv": {
+            "cpu_full": cpu_full,
+            "memory_full": memory_full,
+            "down": down,
+            "disabled": disabled,
+            "up": up_and_enabled,
+        }
+    }
 
 
 def read_file(file_name: str) -> List[Dict] | Dict:

@@ -1,16 +1,13 @@
 """Export weekly reports statistics data to an InfluxDB bucket."""
 
-from pprint import pprint
 from typing import Dict, List
-
-from influxdb_client import Point
 from pathlib import Path
 import argparse
-import yaml
 import configparser
 import datetime
 import os
-
+import yaml
+from influxdb_client import Point
 from influxdb_client.client import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -91,12 +88,10 @@ def _create_points_inventory(file_path: str) -> List[Point]:
     points = []
     config = configparser.ConfigParser()
     config.read(file_path)
-    pprint(config)
-
     return points
 
 
-def _from_key(key: str, data: Dict) -> List[Point]:
+def _from_key(key: str, data: Dict) -> List[Point]:  # pylint: disable=R0911
     """
     Decide which create_point method to call from the key.
     :param key: Section of data. For example, CPU
@@ -117,10 +112,7 @@ def _from_key(key: str, data: Dict) -> List[Point]:
         return _from_fip(data)
     if key == "virtual_worker_nodes":
         return _from_vwn(data)
-    else:
-        raise RuntimeError(
-            f"Key {key} not supported. Please contact service maintainer."
-        )
+    raise RuntimeError(f"Key {key} not supported. Please contact service maintainer.")
 
 
 def _from_cpu(data: Dict) -> List[Point]:
@@ -157,13 +149,9 @@ def _from_hv(data: Dict) -> List[Point]:
     """Extract hv data from yaml into Points."""
     points = []
     points.append(Point("hv").field("up", data["up"]).time(time))
+    points.append(Point("hv").field("active_and_cpu_full", data["cpu_full"]).time(time))
     points.append(
-        Point("hv").field("active_and_cpu_full", data["cpu_full"]).time(time)
-    )
-    points.append(
-        Point("hv")
-        .field("active_and_memory_full", data["memory_full"])
-        .time(time)
+        Point("hv").field("active_and_memory_full", data["memory_full"]).time(time)
     )
     points.append(Point("hv").field("down", data["down"]).time(time))
     points.append(Point("hv").field("disabled", data["disabled"]).time(time))
