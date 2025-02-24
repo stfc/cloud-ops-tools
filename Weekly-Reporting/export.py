@@ -8,7 +8,6 @@ from pathlib import Path
 import argparse
 import yaml
 import configparser
-import logging
 import datetime
 
 from influxdb_client.client import influxdb_client
@@ -163,13 +162,13 @@ def _from_storage(data: Dict) -> List[Point]:
 def _from_hv(data: Dict) -> List[Point]:
     """Extract hv data from yaml into Points."""
     points = []
-    points.append(Point("hv").field("active", data["active"]["active"]).time(time))
+    points.append(Point("hv").field("up", data["up"]).time(time))
     points.append(
-        Point("hv").field("active_and_cpu_full", data["active"]["cpu_full"]).time(time)
+        Point("hv").field("active_and_cpu_full", data["cpu_full"]).time(time)
     )
     points.append(
         Point("hv")
-        .field("active_and_memory_full", data["active"]["memory_full"])
+        .field("active_and_memory_full", data["memory_full"])
         .time(time)
     )
     points.append(Point("hv").field("down", data["down"]).time(time))
@@ -184,8 +183,8 @@ def _from_vm(data: Dict) -> List[Point]:
             Point("vm")
             .field("active", data["active"])
             .field("shutoff", data["shutoff"])
-            .field("errored", data["errored"])
-            .field("building", data["building"])
+            .field("error", data["error"])
+            .field("build", data["build"])
             .time(time)
         )
     ]

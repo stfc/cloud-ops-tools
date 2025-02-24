@@ -33,19 +33,18 @@ storage:
 
 hv:
   # HV stats
-  active:
-    active:
-    cpu_full:
-    memory_full:
+  up:
   down:
   disabled:
+  memory_full:
+  cpu_full:
 
 vm:
   # VM stats
   active:
   shutoff:
-  errored:
-  building:
+  error:
+  build:
 
 floating_ip:
   # Floating IP
