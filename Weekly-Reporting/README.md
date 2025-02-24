@@ -9,11 +9,11 @@ If you need to back-fill data or use a different time you can do the below in th
 ...
 ```
 The script uses argparse to provide an easy-to-use command line interface.<br>
-There is a template yaml file [here](data.yaml) which **requires all values to be not empty**.
+There is a template yaml file [here](data.yaml)
 
 > **NOTE on data.yaml:**
 > - Values in data.yaml must not be empty. 
-> - Values which can be floating point such as Memory in TB must have .0 for whole numbers.
+> - Values which can be decimal must be decimal. For example, 200 (TB) must be written as 200.0
 
 ## Instructions:
 
