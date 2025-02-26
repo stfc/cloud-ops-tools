@@ -60,7 +60,7 @@ def _get_token() -> str:
     Get the token from the environment
     :return: Token as string
     """
-    return os.environ.get("INFLUXDB_API_TOKEN")
+    return os.environ.get("INFLUX_TOKEN")
 
 
 def _create_points_report(file_path: str) -> List[Point]:
