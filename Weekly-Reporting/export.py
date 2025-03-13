@@ -196,7 +196,7 @@ def _write_data(points: List[Point], host: str, org: str, bucket: str, token: st
     :param bucket: InfluxDB bucket
     :param token: InfluxDB API access token
     """
-    with influxdb_client.InfluxDBClient(url=host, token=token, org=org) as _client:
+    with influxdb_client.InfluxDBClient(url=host, token=token, org=org, verify_ssl=False) as _client:
         with _client.write_api(write_options=SYNCHRONOUS) as _write_api:
             _write_api.write(bucket, org, points)
 
