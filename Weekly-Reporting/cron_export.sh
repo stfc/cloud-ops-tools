@@ -46,7 +46,7 @@ source venv/bin/activate
 
 echo "Setting environment variables from .report-creds"
 echo "..."
-export $(cat .report-creds | xargs)
+export $(cat /etc/.report-creds | xargs)
 
 ./report.sh
 
